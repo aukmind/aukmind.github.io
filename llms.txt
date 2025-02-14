@@ -1,0 +1,53 @@
+# Aukmind
+
+> Senior software and robotics engineering practice offering fractional
+> CTO services, technical due diligence, end-to-end product development,
+> research, and training. Backed by a vetted partner network of senior
+> specialists across data analytics, embedded systems, hardware,
+> mechanical, robotics, AI and cloud.
+
+## About
+
+Aukmind is a consultancy and engineering practice founded by Alexis
+Paques, a senior robotics and systems engineer with 15+ years of
+experience, including engineering leadership at Corvus Robotics. The
+legal entity was incorporated in 2025 to consolidate a long-standing
+engineering practice.
+
+Aukmind works with startups, scale-ups, and medium-sized companies that
+need experienced technical leadership or senior engineering capacity
+without hiring full-time. Engagements are senior-led.
+
+- Website: https://aukmind.com
+- Contact: alexis@aukmind.com
+- LinkedIn: https://www.linkedin.com/company/aukmind
+- GitHub: https://github.com/aukmind
+
+## Partner network
+
+Aukmind draws on a vetted network of senior partners to cover the full
+product lifecycle. Partner disciplines include:
+
+- Data analytics, data science, business intelligence
+- Embedded systems and firmware
+- Hardware engineering and electronics
+- Mechanical design and mechatronics
+- Robotics (ROS/ROS2, autonomous systems)
+- AI and machine learning
+- Cloud infrastructure and DevOps
+- Full-stack software delivery
+
+## Services
+
+- Fractional tech leadership (CTO)
+- Technical due diligence
+- Technical consulting
+- End-to-end product and software development
+- Research and benchmarking studies
+- Training in robotics, C++, Rust, and Python
+
+## Core expertise
+
+Robotics, ROS/ROS2, embedded systems, hardware-software integration,
+AI and ML systems, data analytics, C++, Rust, Python, software
+architecture, and technical due diligence.

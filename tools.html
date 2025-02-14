@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <title>Aukmind | Tools</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Use dynamic viewport height so mobile browser chrome doesn't clip the bottom bar */
+        html, body { height: 100dvh; }
+        .tool-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-right: 4px solid #2563eb;
+            font-weight: 600;
+        }
+        /* Mobile bottom-sheet: anchored above a persistent bottom bar */
+        #sidebar {
+            transition: transform 0.25s ease-in-out;
+        }
+        @media (max-width: 767px) {
+            /* Bottom bar height = 3.5rem (h-14). Sheet sits above it. */
+            #sidebar {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 3.5rem;
+                width: 100%;
+                max-height: 70vh;
+                border-top-left-radius: 1rem;
+                border-top-right-radius: 1rem;
+                border-right: none;
+                transform: translateY(calc(100% + 3.5rem));
+                z-index: 40;
+            }
+            #sidebar.open {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex flex-col overflow-hidden">
+    <div class="flex flex-1 overflow-hidden relative">
+        <!-- Backdrop for mobile sheet -->
+        <div id="backdrop" class="hidden fixed inset-0 bg-black bg-opacity-40 z-30"></div>
+
+        <aside id="sidebar" class="w-64 bg-white shadow-md flex flex-col border-r border-gray-200">
+            <!-- Brand / back-to-home (desktop only; mobile uses bottom bar) -->
+            <div class="hidden md:block p-4 border-b border-gray-100">
+                <a href="index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700">Aukmind</a>
+            </div>
+            <div class="p-4 border-b border-gray-100 bg-gray-50">
+                <h2 class="font-bold text-gray-700 uppercase text-sm tracking-wide">Available Tools</h2>
+            </div>
+            <div class="flex-1 overflow-y-auto py-2">
+                <button onclick="loadTool('image/', this)" class="tool-link w-full text-left px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors focus:outline-none">
+                    Image Tool
+                </button>
+                <button onclick="loadTool('pdfmerge/', this)" class="tool-link w-full text-left px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors focus:outline-none">
+                    PDF Merge
+                </button>
+                <button onclick="loadTool('linkedin/', this)" class="tool-link w-full text-left px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors focus:outline-none">
+                    LinkedIn Tool
+                </button>
+            </div>
+            <div class="p-4 text-xs text-gray-400 border-t text-center">
+                &copy; 2025 Aukmind
+            </div>
+        </aside>
+
+        <main class="flex-1 bg-gray-100 relative">
+            <iframe id="toolFrame" src="" class="w-full h-full border-none" title="Tool Interface"></iframe>
+            <div id="loader" class="absolute inset-0 flex items-center justify-center bg-white z-0 pointer-events-none">
+                <p class="text-gray-500 animate-pulse">Loading tool...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile-only bottom bar -->
+    <footer class="md:hidden bg-white border-t border-gray-200 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] flex-shrink-0 flex items-center justify-between px-4 h-14 z-50">
+        <a href="index.html" class="text-xl font-bold text-blue-600">Aukmind</a>
+        <button id="menuToggle" aria-label="Open tool menu" class="p-2 text-gray-700 hover:text-blue-600 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+    </footer>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+        const menuToggle = document.getElementById('menuToggle');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            backdrop.classList.remove('hidden');
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            backdrop.classList.add('hidden');
+        }
+        menuToggle.addEventListener('click', openSidebar);
+        backdrop.addEventListener('click', closeSidebar);
+
+        function loadTool(url, button) {
+            const frame = document.getElementById('toolFrame');
+            const loader = document.getElementById('loader');
+            loader.style.zIndex = '10';
+            frame.src = url;
+            frame.onload = function() {
+                loader.style.zIndex = '-1';
+            };
+            document.querySelectorAll('.tool-link').forEach(el => el.classList.remove('active'));
+            if (button) button.classList.add('active');
+
+            // Auto-close drawer on mobile after selection
+            if (window.matchMedia('(max-width: 767px)').matches) {
+                closeSidebar();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const firstButton = document.querySelector('.tool-link');
+            if (firstButton) firstButton.click();
+        });
+    </script>
+</body>
+</html>
