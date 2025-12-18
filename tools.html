@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <title>Aukmind | Tools</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles for the active tool state */
+        .tool-link.active {
+            background-color: #eff6ff; /* bg-blue-50 */
+            color: #2563eb; /* text-blue-600 */
+            border-right: 4px solid #2563eb;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex flex-col overflow-hidden">
+    <nav class="bg-white shadow-lg flex-shrink-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">Aukmind</a>
+                </div>
+                <div class="flex items-center space-x-8">
+                    <a href="index.html#services" class="text-gray-700 hover:text-blue-600">Services</a>
+                    <a href="index.html#about" class="text-gray-700 hover:text-blue-600">About</a>
+                    <a href="tools.html" class="text-blue-600 font-semibold">Tools</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex flex-1 overflow-hidden">
+        <aside class="w-64 bg-white shadow-md z-10 flex flex-col border-r border-gray-200">
+            <div class="p-4 border-b border-gray-100 bg-gray-50">
+                <h2 class="font-bold text-gray-700 uppercase text-sm tracking-wide">Available Tools</h2>
+            </div>
+            <div class="flex-1 overflow-y-auto py-2">
+                <button onclick="loadTool('/image', this)" class="tool-link w-full text-left px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors focus:outline-none">
+                    Image Tool
+                </button>
+                <button onclick="loadTool('/pdfmerge', this)" class="tool-link w-full text-left px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors focus:outline-none">
+                    PDF Merge
+                </button>
+                <button onclick="loadTool('/linkedin', this)" class="tool-link w-full text-left px-6 py-4 text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors focus:outline-none">
+                    LinkedIn Tool
+                </button>
+            </div>
+            <div class="p-4 text-xs text-gray-400 border-t text-center">
+                &copy; 2025 Aukmind
+            </div>
+        </aside>
+
+        <main class="flex-1 bg-gray-100 relative">
+            <iframe id="toolFrame" src="" class="w-full h-full border-none" title="Tool Interface"></iframe>
+            <div id="loader" class="absolute inset-0 flex items-center justify-center bg-white z-0 pointer-events-none">
+                <p class="text-gray-500 animate-pulse">Loading tool...</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function loadTool(url, button) {
+            const frame = document.getElementById('toolFrame');
+            const loader = document.getElementById('loader');
+            
+            // Show loader briefly (optional UX improvement)
+            loader.style.zIndex = '10';
+            
+            // Update iframe source
+            frame.src = url;
+            
+            // Hide loader after iframe loads
+            frame.onload = function() {
+                loader.style.zIndex = '-1';
+            };
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tool-link').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Add active class to clicked button
+            if (button) {
+                button.classList.add('active');
+            }
+        }
+
+        // Initialize with the first tool on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const firstButton = document.querySelector('.tool-link');
+            if (firstButton) {
+                // Determine the URL from the onclick attribute or hardcode based on logic
+                // Here we simply simulate a click on the first button
+                firstButton.click();
+            }
+        });
+    </script>
+</body>
+</html>
