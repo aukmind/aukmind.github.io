@@ -153,3 +153,16 @@ export function useSortable(el, onMove, options = {}) {
     });
     onBeforeUnmount(() => sortable?.destroy());
 }
+
+// A media query as a ref that follows the screen (rotation, resizing).
+export function useMedia(query) {
+    const list = matchMedia(query);
+    const matches = ref(list.matches);
+    const update = (e) => { matches.value = e.matches; };
+    onMounted(() => {
+        matches.value = list.matches;
+        list.addEventListener('change', update);
+    });
+    onBeforeUnmount(() => list.removeEventListener('change', update));
+    return matches;
+}

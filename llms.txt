@@ -9,8 +9,8 @@
 ## About
 
 Aukmind is a consultancy and engineering practice founded by Alexis
-Paques, a senior robotics and systems engineer with 15+ years of
-experience, including engineering leadership at Corvus Robotics. The
+Paques, a senior robotics and systems engineer working professionally since
+2015, including engineering leadership at Corvus Robotics. The
 legal entity was incorporated in 2025 to consolidate a long-standing
 engineering practice.
 
@@ -49,5 +49,13 @@ product lifecycle. Partner disciplines include:
 ## Core expertise
 
 Robotics, ROS/ROS2, embedded systems, hardware-software integration,
-AI and ML systems, data analytics, C++, Rust, Python, software
+AI and ML systems, data analytics, dashboards and data visualisation, C++, Rust, Python, software
 architecture, and technical due diligence.
+
+## Free tools
+
+Browser-only tools at https://aukmind.com/tools.html. Files never leave the device.
+
+- Image Toolbox (tools.html#image): convert HEIC, compress, resize, crop, blur, metadata, watermark
+- PDF Editor (tools.html#pdf): merge, reorder, edit, sign, convert PDFs
+- LinkedIn Text (tools.html#linkedin): bold and italic text for LinkedIn posts

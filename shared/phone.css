@@ -1,0 +1,31 @@
+/* What a phone shows less of, in every app here (same class names everywhere). Loaded after the app's own styles. */
+
+@media (max-width: 700px) {
+  /* Header: the tool's name is enough; the hint, file sizes and button labels crowd it. */
+  .toolhead p, .docbar__size, .docbar__download-label { display: none; }
+  .privacy-badge > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .privacy-badge { padding: 6px 8px; }
+
+  /* Picking: tap to select; ranges, odd/even and the thumbnail size slider stay on bigger screens. */
+  .selbar .selbar__extra, .selbar .zoom { display: none; }
+  .selbar__main { flex-basis: 100%; }
+
+  /* Small print a phone has no room for; a tool's own caption (resize preview, kept tags) stays. */
+  /* Instructions stay; notes that only explain (tool__note--aside) don't. Phones use one card size: the size slider
+     is hidden there, so a size saved earlier couldn't be changed back. */
+  .tool__note--aside, .image-card__meta:not(.image-card__meta--caption) { display: none; }
+  .page-grid { --thumb-size: 140px !important; }
+
+  /* Landing: tool names in two columns; the descriptions are in each tool's header once it's open. */
+  .landing { gap: 20px; padding: 16px; }
+  .landing__hero { padding: 24px 12px; }
+  .landing__grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tool-card { align-items: center; padding: 10px; gap: 10px; }
+  .tool-card__icon { width: 34px; height: 34px; }
+  .tool-card__text small { display: none; }
+}
+
+/* Touch screens don't drag files in. */
+@media (pointer: coarse) {
+  .landing__or { display: none; }
+}

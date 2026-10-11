@@ -1,0 +1,84 @@
+/* Light and dark colour tokens for every app here; app stylesheets use only these. */
+
+:root {
+  color-scheme: light dark;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: #eff6ff;
+  --primary-border: #93c5fd;
+  --primary-ring: rgba(37, 99, 235, 0.25);
+  --primary-glow: rgba(37, 99, 235, 0.5);
+  --primary-tint: rgba(37, 99, 235, 0.08);
+  --danger: #dc2626;
+  --success: #047857;
+
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --surface-2: #f9fafb;
+  --hover: #f3f4f6;
+  --glass: rgba(255, 255, 255, 0.94);
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #111827;
+  --text-2: #374151;
+  --text-muted: #6b7280;
+  --toast-bg: #111827;
+  --checker-a: #f3f4f6;
+  --checker-b: #ffffff;
+  --paper: #ffffff; /* PDF pages stay white in dark mode too */
+
+  --warn-bg: #fffbeb;
+  --warn-border: #fde68a;
+  --warn-text: #78350f;
+  --warn-strong: #b45309;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --danger-text: #7f1d1d;
+  --ok-bg: #ecfdf5;
+  --ok-text: #166534;
+
+  --shadow: 0 1px 2px rgba(17, 24, 39, 0.06), 0 1px 3px rgba(17, 24, 39, 0.08);
+  --shadow-lg: 0 10px 25px -5px rgba(17, 24, 39, 0.15), 0 4px 10px -4px rgba(17, 24, 39, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --primary-soft: rgba(59, 130, 246, 0.16);
+    --primary-border: #3b6fc4;
+    --primary-ring: rgba(96, 165, 250, 0.35);
+    --primary-glow: rgba(59, 130, 246, 0.4);
+    --primary-tint: rgba(96, 165, 250, 0.12);
+    --danger: #f87171;
+    --success: #34d399;
+
+    --bg: #0f1115;
+    --surface: #181b21;
+    --surface-2: #1d2128;
+    --hover: #252a32;
+    --glass: rgba(24, 27, 33, 0.94);
+    --border: #2c323b;
+    --border-strong: #3b424d;
+    --text: #e8eaed;
+    --text-2: #c9cdd3;
+    --text-muted: #9aa1ab;
+    --toast-bg: #2c323b;
+    --checker-a: #252a32;
+    --checker-b: #1d2128;
+
+    --warn-bg: #2a2110;
+    --warn-border: #5c4613;
+    --warn-text: #f5d58a;
+    --warn-strong: #f0b44c;
+    --danger-bg: #2a1517;
+    --danger-border: #5c2a2e;
+    --danger-text: #f3b4b4;
+    --ok-bg: #0f2a1f;
+    --ok-text: #7fd8a8;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 4px 10px -4px rgba(0, 0, 0, 0.5);
+  }
+}
