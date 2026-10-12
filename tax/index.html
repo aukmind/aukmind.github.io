@@ -8,6 +8,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script src="i18n.js"></script>
+<script src="index.strings.js"></script>
 <style>
 :root{
   --bg:#f3f5f8; --surface:#ffffff; --sunk:#e9edf3; --ink:#152033; --muted:#5d6879; --line:#d8dee8;
@@ -170,76 +172,80 @@ header{position:relative}
 .share{border:1px solid var(--line);background:var(--sunk);color:var(--ink);font:600 13px var(--sans);padding:7px 12px;border-radius:7px;cursor:pointer}
 .share:hover{border-color:var(--accent)}
 .share-url{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font:12px var(--mono)}
+.lang{display:flex;background:var(--sunk);border-radius:7px;padding:2px;gap:2px}
+.lang button{border:0;background:transparent;color:var(--muted);font:600 12px var(--sans);padding:5px 8px;border-radius:5px;cursor:pointer;text-transform:uppercase}
+.lang button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 </style>
 </head>
 <body>
 <div id="app" v-cloak>
 <div class="wrap">
   <header>
-    <div class="eyebrow">Belgium · income year 2026 · private-sector white-collar employee</div>
-    <h1>What is your 🇧🇪 buying power</h1>
-    <p>Every tax on a Belgian salary in 2026, from what your employer pays to what you can buy.</p>
+    <div class="eyebrow">{{ t('eyebrow') }}</div>
+    <h1>{{ t('h1') }}</h1>
+    <p>{{ t('lead') }}</p>
     <div class="share-box">
-      <button class="share" type="button" @click="shareLink">🔗 Share link</button>
-      <span class="hint" v-if="shareState.copied">Copied to clipboard</span>
-      <input v-if="shareState.failed" class="share-url" type="text" readonly :value="shareState.url" @focus="$event.target.select()" aria-label="Link to these settings">
+      <button class="share" type="button" @click="shareLink">{{ t('share') }}</button>
+      <div class="lang" role="group" :aria-label="t('langAria')"><button v-for="l in LANGS" :key="l" type="button" :class="{on:lang===l}" :lang="l" @click="setLang(l)">{{ l }}</button></div>
+      <span class="hint" v-if="shareState.copied">{{ t('copied') }}</span>
+      <input v-if="shareState.failed" class="share-url" type="text" readonly :value="shareState.url" @focus="$event.target.select()" :aria-label="t('shareAria')">
     </div>
   </header>
 
   <div class="grid">
     <aside class="panel inputs">
       <div class="field">
-        <label for="salary">Gross salary <span class="hint">(optional)</span></label>
+        <label for="salary">{{ t('grossSalary') }} <span class="hint">{{ t('optional') }}</span></label>
         <div class="row">
-          <div class="money"><input id="salary" type="number" min="0" step="100" v-model.number="s.salary" placeholder="e.g. 3800"><span>€</span></div>
+          <div class="money"><input id="salary" type="number" min="0" step="100" v-model.number="s.salary" :placeholder="t('salaryPh')"><span>€</span></div>
           <div class="seg">
-            <button :class="{on:s.period==='month'}" @click="setPeriod('month')">/ month</button>
-            <button :class="{on:s.period==='year'}" @click="setPeriod('year')">/ year</button>
+            <button :class="{on:s.period==='month'}" @click="setPeriod('month')">{{ t('perMonth') }}</button>
+            <button :class="{on:s.period==='year'}" @click="setPeriod('year')">{{ t('perYear') }}</button>
           </div>
         </div>
-        <div class="lbl" style="margin-top:4px">Months paid</div>
+        <div class="lbl" style="margin-top:4px">{{ t('monthsPaid') }}</div>
         <div class="seg full">
-          <button v-for="f in [12,13.85,13.92]" :key="f" :class="{on:s.factor===f}" @click="s.factor=f" v-tip.panel="'factor'+f">{{ f.toFixed(2) }}</button>
+          <button v-for="f in [12,13.85,13.92]" :key="f" :class="{on:s.factor===f}" @click="s.factor=f" v-tip.panel="'factor'+f">{{ num(f, 2) }}</button>
         </div>
-        <div class="hint" v-if="s.salary">{{ s.period==='month' ? eur(annualGross) + ' yearly gross pay' : eur(annualGross / s.factor) + ' monthly gross pay' }}</div>
+        <div class="hint" v-if="s.salary">{{ s.period==='month' ? t('yearlyGross', eur(annualGross)) : t('monthlyGross', eur(annualGross / s.factor)) }}</div>
       </div>
 
       <div class="divider"></div>
 
       <div class="field">
-        <div class="lbl">Household</div>
+        <div class="lbl">{{ t('household') }}</div>
         <div class="seg full">
-          <button :class="{on:s.household==='single'}" @click="s.household='single'">Single</button>
-          <button :class="{on:s.household==='joint'}" @click="s.household='joint'" v-tip.panel="'joint'">Couple</button>
+          <button :class="{on:s.household==='single'}" @click="s.household='single'">{{ t('single') }}</button>
+          <button :class="{on:s.household==='joint'}" @click="s.household='joint'" v-tip.panel="'joint'">{{ t('couple') }}</button>
         </div>
-        <div class="hint" v-if="s.household==='joint'">Married or legally cohabiting.</div>
+        <div class="hint" v-if="s.household==='joint'">{{ t('coupleHint') }}</div>
       </div>
 
       <div class="field" v-if="s.household==='joint'">
-        <label for="partner">Partner's gross salary / year</label>
+        <label for="partner">{{ t('partnerGross') }}</label>
         <div class="money"><input id="partner" type="number" min="0" step="1000" v-model.number="s.partnerGross"><span>€</span></div>
       </div>
 
       <div class="pair">
         <div class="field">
-          <div class="lbl">Dependent children</div>
-          <div class="stepper"><button @click="s.children=Math.max(0,s.children-1)" aria-label="fewer children">−</button><output>{{ s.children }}</output><button @click="s.children++" aria-label="more children">+</button></div>
+          <div class="lbl">{{ t('children') }}</div>
+          <div class="stepper"><button @click="s.children=Math.max(0,s.children-1)" :aria-label="t('fewerChildren')">−</button><output>{{ s.children }}</output><button @click="s.children++" :aria-label="t('moreChildren')">+</button></div>
         </div>
         <div class="field">
-          <div class="lbl">of which under 3</div>
-          <div class="stepper"><button @click="s.under3=Math.max(0,s.under3-1)" aria-label="fewer under 3">−</button><output>{{ s.under3 }}</output><button @click="s.under3=Math.min(s.children,s.under3+1)" aria-label="more under 3">+</button></div>
+          <div class="lbl">{{ t('under3') }}</div>
+          <div class="stepper"><button @click="s.under3=Math.max(0,s.under3-1)" :aria-label="t('fewerUnder3')">−</button><output>{{ s.under3 }}</output><button @click="s.under3=Math.min(s.children,s.under3+1)" :aria-label="t('moreUnder3')">+</button></div>
         </div>
       </div>
 
       <div class="divider"></div>
 
       <div class="field">
-        <label for="commune">Commune</label>
+        <label for="commune">{{ t('commune') }}</label>
         <div class="combo">
           <input id="commune" class="text" type="text" role="combobox" autocomplete="off" spellcheck="false"
             :aria-expanded="combo.open" aria-controls="communeList"
             :value="combo.open ? combo.q : s.commune"
-            :placeholder="combo.open ? (s.commune || 'Search a commune') : (communes.length ? 'Search ' + communes.length + ' communes' : 'Loading communes…')"
+            :placeholder="combo.open ? (s.commune || t('searchCommune')) : (communes.length ? t('searchN', communes.length) : t('loadingCommunes'))"
             @focus="openCombo" @blur="combo.open=false" @input="combo.q=$event.target.value; combo.hi=0"
             @keydown.down.prevent="moveHi(1)" @keydown.up.prevent="moveHi(-1)"
             @keydown.enter.prevent="filtered[combo.hi] && pickCommune(filtered[combo.hi])"
@@ -247,31 +253,31 @@ header{position:relative}
           <span class="caret">▼</span>
           <ul v-if="combo.open" id="communeList" role="listbox" ref="comboList">
             <li v-for="(c, i) in filtered" :key="c.nis" role="option" :class="{hi:i===combo.hi, sel:c.name===s.commune}"
-              @mousedown.prevent="pickCommune(c)" @mousemove="combo.hi=i">{{ c.name }}<span>{{ c.rate.toFixed(1) }}% · {{ regionName[c.region] }}</span></li>
-            <li v-if="!filtered.length" class="none">No commune matches "{{ combo.q }}"</li>
+              @mousedown.prevent="pickCommune(c)" @mousemove="combo.hi=i">{{ c.name }}<span>{{ num(c.rate, 1) }}% · {{ t('region.' + c.region) }}</span></li>
+            <li v-if="!filtered.length" class="none">{{ t('noCommune', combo.q) }}</li>
           </ul>
         </div>
-        <div class="hint" v-if="commune">{{ regionName[commune.region] }} · {{ commune.rate.toFixed(1) }}%</div>
-        <div class="hint" v-else-if="communesError">{{ communesError }}</div>
+        <div class="hint" v-if="commune">{{ t('region.' + commune.region) }} · {{ num(commune.rate, 1) }}%</div>
+        <div class="hint" v-else-if="communesError">{{ t('communesError') }}</div>
       </div>
       <div class="field">
-        <div class="lbl">Region <span class="hint" v-if="commune">(set by the commune)</span></div>
+        <div class="lbl">{{ t('region') }} <span class="hint" v-if="commune">{{ t('setByCommune') }}</span></div>
         <div class="seg full">
-          <button v-for="(n, k) in regionName" :key="k" :class="{on:s.region===k}" @click="s.region=k" v-tip.panel="'reg'">{{ n }}</button>
+          <button v-for="k in REGIONS" :key="k" :class="{on:s.region===k}" @click="s.region=k" v-tip.panel="'reg'">{{ t('region.' + k) }}</button>
         </div>
       </div>
       <div class="field">
-        <label for="communal">Communal tax: <span style="font-family:var(--mono)">{{ s.communal.toFixed(1) }}%</span></label>
+        <label for="communal">{{ t('communalLabel') }} <span style="font-family:var(--mono)">{{ num(s.communal, 1) }}%</span></label>
         <input id="communal" type="range" :min="rateRange[0]" :max="rateRange[1]" step="0.1" v-model.number="s.communal">
-        <div class="row hint" style="justify-content:space-between"><span>{{ rateRange[0].toFixed(1) }}% lowest</span><span>{{ rateRange[1].toFixed(1) }}% highest</span></div>
+        <div class="row hint" style="justify-content:space-between"><span>{{ t('lowest', num(rateRange[0], 1) + '%') }}</span><span>{{ t('highest', num(rateRange[1], 1) + '%') }}</span></div>
       </div>
 
       <div class="divider"></div>
 
       <div class="field">
-        <label class="switch"><input type="checkbox" id="vatOn" v-model="s.vat"> Include VAT on what you spend</label>
+        <label class="switch"><input type="checkbox" id="vatOn" v-model="s.vat"> {{ t('includeVat') }}</label>
         <template v-if="s.vat">
-          <label for="vatRate">VAT rate: <span style="font-family:var(--mono)">{{ s.vatRate.toFixed(1) }}%</span> <span class="hint" v-if="s.vatRate!==21">(Belgian standard rate is 21%)</span></label>
+          <label for="vatRate">{{ t('vatRateLabel') }} <span style="font-family:var(--mono)">{{ num(s.vatRate, 1) }}%</span> <span class="hint" v-if="s.vatRate!==21">{{ t('vatStandard') }}</span></label>
           <input id="vatRate" type="range" min="0" max="30" step="0.5" v-model.number="s.vatRate">
         </template>
       </div>
@@ -279,10 +285,10 @@ header{position:relative}
       <div class="divider"></div>
 
       <div class="field">
-        <div class="lbl">Employer size</div>
+        <div class="lbl">{{ t('employerSize') }}</div>
         <div class="seg full">
-          <button :class="{on:!s.bigEmployer}" @click="s.bigEmployer=false">Under 20 workers</button>
-          <button :class="{on:s.bigEmployer}" @click="s.bigEmployer=true">20 or more</button>
+          <button :class="{on:!s.bigEmployer}" @click="s.bigEmployer=false">{{ t('under20') }}</button>
+          <button :class="{on:s.bigEmployer}" @click="s.bigEmployer=true">{{ t('over20') }}</button>
         </div>
       </div>
     </aside>
@@ -290,21 +296,21 @@ header{position:relative}
     <main class="results">
       <div class="panel">
         <div class="row" style="justify-content:space-between;margin-bottom:10px">
-          <h2>Your tax rate</h2>
+          <h2>{{ t('yourTaxRate') }}</h2>
         </div>
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>Scope</th><th>Average rate</th><th>Next € rate</th><th>Tax / year</th><th>Base / year</th></tr></thead>
+            <thead><tr><th>{{ t('thScope') }}</th><th>{{ t('thAvg') }}</th><th>{{ t('thNext') }}</th><th>{{ t('thTaxYear') }}</th><th>{{ t('thBaseYear') }}</th></tr></thead>
             <tbody>
               <tr v-for="r in rows" :key="r.key">
-                <td><div class="name" :style="{'--dot':r.color}" v-tip.left="'row-'+r.key"><span class="sw"></span><div><b>{{ r.label }}</b><small>{{ r.desc }}</small></div></div></td>
+                <td><div class="name" :style="{'--dot':r.color}" v-tip.left="'row-'+r.key"><span class="sw"></span><div><b>{{ t('row.' + r.key) }}</b><small>{{ t('rowDesc.' + r.key) }}</small></div></div></td>
                 <template v-if="cur">
                   <td class="rate">{{ pct(r.avg) }}</td>
-                  <td><span class="rate">{{ pct(r.marg) }}</span><div class="keep">you keep {{ cents(1 - r.marg) }} per €</div></td>
+                  <td><span class="rate">{{ pct(r.marg) }}</span><div class="keep">{{ t('youKeepPer', cents(1 - r.marg)) }}</div></td>
                   <td v-tip="'row-'+r.key">{{ eur(r.tax) }}</td>
                   <td v-tip="r.baseKey">{{ eur(r.base) }}<div class="keep">{{ r.baseName }}</div></td>
                 </template>
-                <template v-else><td colspan="4" style="text-align:center;color:var(--muted);font-family:var(--sans)">Enter a salary to see your figures</td></template>
+                <template v-else><td colspan="4" style="text-align:center;color:var(--muted);font-family:var(--sans)">{{ t('enterSalary') }}</td></template>
               </tr>
             </tbody>
           </table>
@@ -313,14 +319,14 @@ header{position:relative}
 
       <div class="panel" v-if="cur">
         <div class="row" style="justify-content:space-between;margin-bottom:12px">
-          <h2>Where the employer's {{ eur(cur.cost) }} goes</h2>
+          <h2>{{ t('whereGoes', eur(cur.cost)) }}</h2>
         </div>
         <div class="bar">
           <div v-for="seg in barSegs" :key="seg.k" :style="{width:seg.w+'%',background:seg.color}" v-tip="seg.k"></div>
         </div>
         <div class="tbl-wrap" style="margin-top:12px">
           <table class="bd split">
-            <thead><tr><th style="text-align:left">Goes to</th><th>Per year</th><th>% of cost</th><th>Cumulative tax</th></tr></thead>
+            <thead><tr><th style="text-align:left">{{ t('thGoesTo') }}</th><th>{{ t('thPerYear') }}</th><th>{{ t('thShare') }}</th><th>{{ t('thCum') }}</th></tr></thead>
             <tbody>
               <tr v-for="seg in splitRows" :key="seg.k" :class="seg.cls">
                 <td class="lab" v-tip="seg.k"><span v-if="seg.child" class="indent">↳</span><i class="dot" :style="{background:seg.color}"></i>{{ seg.label }}</td>
@@ -332,15 +338,13 @@ header{position:relative}
           </table>
         </div>
 
-        <div class="callout" style="margin-top:16px">
-          A raise of <b>€100 gross/month</b> costs your employer <b>{{ eur(raise.cost) }}</b>/month and adds <b>{{ eur(raise.net) }}</b> to your net pay<template v-if="s.vat">, which buys <b>{{ eur(raise.afterVat) }}</b> worth of goods after VAT</template>. <b>{{ pct(raise.taxShare) }}</b> of what your employer pays for the raise goes to tax.
-        </div>
+        <div class="callout" style="margin-top:16px" v-html="raiseHtml"></div>
 
         <details class="more" style="margin-top:14px" open>
-          <summary>Full breakdown</summary>
+          <summary>{{ t('fullBreakdown') }}</summary>
           <div class="tbl-wrap">
           <table class="bd">
-            <thead><tr><th></th><th style="text-align:left">Item</th><th>Per year</th><th>Per month</th><th>% of cost</th><th>Cumulative tax</th></tr></thead>
+            <thead><tr><th></th><th style="text-align:left">{{ t('thItem') }}</th><th>{{ t('thPerYear') }}</th><th>{{ t('thPerMonth') }}</th><th>{{ t('thShare') }}</th><th>{{ t('thCum') }}</th></tr></thead>
             <tbody>
               <tr v-for="(l, i) in breakdown" :key="i" :class="l.cls"><td class="op">{{ l.op }}</td><td class="lab" v-tip.left="l.k">{{ l.label }}</td><td v-tip.left="l.k">{{ eur(l.v) }}</td><td>{{ eur(l.v/12) }}</td><td>{{ pct(l.share) }}</td><td class="cum">{{ l.cum != null ? pct(l.cum) : '' }}</td></tr>
             </tbody>
@@ -348,126 +352,60 @@ header{position:relative}
           </div>
         </details>
       </div>
-      <div class="panel empty" v-else>Enter a salary to see where the employer's money goes and the full breakdown. The curves below work without one.</div>
+      <div class="panel empty" v-else>{{ t('emptyPanel') }}</div>
     </main>
   </div>
 
   <div class="panel">
     <div class="chart-head">
       <div>
-        <h2>Tax and buying power at each salary level</h2>
+        <h2>{{ t('chartTitle') }}</h2>
 
       </div>
       <div class="row">
         <div class="chips">
-          <button v-for="r in rowDefs" :key="r.key" class="chip" :class="{on:s.show[r.key]}" :style="{'--dot':r.color}" @click="s.show[r.key]=!s.show[r.key]" v-tip.above="'chip-'+r.key"><i></i>{{ r.label }}</button>
-          <button class="chip" :class="{on:s.show.power}" style="--dot:var(--c-power)" @click="s.show.power=!s.show.power" v-tip.above="'chip-power'"><i></i>Buying power</button>
+          <button v-for="r in rowDefs" :key="r.key" class="chip" :class="{on:s.show[r.key]}" :style="{'--dot':r.color}" @click="s.show[r.key]=!s.show[r.key]" v-tip.above="'chip-'+r.key"><i></i>{{ t('row.' + r.key) }}</button>
+          <button class="chip" :class="{on:s.show.power}" style="--dot:var(--c-power)" @click="s.show.power=!s.show.power" v-tip.above="'chip-power'"><i></i>{{ t('buyingPower') }}</button>
         </div>
         <div class="seg">
-          <button :class="{on:s.lines==='both'}" @click="s.lines='both'">Both</button>
-          <button :class="{on:s.lines==='marg'}" @click="s.lines='marg'"><svg class="ls" viewBox="0 0 18 4" aria-hidden="true"><line x1="0" y1="2" x2="18" y2="2"/></svg>Next €</button>
-          <button :class="{on:s.lines==='avg'}" @click="s.lines='avg'"><svg class="ls" viewBox="0 0 18 4" aria-hidden="true"><line x1="0" y1="2" x2="18" y2="2" stroke-dasharray="4 3"/></svg>Average</button>
+          <button :class="{on:s.lines==='both'}" @click="s.lines='both'">{{ t('both') }}</button>
+          <button :class="{on:s.lines==='marg'}" @click="s.lines='marg'"><svg class="ls" viewBox="0 0 18 4" aria-hidden="true"><line x1="0" y1="2" x2="18" y2="2"/></svg>{{ t('nextEur') }}</button>
+          <button :class="{on:s.lines==='avg'}" @click="s.lines='avg'"><svg class="ls" viewBox="0 0 18 4" aria-hidden="true"><line x1="0" y1="2" x2="18" y2="2" stroke-dasharray="4 3"/></svg>{{ t('average') }}</button>
         </div>
       </div>
     </div>
-    <div class="chart-box"><canvas id="chart" aria-label="Tax rate per salary chart"></canvas><div id="chartTip" class="chart-tip" hidden></div></div>
+    <div class="chart-box"><canvas id="chart" :aria-label="t('chartAria')"></canvas><div id="chartTip" class="chart-tip" hidden></div></div>
     <div class="trap-note">
-      <b>Why close to 90% between {{ trapText[0] }} and {{ trapText[1] }}?</b>
-      Three low-wage discounts shrink as your pay rises: your employer's structural reduction (up to 30 cents per extra €), your social work bonus (27–32 cents per extra €) and the tax credit tied to that bonus. So each extra euro pays the normal taxes <em>and</em> costs you part of those discounts. Above {{ trapText[1] }} they're used up and the rate falls back to about 70%.
+      <b>{{ t('trapTitle', trapText[0], trapText[1]) }}</b>
+      <span v-html="t('trapBody', trapText[1])"></span>
     </div>
     <div class="trap-note top-note" v-if="topText">
-      <b>Why the step at {{ topText[0] }}{{ topText[1] ? ' and the small dip at ' + topText[1] : '' }}?</b>
-      From {{ topText[0] }} your net taxable income passes {{ eur(P.brackets[2][0]) }}, so the top 50% income tax bracket starts, and the communal tax on it grows too.<template v-if="topText[1]"> At {{ topText[1] }} the special social security contribution reaches its yearly cap ({{ eur(bbszCap) }}), so it stops growing and the rate drops slightly.</template>
+      <b>{{ t('topTitle', topText[0], topText[1]) }}</b>
+      <span v-html="t('topBody', topText[0], eur(P.brackets[2][0]), topText[1], eur(bbszCap))"></span>
     </div>
   </div>
 
   <div>
-    <div class="eyebrow" style="margin-bottom:10px">Rules used · income year 2026 (assessment year 2027)</div>
+    <div class="eyebrow" style="margin-bottom:10px">{{ t('refEyebrow') }}</div>
     <div class="ref">
-      <section>
-        <h3>1 · Employer social security</h3>
+      <section v-for="sec in refSections" :key="sec.h">
+        <h3>{{ sec.h }}</h3>
         <ul>
-          <li>Base rate <span class="num">25.00%</span>: <span class="num">19.88%</span> basic + <span class="num">5.12%</span> wage moderation.</li>
-          <li>Small funds: closure fund <span class="num">0.32%</span> (under 20 workers) or <span class="num">0.37%</span>, temporary unemployment <span class="num">0.09%</span>, risk groups <span class="num">0.10%</span>, asbestos fund <span class="num">0.01%</span> for quarters 1–3 only.</li>
-          <li>Structural reduction for low wages, per quarter: <span class="num">0.14×(11 687.74 − S) + 0.16×(9 738.14 − S)</span>, where S is the quarterly wage and each term counts only when positive.</li>
-          <li>White-collar double holiday pay (0.92 × monthly) is paid without employer contributions.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>2 · Employee social security</h3>
-        <ul>
-          <li><span class="num">13.07%</span> of gross. On double holiday pay, only the part up to 85% of monthly pay is subject; the other 7% is exempt.</li>
-          <li>Social work bonus (per month, reference wage S): part A <span class="num">127.54 − 0.3196×(S − 2 937.93)</span>, zero above €3 336.98. Part B <span class="num">171.99 − 0.2699×(S − 2 300.62)</span>, zero above €2 937.93.</li>
-          <li>Special social security contribution: capped at <span class="num">€731.28/yr</span> for singles. Couples use separate scales (max €619.68 when both partners earn).</li>
-        </ul>
-      </section>
-      <section>
-        <h3>3 · Taxable income</h3>
-        <ul>
-          <li>Gross − employee social security = taxable pay.</li>
-          <li>Flat-rate professional expenses: <span class="num">30%</span>, capped at <span class="num">€6 070</span>.</li>
-          <li>Tax brackets:
-            <table><tbody>
-              <tr><td>0 – 16 720</td><td class="num">25%</td></tr>
-              <tr><td>16 720 – 29 510</td><td class="num">40%</td></tr>
-              <tr><td>29 510 – 51 070</td><td class="num">45%</td></tr>
-              <tr><td>&gt; 51 070</td><td class="num">50%</td></tr>
-            </tbody></table>
-          </li>
-        </ul>
-      </section>
-      <section>
-        <h3>4 · Tax-free allowance &amp; children</h3>
-        <ul>
-          <li>Base allowance <span class="num">€11 550</span>, raised by the 2026 reform from €11 180. It keeps rising toward €15 600 by 2030.</li>
-          <li>The allowance is taxed at the same brackets and that amount is credited against your tax. It is not a 0% slice of income.</li>
-          <li>Supplements for 1/2/3/4 children: <span class="num">€2 130 / 5 130 / 11 440 / 18 510</span>, plus <span class="num">€7 070</span> for each extra child and <span class="num">€740</span> per child under 3.</li>
-          <li>Single with children: <span class="num">+€1 980</span>, applied automatically. Unused child allowance can offset your tax (up to <span class="num">€550</span> per child), but only down to zero.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>5 · Couples (joint return)</h3>
-        <ul>
-          <li>Each partner is taxed in their own column, with their own allowance. The totals are added.</li>
-          <li>Marital quotient: if one partner earns less than 30% of the couple's combined professional income, income moves across until they reach 30%, at most <span class="num">€11 780</span>.</li>
-          <li>Child supplements go to the partner with the higher income. An allowance a partner can't use moves to the other partner.</li>
-          <li>Here, your tax = the couple's total tax − what the couple would pay if you earned nothing, never below zero.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>6 · Federal, regional and communal tax</h3>
-        <ul>
-          <li>The brackets give the basic tax. The federal state keeps <span class="num">75.043%</span> of it. The region gets the rest (autonomy factor 24.957%) and adds its own surcharge on the federal part: <span class="num">33.257%</span> in Flanders and Wallonia, <span class="num">32.591%</span> in Brussels.</li>
-          <li>Communal tax = (federal + regional tax) × your commune's rate. The rates for all 565 communes come from the FPS Finance list for assessment year 2026, the latest one published.</li>
-          <li>Tax work bonus credit: <span class="num">33.14%</span> of part A plus <span class="num">52.54%</span> of part B of the social work bonus.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>7 · VAT on spending</h3>
-        <ul>
-          <li>Standard rate <span class="num">21%</span>, applied to all of your net pay as if you spent it. Use the slider to see other rates.</li>
-          <li>VAT inside a price = price × r / (100 + r): at 21% that's 21 / 121 = <span class="num">17.36%</span> of what you pay.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>What's not included</h3>
-        <ul>
-          <li>Benefits in kind (meal vouchers, company car, group insurance), personal deductions (pension savings, service vouchers, gifts), excise duties and blue-collar holiday-fund rules.</li>
-          <li>Figures are your final annual tax, not the monthly withholding, which is only an advance on it.</li>
+          <li v-for="(li, i) in sec.li" :key="i" v-html="li"></li>
         </ul>
       </section>
     </div>
   </div>
 
   <a class="inherit" href="inheritance.html">
-    <span class="eyebrow">One more tax</span>
-    <b>Did you forget about inheritance??</b>
-    <span>What you'd pay on what you inherit, by region and relationship →</span>
+    <span class="eyebrow">{{ t('inheritEyebrow') }}</span>
+    <b>{{ t('inheritTitle') }}</b>
+    <span>{{ t('inheritLink') }}</span>
   </a>
 
   <footer>
-    Sources: <span v-html="allSources"></span>.
-    This is an estimate for orientation only. Your actual tax assessment decides.
+    {{ t('sources') }}: <span v-html="allSources"></span>.
+    {{ t('disclaimer') }}
   </footer>
 </div>
 
@@ -476,6 +414,10 @@ header{position:relative}
 </div>
 
 <script>
+const { lang, LANGS, t, eur, eurK, num, pct, setLang, ready } = TaxI18n.create(TAX_STRINGS);
+const eur2 = v => eur(v, 2);
+const REGIONS = ['vl', 'wal', 'bru'];
+
 const P = {
   brackets: [[16720, .25], [29510, .40], [51070, .45], [Infinity, .50]],
   taxFree: 11550,
@@ -494,36 +436,36 @@ const P = {
 
 // Monthly gross, full-time: legal minimum (NAR, 1 Apr 2026) and Statbel's latest wage survey (2022).
 const REF_WAGES = [
-  { label: 'Minimum', m: 2189.81, year: 2026, color: '--w-min' },
-  { label: 'Median', m: 3728, year: 2022, color: '--w-med' },
-  { label: 'Average', m: 4076, year: 2022, color: '--w-avg' },
+  { key: 'min', m: 2189.81, year: 2026, color: '--w-min' },
+  { key: 'med', m: 3728, year: 2022, color: '--w-med' },
+  { key: 'avg', m: 4076, year: 2022, color: '--w-avg' },
 ];
 
 const SRC = {
-  rates: ['FPS Finance: tax rates', 'https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates'],
-  indexed: ['Practicali: indexed amounts AY 2027', 'https://www.practicali.be/blog/geindexeerde-bedragen-aj-2027'],
-  taxFree: ['Liantis: tax-free sum reform', 'https://www.liantis.be/nl/nieuws/hervorming-personenbelasting-belastingvrije-som-stijgt-stapsgewijs-vanaf-2026'],
-  mq: ['Securex: marital quotient', 'https://www.securex.be/nl/lex4you/werkgever/themas/verlonen/burgerlijke-staat-personen-ten-laste/huwelijksquotient'],
-  regional: ['Flemish Parliament: regional surcharges', 'https://docs.vlaamsparlement.be/files/pfile?id=1908771'],
-  autonomy: ['news.belgium: autonomy factor', 'https://news.belgium.be/nl/vaststelling-van-de-definitieve-autonomiefactor-het-kader-van-de-wet-betreffende-de-financiering'],
-  communal: ['FPS Finance: communal tax rates', 'https://fin.belgium.be/nl/particulieren/belastingaangifte/aanslagbiljet/gemeentebelasting'],
-  statbel: ['Statbel: REFNIS commune codes', 'https://statbel.fgov.be/nl/over-statbel/methodologie/classificaties/geografie'],
-  rszContrib: ['NSSO: employer contributions', 'https://www.socialsecurity.be/employer/instructions/dmfa/nl/latest/instructions/socialsecuritycontributions/contributions.html'],
-  vbo2026: ['VBO-FEB: social changes 1 Jan 2026', 'https://www.vbo-feb.be/nl/nieuws/de-sociale-nieuwigheden-op-1-januari-2026/'],
-  vboQ1: ['VBO-FEB: social contributions 2026', 'https://www.vbo-feb.be/nl/nieuws/sociale-bijdragen-eerste-kwartaal-2026/'],
-  struct: ['Partena: structural reduction 2026', 'https://www.partena-professional.be/en/our-insights/infoflashes/nsso-structural-reduction-1-januari-2026'],
-  structCalc: ['Securex: how the reduction is calculated', 'https://www.securex.be/nl/lex4you/werkgever/themas/loonbeleid-optimaliseren/rsz-kortingen-alle-gewesten/de-berekening-van-het-theoretisch-verminderingsbedrag'],
-  wb: ['Securex: work bonus amounts', 'https://www.securex.be/nl/lex4you/werkgever/actuele-bedragen/sociaalrechtelijke-bedragen/werkbonus'],
-  minWage: ['NAR: minimum wage', 'https://cnt-nar.be/nl/thema-dossiers/minimumloon'],
-  wages: ['Statbel: Belgian wages', 'https://statbel.fgov.be/en/themes/work-training/wages-and-labourcost/overview-belgian-wages-and-salaries'],
-  wbRsz: ['NSSO: work bonus', 'https://www.socialsecurity.be/employer/instructions/dmfa/nl/latest/instructions/deductions/workers_reductions/workbonus.html'],
-  bbsz: ['NSSO: special social security contribution', 'https://www.socialsecurity.be/employer/instructions/dmfa/nl/latest/instructions/special_contributions/other_specialcontributions/specialsocialsecuritycontribution.html'],
-  vat: ['news.belgium: VAT rate reform', 'https://news.belgium.be/nl/hervorming-van-bepaalde-btw-tarieven'],
-  vatGuide: ['Accountable: Belgian VAT rates', 'https://www.accountable.eu/nl-be/blog/btw-tarieven-belgie/'],
+  rates: 'https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates',
+  indexed: 'https://www.practicali.be/blog/geindexeerde-bedragen-aj-2027',
+  taxFree: 'https://www.liantis.be/nl/nieuws/hervorming-personenbelasting-belastingvrije-som-stijgt-stapsgewijs-vanaf-2026',
+  mq: 'https://www.securex.be/nl/lex4you/werkgever/themas/verlonen/burgerlijke-staat-personen-ten-laste/huwelijksquotient',
+  regional: 'https://docs.vlaamsparlement.be/files/pfile?id=1908771',
+  autonomy: 'https://news.belgium.be/nl/vaststelling-van-de-definitieve-autonomiefactor-het-kader-van-de-wet-betreffende-de-financiering',
+  communal: 'https://fin.belgium.be/nl/particulieren/belastingaangifte/aanslagbiljet/gemeentebelasting',
+  statbel: 'https://statbel.fgov.be/nl/over-statbel/methodologie/classificaties/geografie',
+  rszContrib: 'https://www.socialsecurity.be/employer/instructions/dmfa/nl/latest/instructions/socialsecuritycontributions/contributions.html',
+  vbo2026: 'https://www.vbo-feb.be/nl/nieuws/de-sociale-nieuwigheden-op-1-januari-2026/',
+  vboQ1: 'https://www.vbo-feb.be/nl/nieuws/sociale-bijdragen-eerste-kwartaal-2026/',
+  struct: 'https://www.partena-professional.be/en/our-insights/infoflashes/nsso-structural-reduction-1-januari-2026',
+  structCalc: 'https://www.securex.be/nl/lex4you/werkgever/themas/loonbeleid-optimaliseren/rsz-kortingen-alle-gewesten/de-berekening-van-het-theoretisch-verminderingsbedrag',
+  wb: 'https://www.securex.be/nl/lex4you/werkgever/actuele-bedragen/sociaalrechtelijke-bedragen/werkbonus',
+  minWage: 'https://cnt-nar.be/nl/thema-dossiers/minimumloon',
+  wages: 'https://statbel.fgov.be/en/themes/work-training/wages-and-labourcost/overview-belgian-wages-and-salaries',
+  wbRsz: 'https://www.socialsecurity.be/employer/instructions/dmfa/nl/latest/instructions/deductions/workers_reductions/workbonus.html',
+  bbsz: 'https://www.socialsecurity.be/employer/instructions/dmfa/nl/latest/instructions/special_contributions/other_specialcontributions/specialsocialsecuritycontribution.html',
+  vat: 'https://news.belgium.be/nl/hervorming-van-bepaalde-btw-tarieven',
+  vatGuide: 'https://www.accountable.eu/nl-be/blog/btw-tarieven-belgie/',
 };
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
-const link = k => `<a href="${SRC[k][1]}" target="_blank" rel="noopener">${esc(SRC[k][0])}</a>`;
-const sources = (...ks) => `<div class="src">Sources: ${ks.map(link).join(' · ')}</div>`;
+const link = k => `<a href="${SRC[k]}" target="_blank" rel="noopener">${esc(t('src.' + k))}</a>`;
+const sources = (...ks) => `<div class="src">${t('sources')}: ${ks.map(link).join(' · ')}</div>`;
 
 const progressive = x => {
   let t = 0, lo = 0;
@@ -625,12 +567,12 @@ function bbszQuarter(M, scale) {
 function erParts(s) {
   const e = P.er;
   return [
-    { label: 'Basic contribution', rate: e.basic },
-    { label: 'Wage moderation', rate: e.wageMod },
-    { label: `Closure fund (${s.bigEmployer ? '20+' : 'under 20'} workers)`, rate: s.bigEmployer ? e.fsoBig : e.fsoSmall },
-    { label: 'Temporary unemployment', rate: e.tempUnemp },
-    { label: 'Risk groups (training)', rate: e.riskGroups },
-    { label: 'Asbestos fund (Q1–Q3 only)', rate: e.asbestos },
+    { label: t('er.basic'), rate: e.basic },
+    { label: t('er.wageMod'), rate: e.wageMod },
+    { label: t('er.fso', s.bigEmployer), rate: s.bigEmployer ? e.fsoBig : e.fsoSmall },
+    { label: t('er.tempUnemp'), rate: e.tempUnemp },
+    { label: t('er.riskGroups'), rate: e.riskGroups },
+    { label: t('er.asbestos'), rate: e.asbestos },
   ];
 }
 
@@ -660,21 +602,12 @@ function compute(G, s, env) {
   };
 }
 
-const COMPS = {
-  er: { label: 'Employer social security', color: 'var(--k-er)' },
-  ee: { label: 'Employee social security', color: 'var(--k-ee)' },
-  fed: { label: 'Federal income tax', color: 'var(--k-fed)' },
-  reg: { label: 'Regional income tax', color: 'var(--k-reg)' },
-  com: { label: 'Communal tax', color: 'var(--k-com)' },
-  bbsz: { label: 'Special social security contribution', color: 'var(--k-bbsz)' },
-  vat: { label: 'VAT', color: 'var(--k-vat)' },
-};
+const COMP_COLORS = { er: 'var(--k-er)', ee: 'var(--k-ee)', fed: 'var(--k-fed)', reg: 'var(--k-reg)', com: 'var(--k-com)', bbsz: 'var(--k-bbsz)', vat: 'var(--k-vat)' };
 const ROW_DEFS = [
-  { key: 'full', label: 'Full tax', desc: 'employer + employee + VAT', color: 'var(--c-full)', set: ['er', 'ee', 'fed', 'reg', 'com', 'bbsz', 'vat'], base: 'cost' },
-  { key: 'work', label: 'Work tax', desc: 'employer + employee', color: 'var(--c-work)', set: ['er', 'ee', 'fed', 'reg', 'com', 'bbsz'], base: 'cost' },
-  { key: 'employee', label: 'Employee', desc: 'your social security + income taxes', color: 'var(--c-emp)', set: ['ee', 'fed', 'reg', 'com', 'bbsz'], base: 'G' },
+  { key: 'full', color: 'var(--c-full)', set: ['er', 'ee', 'fed', 'reg', 'com', 'bbsz', 'vat'], base: 'cost' },
+  { key: 'work', color: 'var(--c-work)', set: ['er', 'ee', 'fed', 'reg', 'com', 'bbsz'], base: 'cost' },
+  { key: 'employee', color: 'var(--c-emp)', set: ['ee', 'fed', 'reg', 'com', 'bbsz'], base: 'G' },
 ];
-const BASE_NAME = { cost: 'employer cost', G: 'gross salary' };
 const BASE_TIP = { cost: 'cost', G: 'gross' };
 const sumSet = (r, set) => set.reduce((t, k) => t + r.parts[k], 0);
 
@@ -742,6 +675,8 @@ function bindUrlState(s, fields, watch) {
   }
   const write = () => {
     const out = new URLSearchParams();
+    const lang = new URLSearchParams(location.search).get('lang');
+    if (lang) out.set('lang', lang);
     for (const [param, [key, type]] of Object.entries(fields)) {
       if (s[key] === defaults[key]) continue;
       out.set(param, type === 'bool' ? (s[key] ? '1' : '0') : String(s[key]));
@@ -755,7 +690,8 @@ function bindUrlState(s, fields, watch) {
 
 const app = Vue.createApp({
   setup() {
-    const { reactive, computed, watch, onMounted, ref, nextTick } = Vue;
+    const { reactive, computed, watch, watchEffect, onMounted, ref, nextTick } = Vue;
+    watchEffect(() => { document.title = t('title'); });
     const s = reactive({
       salary: 3800, period: 'month', factor: 13.92,
       household: 'single', partnerGross: 0, children: 0, under3: 0,
@@ -781,10 +717,9 @@ const app = Vue.createApp({
     }
 
 
-    const eur = v => new Intl.NumberFormat('fr-BE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v || 0).replace(/\u202f/g, '\u00a0');
-    const eur2 = v => new Intl.NumberFormat('fr-BE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v || 0).replace(/\u202f/g, '\u00a0');
-    const pct = (v, d = 1) => ((v || 0) * 100).toFixed(d) + '%';
-    const cents = v => '€' + Math.max(0, v).toFixed(2);
+    const cents = v => lang.value === 'en' ? '€' + Math.max(0, v).toFixed(2) : eur(Math.max(0, v), 2);
+    // VAT rates move in half-percent steps.
+    const vr = v => num(v, v % 1 ? 1 : 0);
 
     function setPeriod(p) {
       if (p === s.period) return;
@@ -794,8 +729,7 @@ const app = Vue.createApp({
     }
 
     const communes = ref([]);
-    const communesError = ref('');
-    const regionName = { vl: 'Flanders', wal: 'Wallonia', bru: 'Brussels' };
+    const communesError = ref(false);
     const commune = computed(() => communes.value.find(c => c.name === s.commune) || null);
     const rateRange = computed(() => {
       if (!communes.value.length) return [0, 12];
@@ -817,7 +751,7 @@ const app = Vue.createApp({
         communes.value = list.map(c => ({ ...c, key: normName(c.name) })).sort((a, b) => a.name.localeCompare(b.name, 'nl'));
         if (commune.value) { s.communal = commune.value.rate; s.region = commune.value.region; }
       })
-      .catch(() => { communesError.value = "Couldn't load the commune list (communes.json / communes.js next to this page). Set the rate by hand below."; });
+      .catch(() => { communesError.value = true; });
 
     const combo = reactive({ open: false, q: '', hi: 0 });
     const comboList = ref(null);
@@ -871,28 +805,28 @@ const app = Vue.createApp({
     });
     const topText = computed(() => {
       const [top, cap] = topMonthly.value; if (!top) return null;
-      const u = s.period === 'month' ? 1 : s.factor, per = s.period === 'month' ? ' a month' : ' a year';
+      const u = s.period === 'month' ? 1 : s.factor, per = t(s.period === 'month' ? 'aMonth' : 'aYear');
       const f = v => eur(Math.round(v * u / 50) * 50) + per;
       return [f(top), cap && cap > top ? f(cap) : null];
     });
     const trapText = computed(() => {
       const u = s.period === 'month' ? 1 : s.factor;
       const f = v => eur(Math.round(v * u / 100) * 100);
-      return [f(trapMonthly.value[0]), f(trapMonthly.value[1]) + (s.period === 'month' ? ' a month' : ' a year')];
+      return [f(trapMonthly.value[0]), f(trapMonthly.value[1]) + t(s.period === 'month' ? 'aMonth' : 'aYear')];
     });
 
     const rowDefs = computed(() => ROW_DEFS.filter(d => s.vat || !d.set.includes('vat')));
     const cur = computed(() => annualGross.value > 0 ? compute(annualGross.value, s, env.value) : null);
     const rows = computed(() => rowDefs.value.map(d => {
-      const out = { ...d, baseName: BASE_NAME[d.base], baseKey: BASE_TIP[d.base] };
+      const out = { ...d, baseName: t('base.' + d.base), baseKey: BASE_TIP[d.base] };
       return annualGross.value > 0 ? { ...out, ...rates(annualGross.value, d, s, env.value) } : out;
     }));
 
     const barSegs = computed(() => {
       const r = cur.value; if (!r) return [];
-      const segs = ['er', 'ee', 'fed', 'reg', 'com', 'bbsz', 'vat'].map(k => ({ k, v: r.parts[k], tax: true, ...COMPS[k] }));
+      const segs = ['er', 'ee', 'fed', 'reg', 'com', 'bbsz', 'vat'].map(k => ({ k, v: r.parts[k], tax: true, label: t('comp.' + k), color: COMP_COLORS[k] }));
       const used = segs.reduce((t, x) => t + x.v, 0);
-      segs.push({ k: 'yours', v: Math.max(0, r.cost - used), label: s.vat ? 'Goods & services you get' : 'Your net pay', color: 'var(--k-net)' });
+      segs.push({ k: 'yours', v: Math.max(0, r.cost - used), label: t(s.vat ? 'goodsYouGet' : 'yourNetPay'), color: 'var(--k-net)' });
       let cum = 0;
       return segs.filter(x => x.v > 0.5).map(x => {
         if (x.tax) cum += x.v;
@@ -904,12 +838,12 @@ const app = Vue.createApp({
     const splitRows = computed(() => {
       const r = cur.value; if (!r) return [];
       const rows = barSegs.value.filter(x => x.k !== 'vat' && x.k !== 'yours');
-      if (!s.vat) return rows.concat(barSegs.value.filter(x => x.k === 'yours').map(x => ({ ...x, label: 'Your net salary' })));
+      if (!s.vat) return rows.concat(barSegs.value.filter(x => x.k === 'yours').map(x => ({ ...x, label: t('yourNetSalary') })));
       const vat = barSegs.value.find(x => x.k === 'vat');
       const goods = barSegs.value.find(x => x.k === 'yours');
-      rows.push({ k: 'net', label: 'Your net salary', v: r.net, share: r.net / r.cost, cum: null, color: 'transparent', cls: 'group' });
-      if (vat) rows.push({ ...vat, label: 'VAT, paid when you spend it', child: true });
-      if (goods) rows.push({ ...goods, label: 'Goods & services you actually get', child: true });
+      rows.push({ k: 'net', label: t('yourNetSalary'), v: r.net, share: r.net / r.cost, cum: null, color: 'transparent', cls: 'group' });
+      if (vat) rows.push({ ...vat, label: t('vatWhenSpent'), child: true });
+      if (goods) rows.push({ ...goods, label: t('goodsActually'), child: true });
       return rows;
     });
 
@@ -924,35 +858,39 @@ const app = Vue.createApp({
         taxShare: 1 - ((b.net - b.parts.vat) - (a.net - a.parts.vat)) / (b.cost - a.cost),
       };
     });
+    const raiseHtml = computed(() => {
+      const r = raise.value; if (r.cost == null) return '';
+      return t('raise', { h: eur(100), cost: eur(r.cost), net: eur(r.net), afterVat: s.vat ? eur(r.afterVat) : null, taxShare: pct(r.taxShare) });
+    });
 
     const breakdown = computed(() => {
       const r = cur.value; if (!r) return [];
       const p = r.parts, u = r.u;
       const L = [
-        { op: '', k: 'gross', label: 'Gross salary', v: r.G },
-        { op: '+', k: 'er', label: 'Employer social security', v: p.er + r.structRed, tax: p.er + r.structRed, cls: 'sub' },
+        { op: '', k: 'gross', label: t('bd.gross'), v: r.G },
+        { op: '+', k: 'er', label: t('comp.er'), v: p.er + r.structRed, tax: p.er + r.structRed, cls: 'sub' },
       ];
-      if (r.structRed > 0) L.push({ op: '−', k: 'struct', label: 'Structural reduction for low wages', v: r.structRed, tax: -r.structRed, cls: 'sub' });
+      if (r.structRed > 0) L.push({ op: '−', k: 'struct', label: t('bd.struct'), v: r.structRed, tax: -r.structRed, cls: 'sub' });
       L.push(
-        { op: '=', k: 'cost', label: 'Total employer cost', v: r.cost, cls: 'tot' },
-        { op: '', k: 'gross', label: 'Gross salary', v: r.G },
-        { op: '−', k: 'ee', label: 'Employee social security (13.07%)', v: u.sscGross, tax: u.sscGross },
+        { op: '=', k: 'cost', label: t('bd.cost'), v: r.cost, cls: 'tot' },
+        { op: '', k: 'gross', label: t('bd.gross'), v: r.G },
+        { op: '−', k: 'ee', label: `${t('comp.ee')} (${pct(P.ee, 2)})`, v: u.sscGross, tax: u.sscGross },
       );
-      if (u.wb > 0) L.push({ op: '+', k: 'wb', label: 'Social work bonus (lowers your social security)', v: u.wb, tax: -u.wb, cls: 'sub' });
+      if (u.wb > 0) L.push({ op: '+', k: 'wb', label: t('bd.wb'), v: u.wb, tax: -u.wb, cls: 'sub' });
       L.push(
-        { op: '=', k: 'taxable', label: 'Taxable pay', v: u.taxable, cls: 'tot' },
-        { op: '−', k: 'prof', label: 'Flat-rate professional expenses', v: u.prof, cls: 'sub' },
-        { op: '=', k: 'npi', label: 'Net taxable income', v: u.npi, cls: 'sub' },
-        { op: '', k: 'taxable', label: 'Taxable pay', v: u.taxable },
-        { op: '−', k: 'fed', label: 'Federal income tax', v: p.fed, tax: p.fed },
-        { op: '−', k: 'reg', label: `Regional income tax (${regionName[s.region]})`, v: p.reg, tax: p.reg },
-        { op: '−', k: 'com', label: `Communal tax (${s.communal.toFixed(1)}%${commune.value ? ', ' + commune.value.name : ''})`, v: p.com, tax: p.com },
-        { op: '−', k: 'bbsz', label: 'Special social security contribution', v: p.bbsz, tax: p.bbsz },
-        { op: '=', k: 'net', label: 'Net salary', v: r.net, cls: 'tot' },
+        { op: '=', k: 'taxable', label: t('bd.taxable'), v: u.taxable, cls: 'tot' },
+        { op: '−', k: 'prof', label: t('bd.prof'), v: u.prof, cls: 'sub' },
+        { op: '=', k: 'npi', label: t('bd.npi'), v: u.npi, cls: 'sub' },
+        { op: '', k: 'taxable', label: t('bd.taxable'), v: u.taxable },
+        { op: '−', k: 'fed', label: t('comp.fed'), v: p.fed, tax: p.fed },
+        { op: '−', k: 'reg', label: `${t('comp.reg')} (${t('region.' + s.region)})`, v: p.reg, tax: p.reg },
+        { op: '−', k: 'com', label: `${t('comp.com')} (${num(s.communal, 1)}%${commune.value ? ', ' + commune.value.name : ''})`, v: p.com, tax: p.com },
+        { op: '−', k: 'bbsz', label: t('comp.bbsz'), v: p.bbsz, tax: p.bbsz },
+        { op: '=', k: 'net', label: t('bd.net'), v: r.net, cls: 'tot' },
       );
       if (s.vat) L.push(
-        { op: '−', k: 'vat', label: `VAT on spending it all (${s.vatRate}/${100 + s.vatRate})`, v: p.vat, tax: p.vat },
-        { op: '=', k: 'yours', label: 'Goods & services you actually get', v: r.net - p.vat, cls: 'tot' },
+        { op: '−', k: 'vat', label: t('bd.vat', `${vr(s.vatRate)}/${vr(100 + s.vatRate)}`), v: p.vat, tax: p.vat },
+        { op: '=', k: 'yours', label: t('goodsActually'), v: r.net - p.vat, cls: 'tot' },
       );
       let cum = 0;
       return L.map(l => {
@@ -963,97 +901,94 @@ const app = Vue.createApp({
 
     // Tooltip content: what it is, how it's computed with your numbers, and sources.
     const tipBuilders = {
-      factor12: () => `<h4>12 months paid</h4><p>Just 12 monthly salaries, with no 13th month and no double holiday pay. Rare for white-collar jobs.</p>`,
-      'factor13.85': () => `<h4>13.85 months paid</h4><p>12 months + a 13th month + double holiday pay of 85% of one monthly salary.</p><p class="m">85% is the part of double holiday pay that employee social security (13.07%) is charged on.</p>`,
-      'factor13.92': () => `<h4>13.92 months paid</h4><p>The usual white-collar package: 12 months + a 13th month (end-of-year bonus) + double holiday pay of 92% of one monthly salary.</p><p class="m">Employee social security is charged on 85% of it, the other 7% is exempt, and your employer pays no contributions on double holiday pay.</p>${sources('rszContrib')}`,
-      joint: () => `<h4>Joint tax return</h4><p>Married and legally cohabiting partners file one return. Each partner is taxed in their own column, but the marital quotient can move up to ${eur(P.mqMax)} to a partner who earns less than 30% of the couple's combined income. A tax-free allowance one partner can't use moves to the other.</p>${sources('mq', 'indexed')}`,
-      gross: r => `<h4>Gross salary</h4><p>${r ? `${eur2(r.u.m)} × ${s.factor} months paid = <b>${eur(r.G)}</b> a year.` : ''} Your contract salary before any deduction. Taxes and contributions are calculated from it.</p>`,
+      factor12: () => `<h4>${t('tip.monthsPaid', 12)}</h4><p>${t('tip.f12')}</p>`,
+      'factor13.85': () => `<h4>${t('tip.monthsPaid', num(13.85, 2))}</h4><p>${t('tip.f1385')}</p><p class="m">${t('tip.f1385m')}</p>`,
+      'factor13.92': () => `<h4>${t('tip.monthsPaid', num(13.92, 2))}</h4><p>${t('tip.f1392')}</p><p class="m">${t('tip.f1392m')}</p>${sources('rszContrib')}`,
+      joint: () => `<h4>${t('tip.jointH')}</h4><p>${t('tip.joint', eur(P.mqMax))}</p>${sources('mq', 'indexed')}`,
+      gross: r => `<h4>${t('bd.gross')}</h4><p>${r ? t('tip.grossCalc', eur2(r.u.m), num(s.factor, 2), eur(r.G)) : ''} ${t('tip.gross')}</p>`,
       cost: r => {
-        if (!r) return `<h4>Employer cost</h4><p>Gross salary + employer social security.</p>`;
-        return `<h4>Total employer cost</h4><table>
-          <tr><td>Gross salary</td><td>${eur(r.G)}</td></tr>
-          <tr><td>Employer social security</td><td>${eur(r.parts.er)}</td></tr>
-          <tr class="t"><td>Employer cost</td><td>${eur(r.cost)}</td></tr></table>
-          <p class="m">Your salary really costs this much. The work and full tax rates are measured against it.</p>`;
+        if (!r) return `<h4>${t('tip.costH')}</h4><p>${t('tip.costShort')}</p>`;
+        return `<h4>${t('bd.cost')}</h4><table>
+          <tr><td>${t('bd.gross')}</td><td>${eur(r.G)}</td></tr>
+          <tr><td>${t('comp.er')}</td><td>${eur(r.parts.er)}</td></tr>
+          <tr class="t"><td>${t('tip.costH')}</td><td>${eur(r.cost)}</td></tr></table>
+          <p class="m">${t('tip.costM')}</p>`;
       },
       er: r => {
         const parts = erParts(s);
         const base = r ? r.u.erBase : null;
         const rowsHtml = parts.map(p => `<tr><td>${p.label} ${pct(p.rate, p.rate < .001 ? 4 : 2)}</td><td>${base != null ? eur(p.rate * base) : ''}</td></tr>`).join('');
-        return `<h4>Employer social security</h4>
-          <p>Paid by your employer on top of your gross salary${r ? `, on ${eur(base)}. That's your gross minus the double holiday pay (${eur(r.u.hol)}), which carries no employer contributions` : ''}.</p>
+        return `<h4>${t('comp.er')}</h4>
+          <p>${r ? t('tip.er', eur(base), eur(r.u.hol)) : t('tip.er')}</p>
           <table>${rowsHtml}
-          ${r && r.structRed > 0 ? `<tr><td>− Structural reduction (low wages)</td><td>−${eur(r.structRed)}</td></tr>` : ''}
-          <tr class="t"><td>Total ${pct(r ? r.parts.er / base : parts.reduce((t, p) => t + p.rate, 0), 2)}</td><td>${r ? eur(r.parts.er) : ''}</td></tr></table>
-          <p class="m">19.88% + 5.12% = the 25% base rate set by the 2016–2018 tax shift.</p>
+          ${r && r.structRed > 0 ? `<tr><td>− ${t('tip.structShort')}</td><td>−${eur(r.structRed)}</td></tr>` : ''}
+          <tr class="t"><td>${t('total')} ${pct(r ? r.parts.er / base : parts.reduce((t, p) => t + p.rate, 0), 2)}</td><td>${r ? eur(r.parts.er) : ''}</td></tr></table>
+          <p class="m">${t('tip.erM')}</p>
           ${sources('vboQ1', 'vbo2026', 'rszContrib')}`;
       },
       struct: r => {
         const q = r ? r.u.erBase / 4 : 0;
-        return `<h4>Structural reduction</h4><p>A discount on employer contributions for lower wages. Per quarter: 0.14 × (11 687.74 − S) + 0.16 × (9 738.14 − S), where S is the quarterly wage and each term counts only when positive.</p>
-          ${r ? `<p>Your S = ${eur2(q)} → ${eur2(r.structRed / 4)} per quarter, <b>${eur(r.structRed)}</b> a year.</p>` : ''}${sources('struct', 'structCalc')}`;
+        return `<h4>${t('tip.structH')}</h4><p>${t('tip.struct')}</p>
+          ${r ? `<p>${t('tip.structCalc', eur2(q), eur2(r.structRed / 4), eur(r.structRed))}</p>` : ''}${sources('struct', 'structCalc')}`;
       },
-      ee: r => `<h4>Employee social security</h4>
-        <p>13.07% of your gross salary, withheld from your pay. It funds pensions, healthcare and unemployment benefits.</p>
+      ee: r => `<h4>${t('comp.ee')}</h4>
+        <p>${t('tip.ee')}</p>
         ${r ? `<table>
-          <tr><td>13.07% × ${eur(r.u.eeBase)}</td><td>${eur(r.u.sscGross)}</td></tr>
-          ${r.u.holExempt > 0 ? `<tr><td colspan="2" class="m">${eur(r.u.holExempt)} of double holiday pay (the 7% part) is exempt</td></tr>` : ''}
-          ${r.u.wb > 0 ? `<tr><td>− Social work bonus</td><td>−${eur(r.u.wb)}</td></tr>` : ''}
-          <tr class="t"><td>You pay</td><td>${eur(r.u.ssc)}</td></tr></table>` : ''}
+          <tr><td>${pct(P.ee, 2)} × ${eur(r.u.eeBase)}</td><td>${eur(r.u.sscGross)}</td></tr>
+          ${r.u.holExempt > 0 ? `<tr><td colspan="2" class="m">${t('tip.eeExempt', eur(r.u.holExempt))}</td></tr>` : ''}
+          ${r.u.wb > 0 ? `<tr><td>− ${t('wb')}</td><td>−${eur(r.u.wb)}</td></tr>` : ''}
+          <tr class="t"><td>${t('youPay')}</td><td>${eur(r.u.ssc)}</td></tr></table>` : ''}
         ${sources('rszContrib', 'wb')}`,
-      wb: r => `<h4>Social work bonus</h4><p>Lowers employee social security when your monthly pay is low. Part A: €127.54/month, phasing out between €2 937.93 and €3 336.98. Part B: €171.99/month, phasing out between €2 300.62 and €2 937.93.</p>
-        ${r ? `<p>At ${eur2(r.u.m)}/month: <b>${eur(r.u.wb)}</b> a year. It also gives you the tax work bonus credit of ${eur(r.u.fwb)} (33.14% of A + 52.54% of B).</p>` : ''}${sources('wb', 'wbRsz')}`,
-      taxable: r => `<h4>Taxable pay</h4><p>Gross salary − employee social security${r ? ` = ${eur(r.G)} − ${eur(r.u.ssc)} = <b>${eur(r.u.taxable)}</b>` : ''}. Your net salary is this amount minus the income taxes.</p>`,
-      prof: r => `<h4>Flat-rate professional expenses</h4><p>The tax office assumes work costs you something (commute, clothes…) and deducts 30% of taxable pay, capped at €6 070 for 2026${r ? `: min(30% × ${eur(r.u.taxable)}, €6 070) = <b>${eur(r.u.prof)}</b>` : ''}. You can declare actual costs instead if they're higher.</p>${sources('indexed')}`,
-      npi: r => `<h4>Net taxable income</h4><p>Taxable pay − professional expenses${r ? ` = <b>${eur(r.u.npi)}</b>` : ''}. The tax brackets are applied to this amount.</p>`,
+      wb: r => `<h4>${t('wb')}</h4><p>${t('tip.wb')}</p>
+        ${r ? `<p>${t('tip.wbCalc', eur2(r.u.m), eur(r.u.wb), eur(r.u.fwb))}</p>` : ''}${sources('wb', 'wbRsz')}`,
+      taxable: r => `<h4>${t('bd.taxable')}</h4><p>${t('tip.taxable', r ? ` = ${eur(r.G)} − ${eur(r.u.ssc)} = <b>${eur(r.u.taxable)}</b>` : '')}</p>`,
+      prof: r => `<h4>${t('bd.prof')}</h4><p>${t('tip.prof', eur(P.profMax), r ? `: min(30% × ${eur(r.u.taxable)}, ${eur(P.profMax)}) = <b>${eur(r.u.prof)}</b>` : '')}</p>${sources('indexed')}`,
+      npi: r => `<h4>${t('bd.npi')}</h4><p>${t('tip.npi', r ? ` = <b>${eur(r.u.npi)}</b>` : '')}</p>`,
       fed: r => {
-        const keep = 1 - P.autonomy;
-        if (!r) return `<h4>Federal income tax</h4><p>The brackets give the basic tax. The federal state keeps 75.043% of it.</p>${sources('rates', 'autonomy')}`;
+        const keep = pct(1 - P.autonomy, 3);
+        if (!r) return `<h4>${t('comp.fed')}</h4><p>${t('tip.fedShort', keep)}</p>${sources('rates', 'autonomy')}`;
         const d = r.fed.det;
         let body;
         if (!d.joint) {
           const br = bracketRows(r.u.npi).map(b => `<tr><td>${eur(b.from)} – ${eur(b.to)} × ${pct(b.r, 0)}</td><td>${eur(b.amt)}</td></tr>`).join('');
           body = `<table>${br}
-            <tr class="t"><td>Tax on ${eur(r.u.npi)}</td><td>${eur(d.base)}</td></tr>
-            <tr><td>− Tax-free allowance ${eur(d.allow)}, taxed at the same rates</td><td>−${eur(Math.min(d.red, d.base))}</td></tr>
-            ${r.u.fwb > 0 ? `<tr><td>− Tax work bonus credit</td><td>−${eur(r.u.fwb)}</td></tr>` : ''}
-            ${d.refund > 0 ? `<tr><td>− Unused child allowance</td><td>−${eur(Math.min(d.refund, d.tax))}</td></tr>` : ''}
-            <tr class="t"><td>Basic tax</td><td>${eur(r.fed.net)}</td></tr>
-            <tr><td>× 75.043% federal share</td><td>${eur(r.parts.fed)}</td></tr></table>`;
+            <tr class="t"><td>${t('tip.taxOn', eur(r.u.npi))}</td><td>${eur(d.base)}</td></tr>
+            <tr><td>− ${t('tip.allowance', eur(d.allow))}</td><td>−${eur(Math.min(d.red, d.base))}</td></tr>
+            ${r.u.fwb > 0 ? `<tr><td>− ${t('tip.fwb')}</td><td>−${eur(r.u.fwb)}</td></tr>` : ''}
+            ${d.refund > 0 ? `<tr><td>− ${t('tip.childRefund')}</td><td>−${eur(Math.min(d.refund, d.tax))}</td></tr>` : ''}
+            <tr class="t"><td>${t('tip.basicTax')}</td><td>${eur(r.fed.net)}</td></tr>
+            <tr><td>${t('tip.fedShare', keep)}</td><td>${eur(r.parts.fed)}</td></tr></table>`;
         } else {
-          body = `<p>Joint return: the couple's tax with your income (${eur(d.withUser.tax - d.withUser.refund)}) minus the couple's tax if you earned nothing (${eur(d.without.tax - d.without.refund)}) = basic tax <b>${eur(r.fed.net)}</b>. The marital quotient moves ${eur(d.withUser.q)} between your columns.</p>
-            <p>× 75.043% federal share = <b>${eur(r.parts.fed)}</b></p>`;
+          body = `<p>${t('tip.fedJoint', eur(d.withUser.tax - d.withUser.refund), eur(d.without.tax - d.without.refund), eur(r.fed.net), eur(d.withUser.q))}</p>
+            <p>${t('tip.fedShare', keep)} = <b>${eur(r.parts.fed)}</b></p>`;
         }
-        return `<h4>Federal income tax</h4><p class="m">The allowance is ${eur(P.taxFree)} + child supplements. The remaining ${pct(P.autonomy, 3)} of the basic tax (the autonomy factor) goes to your region.</p>${body}${sources('rates', 'indexed', 'taxFree', 'autonomy')}`;
+        return `<h4>${t('comp.fed')}</h4><p class="m">${t('tip.fedM', eur(P.taxFree), pct(P.autonomy, 3))}</p>${body}${sources('rates', 'indexed', 'taxFree', 'autonomy')}`;
       },
       reg: r => {
         const sur = P.surcharge[s.region];
-        return `<h4>Regional income tax</h4><p>Your region adds a surcharge to the federal tax: ${pct(sur, 3)} in ${regionName[s.region]}. Flanders and Wallonia 33.257%, Brussels 32.591%.</p>
-          ${r ? `<p>${eur(r.fed.net)} × 75.043% × ${pct(sur, 3)} = <b>${eur(r.parts.reg)}</b></p>` : ''}
-          <p class="m">In Flanders this adds back exactly the 24.957% the federal state gave up, so the total comes to 100% of the basic tax. Brussels charges slightly less, 99.5%.</p>${sources('regional', 'autonomy')}`;
+        return `<h4>${t('comp.reg')}</h4><p>${t('tip.reg', pct(sur, 3), t('region.' + s.region))}</p>
+          ${r ? `<p>${eur(r.fed.net)} × ${pct(1 - P.autonomy, 3)} × ${pct(sur, 3)} = <b>${eur(r.parts.reg)}</b></p>` : ''}
+          <p class="m">${t('tip.regM')}</p>${sources('regional', 'autonomy')}`;
       },
-      com: r => `<h4>Communal tax</h4><p>Your commune adds a percentage on top of federal + regional tax${commune.value ? `: ${esc(commune.value.name)} charges ${commune.value.rate.toFixed(1)}%` : ''}. Rates run from ${rateRange.value[0].toFixed(1)}% to ${rateRange.value[1].toFixed(1)}%.</p>
-        ${r ? `<p>(${eur(r.parts.fed)} + ${eur(r.parts.reg)}) × ${s.communal.toFixed(1)}% = <b>${eur(r.parts.com)}</b></p>` : ''}
-        <p class="m">Rates from the FPS Finance list for assessment year 2026 (the latest published). Regions from Statbel's commune codes.</p>${sources('communal', 'statbel')}`,
-      bbsz: r => {
-        const scaleName = { single: 'single / individual', jointWith: 'couple, both earning', jointWithout: 'couple, partner without income' };
-        return `<h4>Special social security contribution</h4><p>An extra contribution withheld from your monthly pay. It rises with income up to a cap: €731.28 a year for singles, €619.68 when both partners in a couple earn.</p>
-          ${r ? `<p>Scale "${scaleName[r.bbszScale]}", at ${eur2(r.u.eeBase / 12)}/month: <b>${eur(r.parts.bbsz)}</b> a year.</p>` : ''}${sources('bbsz')}`;
-      },
-      vat: r => `<h4>VAT on what you spend</h4>
-        <p>Prices include ${s.vatRate}% VAT on top of the price before tax: an item priced €100 before tax costs <b>€${(100 + s.vatRate).toFixed(2)}</b>, and €${s.vatRate.toFixed(2)} of that goes to the state.</p>
-        <p>So VAT is ${s.vatRate} ÷ ${100 + s.vatRate} = <b>${pct(vatShare.value, 2)}</b> of what you pay, not ${s.vatRate}%.</p>
-        ${r ? `<p>Spending your whole net pay of ${eur(r.net)}: ${eur(r.net)} × ${pct(vatShare.value, 2)} = <b>${eur(r.parts.vat)}</b></p>` : ''}
-        <p class="m">The 12% and 6% rates (restaurants, food, water, medicines) and VAT-exempt spending such as rent are left out, so this is an upper bound.</p>${sources('vat', 'vatGuide')}`,
-      net: r => `<h4>Net salary</h4><p>What lands in your bank account over the year${r ? `: <b>${eur(r.net)}</b>, which is ${eur(r.net / 12)} a month averaged over 12 months` : ''}. Gross salary − employee social security − federal, regional and communal tax − special social security contribution.</p>`,
-      yours: r => `<h4>${s.vat ? 'What you actually get' : 'Your net pay'}</h4><p>${s.vat ? 'Your net salary minus the VAT included in everything you buy with it.' : 'Your net salary.'}${r ? ` <b>${eur(r.net - r.parts.vat)}</b>, or ${pct((r.net - r.parts.vat) / r.cost)} of what your employer spends.` : ''}</p>`,
-      'chip-full': () => `<b>Full tax</b>: share of your employer cost that ends up as tax, VAT included.`,
-      'chip-work': () => `<b>Work tax</b>: share of your employer cost taken by social security and income tax.`,
-      'chip-power': () => `<b>Buying power</b>: share of your employer cost you can actually spend on goods and services${s.vat ? ', after VAT' : ''}. The mirror of ${s.vat ? 'Full' : 'Work'} tax.`,
-      'chip-employee': () => `<b>Employee</b>: share of your gross salary taken by your social security and income tax.`,
-      'row-full': () => `<h4>Full tax</h4><p><em>How much of what your employer pays for you ends up as tax, once you've spent your pay.</em></p><p class="m">Employer contributions + employee taxes + VAT, out of employer cost.</p>`,
-      'row-work': () => `<h4>Work tax</h4><p><em>How much of what your employer pays in total for your job goes to tax.</em></p><p class="m">Employer contributions + employee taxes, out of employer cost.</p>`,
-      'row-employee': () => `<h4>Employee</h4><p><em>How much of your gross salary goes to tax.</em></p><p class="m">Employee social security + income taxes, out of gross salary.</p>`,
+      com: r => `<h4>${t('comp.com')}</h4><p>${t('tip.com', commune.value && esc(commune.value.name), commune.value && num(commune.value.rate, 1) + '%', num(rateRange.value[0], 1) + '%', num(rateRange.value[1], 1) + '%')}</p>
+        ${r ? `<p>(${eur(r.parts.fed)} + ${eur(r.parts.reg)}) × ${num(s.communal, 1)}% = <b>${eur(r.parts.com)}</b></p>` : ''}
+        <p class="m">${t('tip.comM')}</p>${sources('communal', 'statbel')}`,
+      bbsz: r => `<h4>${t('comp.bbsz')}</h4><p>${t('tip.bbsz')}</p>
+          ${r ? `<p>${t('tip.bbszCalc', t('scale.' + r.bbszScale), eur2(r.u.eeBase / 12), eur(r.parts.bbsz))}</p>` : ''}${sources('bbsz')}`,
+      vat: r => `<h4>${t('tip.vatH')}</h4>
+        <p>${t('tip.vat1', vr(s.vatRate) + '%', eur(100), eur(100 + s.vatRate, 2), eur(s.vatRate, 2))}</p>
+        <p>${t('tip.vat2', vr(s.vatRate), vr(100 + s.vatRate), pct(vatShare.value, 2))}</p>
+        ${r ? `<p>${t('tip.vat3', eur(r.net), pct(vatShare.value, 2), eur(r.parts.vat))}</p>` : ''}
+        <p class="m">${t('tip.vatM')}</p>${sources('vat', 'vatGuide')}`,
+      net: r => `<h4>${t('bd.net')}</h4><p>${t('tip.net', r ? t('tip.netCalc', eur(r.net), eur(r.net / 12)) : '')}</p>`,
+      yours: r => `<h4>${s.vat ? t('tip.yoursH') : t('yourNetPay')}</h4><p>${s.vat ? t('tip.yoursVat') : t('tip.yoursNoVat')}${r ? t('tip.yoursCalc', eur(r.net - r.parts.vat), pct((r.net - r.parts.vat) / r.cost)) : ''}</p>`,
+      'chip-full': () => t('chip.full'),
+      'chip-work': () => t('chip.work'),
+      'chip-power': () => t('chip.power', s.vat),
+      'chip-employee': () => t('chip.employee'),
+      'row-full': () => `<h4>${t('row.full')}</h4><p><em>${t('rowTip.full')}</em></p><p class="m">${t('rowTipM.full')}</p>`,
+      'row-work': () => `<h4>${t('row.work')}</h4><p><em>${t('rowTip.work')}</em></p><p class="m">${t('rowTipM.work')}</p>`,
+      'row-employee': () => `<h4>${t('row.employee')}</h4><p><em>${t('rowTip.employee')}</em></p><p class="m">${t('rowTipM.employee')}</p>`,
     };
     const tipHtml = computed(() => {
       const f = tip.key && tipBuilders[tip.key];
@@ -1085,7 +1020,18 @@ const app = Vue.createApp({
       if (b.bottom > innerHeight - 16) el.style.top = Math.max(16, innerHeight - 16 - b.height) + 'px';
     }, { flush: 'post' });
 
-    const allSources = Object.keys(SRC).map(link).join(' · ');
+    const allSources = computed(() => Object.keys(SRC).map(link).join(' · '));
+    const refSections = computed(() => {
+      const n = v => new Intl.NumberFormat(lang.value === 'nl' ? 'nl-BE' : 'fr-BE').format(v);
+      let lo = 0;
+      const rows = P.brackets.map(([hi, r]) => {
+        const span = hi === Infinity ? `&gt; ${n(lo)}` : `${n(lo)} – ${n(hi)}`;
+        lo = hi;
+        return `<tr><td>${span}</td><td class="num">${pct(r, 0)}</td></tr>`;
+      }).join('');
+      const br = `<table><tbody>${rows}</tbody></table>`;
+      return ['er', 'ee', 'taxable', 'allow', 'couple', 'levels', 'vat', 'notIncl'].map(k => t('ref.' + k, br));
+    });
 
     function series() {
       const monthly = s.period === 'month';
@@ -1102,9 +1048,9 @@ const app = Vue.createApp({
           avg.push({ x, y: r.avg * 100 });
           marg.push({ x, y: r.marg * 100 });
         }
-        const color = cssVar(d.color.slice(4, -1));
-        if (s.lines !== 'avg') out.push({ series: d.label, kind: 'marg', label: d.label + ' · next €', data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
-        if (s.lines !== 'marg') out.push({ series: d.label, kind: 'avg', label: d.label + ' · average', data: avg, borderColor: color, backgroundColor: color, borderWidth: 1.6, borderDash: [6, 4], pointRadius: 0, tension: .2 });
+        const color = cssVar(d.color.slice(4, -1)), label = t('row.' + d.key);
+        if (s.lines !== 'avg') out.push({ series: label, kind: 'marg', label: label + ' · ' + t('nextEur'), data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
+        if (s.lines !== 'marg') out.push({ series: label, kind: 'avg', label: label + ' · ' + t('average'), data: avg, borderColor: color, backgroundColor: color, borderWidth: 1.6, borderDash: [6, 4], pointRadius: 0, tension: .2 });
       }
       if (s.show.power) {
         // Buying power = 100% − full tax (work tax when VAT is off).
@@ -1115,9 +1061,9 @@ const app = Vue.createApp({
           avg.push({ x, y: (1 - r.avg) * 100 });
           marg.push({ x, y: (1 - r.marg) * 100 });
         }
-        const color = cssVar('--c-power');
-        if (s.lines === 'marg') out.push({ series: 'Buying power', kind: 'marg', label: 'Buying power · next €', data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
-        if (s.lines !== 'marg') out.push({ series: 'Buying power', kind: 'avg', label: 'Buying power · average', data: avg, borderColor: color, backgroundColor: color, borderWidth: 1.6, borderDash: [6, 4], pointRadius: 0, tension: .2 });
+        const color = cssVar('--c-power'), label = t('buyingPower');
+        if (s.lines === 'marg') out.push({ series: label, kind: 'marg', label: label + ' · ' + t('nextEur'), data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
+        if (s.lines !== 'marg') out.push({ series: label, kind: 'avg', label: label + ' · ' + t('average'), data: avg, borderColor: color, backgroundColor: color, borderWidth: 1.6, borderDash: [6, 4], pointRadius: 0, tension: .2 });
       }
       return { out, xMax, userX };
     }
@@ -1133,7 +1079,7 @@ const app = Vue.createApp({
         ctx.fillStyle = cssVar('--c-full'); ctx.globalAlpha = .07;
         ctx.fillRect(x0, a.top, x1 - x0, a.bottom - a.top);
         ctx.globalAlpha = .8; ctx.font = '600 11px ' + cssVar('--sans'); ctx.textAlign = 'center';
-        ctx.fillText('Low-wage trap', (x0 + x1) / 2, a.bottom - 24);
+        ctx.fillText(t('lowWageTrap'), (x0 + x1) / 2, a.bottom - 24);
         ctx.restore();
         const top = c.$top;
         if (top) {
@@ -1143,7 +1089,7 @@ const app = Vue.createApp({
             ctx.fillStyle = cssVar('--c-work'); ctx.globalAlpha = .85; ctx.font = '600 11px ' + cssVar('--sans');
             const flip = px > a.right - 90;
             ctx.textAlign = flip ? 'right' : 'left';
-            ctx.fillText(flip ? '50% bracket →' : '← 50% bracket', flip ? px - 4 : px + 4, a.bottom - 24);
+            ctx.fillText(flip ? t('bracket50') + ' →' : '← ' + t('bracket50'), flip ? px - 4 : px + 4, a.bottom - 24);
             ctx.restore();
           }
         }
@@ -1178,7 +1124,7 @@ const app = Vue.createApp({
         ctx.globalAlpha = 1; ctx.setLineDash([]); ctx.fillStyle = cssVar('--ink');
         ctx.font = '600 12px ' + cssVar('--sans');
         ctx.textAlign = px > a.right - 80 ? 'right' : 'left';
-        ctx.fillText('You', px + (ctx.textAlign === 'left' ? 6 : -6), a.bottom - 8);
+        ctx.fillText(t('you'), px + (ctx.textAlign === 'left' ? 6 : -6), a.bottom - 8);
         ctx.restore();
       },
     };
@@ -1194,15 +1140,15 @@ const app = Vue.createApp({
         rowsBy.get(ds.series)[ds.kind] = p.parsed.y;
       }
       const hasM = [...rowsBy.values()].some(r => r.marg != null), hasA = [...rowsBy.values()].some(r => r.avg != null);
-      const cell = (v, color, dashed) => v == null ? '<td></td>' : `<td>${lineSample(color, dashed)}<b>${v.toFixed(1)}%</b></td>`;
+      const cell = (v, color, dashed) => v == null ? '<td></td>' : `<td>${lineSample(color, dashed)}<b>${num(v, 1)}%</b></td>`;
       const x = tt.dataPoints[0].parsed.x;
-      const monthly = s.period === 'month', per = monthly ? 'month' : 'year';
+      const monthly = s.period === 'month', per = t(monthly ? 'unit.month' : 'unit.year');
       const r = compute(monthly ? x * s.factor : x, s, env.value);
       const unit = v => eur(monthly ? v / s.factor : v);
-      el.innerHTML = `<div class="ct-title">Gross ${eur(x)} / ${per}</div>
-        <div class="ct-sub"><span>Employer cost (supergross)</span><b>${unit(r.cost)}</b></div>
-        <div class="ct-sub"><span>Net pay</span><b>${unit(r.net)}</b></div>
-        <table><thead><tr><th></th>${hasM ? '<th>Next €</th>' : ''}${hasA ? '<th>Average</th>' : ''}</tr></thead><tbody>
+      el.innerHTML = `<div class="ct-title">${t('ctGross', eur(x), per)}</div>
+        <div class="ct-sub"><span>${t('ctCost')}</span><b>${unit(r.cost)}</b></div>
+        <div class="ct-sub"><span>${t('ctNet')}</span><b>${unit(r.net)}</b></div>
+        <table><thead><tr><th></th>${hasM ? `<th>${t('nextEur')}</th>` : ''}${hasA ? `<th>${t('average')}</th>` : ''}</tr></thead><tbody>
         ${[...rowsBy].map(([name, r]) => `<tr><td class="ct-name">${esc(name)}</td>${hasM ? cell(r.marg, r.color, false) : ''}${hasA ? cell(r.avg, r.color, true) : ''}</tr>`).join('')}
         </tbody></table>`;
       el.hidden = false;
@@ -1218,10 +1164,10 @@ const app = Vue.createApp({
       const { out, xMax, userX } = series();
       const muted = cssVar('--muted'), line = cssVar('--line');
       const monthly = s.period === 'month';
-      const tickFmt = v => '€' + (monthly ? (v / 1000).toFixed(v % 1000 ? 1 : 0) : Math.round(v / 1000)) + 'k';
-      const xTitle = monthly ? `Gross salary per month (${s.factor.toFixed(2)} months paid)` : 'Gross salary per year';
-      const yTitle = 'Share of the tax of each €';
-      const refs = REF_WAGES.map(r => ({ x: monthly ? r.m : r.m * s.factor, label: `${r.label} €${Math.round(r.m).toLocaleString('en').replace(',', ' ')}/mo (${r.year})`, color: r.color }));
+      const tickFmt = v => monthly ? eurK(v, v % 1000 ? 1 : 0) : eurK(Math.round(v / 1000) * 1000);
+      const xTitle = monthly ? t('xMonth', num(s.factor, 2)) : t('xYear');
+      const yTitle = t('yTitle');
+      const refs = REF_WAGES.map(r => ({ x: monthly ? r.m : r.m * s.factor, label: `${t('refWage.' + r.key)} ${eur(Math.round(r.m))}/${t('unit.mo')} (${r.year})`, color: r.color }));
       if (!chart) {
         chart = new Chart(document.getElementById('chart'), {
           type: 'line',
@@ -1251,6 +1197,7 @@ const app = Vue.createApp({
         chart.options.scales.x.max = xMax;
         chart.options.scales.x.ticks.callback = tickFmt;
         chart.options.scales.x.title.text = xTitle;
+        chart.options.scales.y.title.text = yTitle;
         chart.options.scales.x.title.color = muted; chart.options.scales.y.title.color = muted;
         chart.options.scales.x.ticks.color = muted; chart.options.scales.y.ticks.color = muted;
         chart.options.scales.x.grid.color = line; chart.options.scales.y.grid.color = line;
@@ -1262,9 +1209,10 @@ const app = Vue.createApp({
       chart.update('none');
     }
 
-    let t = null;
-    const schedule = () => { clearTimeout(t); t = setTimeout(draw, 60); };
+    let drawTimer = null;
+    const schedule = () => { clearTimeout(drawTimer); drawTimer = setTimeout(draw, 60); };
     watch(() => JSON.stringify(s), schedule);
+    watch(lang, schedule);
     watch(() => s.children, n => { if (s.under3 > n) s.under3 = n; });
     onMounted(() => {
       draw();
@@ -1273,16 +1221,16 @@ const app = Vue.createApp({
     });
 
     return { shareState, shareLink,
-      s, P, setPeriod, communes, commune, communesError, regionName, rateRange,
+      s, P, setPeriod, communes, commune, communesError, REGIONS, rateRange,
       combo, comboList, filtered, openCombo, moveHi, pickCommune,
-      annualGross, vatShare, trapText, topText, bbszCap, rowDefs, rows, cur, barSegs, splitRows, raise, breakdown,
-      tipHtml, tipPos, tipEl, keepTip, hideTipSoon, allSources,
-      eur, pct, cents,
+      annualGross, vatShare, trapText, topText, bbszCap, rowDefs, rows, cur, barSegs, splitRows, raiseHtml, breakdown,
+      tipHtml, tipPos, tipEl, keepTip, hideTipSoon, allSources, refSections,
+      eur, num, pct, cents, t, lang, LANGS, setLang,
     };
   },
 });
 app.directive('tip', vTip);
-app.mount('#app');
+ready.finally(() => app.mount('#app'));
 </script>
 </body>
 </html>
