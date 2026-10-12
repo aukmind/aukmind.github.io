@@ -14,7 +14,7 @@
 :root{
   --bg:#f3f5f8; --surface:#ffffff; --sunk:#e9edf3; --ink:#152033; --muted:#5d6879; --line:#d8dee8;
   --accent:#2446b8; --accent-soft:#e3e9fb; --tip-bg:#152033; --tip-ink:#eef2f8; --tip-muted:#aab5c6; --tip-link:#9db4ff;
-  --c-full:#c8403a; --c-work:#2f55d4; --c-emp:#178a66; --c-power:#8a5cd6; --w-min:#d98200; --w-med:#0e97ad; --w-avg:#a8572b;
+  --c-full:#c8403a; --c-work:#2f55d4; --c-emp:#178a66; --c-power:#8a5cd6; --w-min:#d98200; --w-med:#0e97ad; --w-avg:#a8572b; --pol:#6d5a8c; --corp:#2b7a78;
   --k-er:#4f5fd8; --k-ee:#2f9bd0; --k-fed:#d9482f; --k-reg:#f07a4a; --k-com:#f2aa55; --k-bbsz:#b99a1c; --k-vat:#b03a7a; --k-net:#2d9a67;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -25,14 +25,14 @@
     color-scheme:dark;
     --bg:#0f141c; --surface:#171e2a; --sunk:#1f2836; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2b3546;
     --accent:#8aa6ff; --accent-soft:#233154; --tip-bg:#e7ecf4; --tip-ink:#152033; --tip-muted:#4d5869; --tip-link:#2446b8;
-    --c-full:#f0726b; --c-work:#7f9cff; --c-emp:#4cc79c; --c-power:#b79bf0; --w-min:#f5b041; --w-med:#4fc6d8; --w-avg:#e0925f;
+    --c-full:#f0726b; --c-work:#7f9cff; --c-emp:#4cc79c; --c-power:#b79bf0; --w-min:#f5b041; --w-med:#4fc6d8; --w-avg:#e0925f; --pol:#b6a3d6; --corp:#6cc5bf;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#0f141c; --surface:#171e2a; --sunk:#1f2836; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2b3546;
   --accent:#8aa6ff; --accent-soft:#233154; --tip-bg:#e7ecf4; --tip-ink:#152033; --tip-muted:#4d5869; --tip-link:#2446b8;
-  --c-full:#f0726b; --c-work:#7f9cff; --c-emp:#4cc79c; --c-power:#b79bf0; --w-min:#f5b041; --w-med:#4fc6d8; --w-avg:#e0925f;
+  --c-full:#f0726b; --c-work:#7f9cff; --c-emp:#4cc79c; --c-power:#b79bf0; --w-min:#f5b041; --w-med:#4fc6d8; --w-avg:#e0925f; --pol:#b6a3d6; --corp:#6cc5bf;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;margin:0}
@@ -137,7 +137,69 @@ td:first-child{font-family:var(--sans)}
 .chart-tip td.ct-name,.chart-tip th:first-child{padding-left:0;font-family:var(--sans);font-weight:500}
 .chart-tip td svg{vertical-align:middle;margin-right:6px}
 .chart-tip td b{font-family:var(--mono);font-weight:500}
-@media (max-width:600px){.chart-box{height:320px}}
+#chart{touch-action:pan-y;cursor:grab}
+#chart.panning{cursor:grabbing}
+.zoom{display:inline-flex;background:var(--sunk);border-radius:8px;padding:3px;gap:2px}
+.zoom button{border:0;background:transparent;color:var(--ink);font:600 15px var(--sans);width:32px;height:28px;border-radius:6px;cursor:pointer}
+.zoom button:hover{background:var(--surface)}
+.zoom-hint{margin-top:4px;text-align:right}
+.head{position:absolute;z-index:4;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;padding:0;border:2px solid var(--pol);background:var(--surface);color:var(--pol);font:700 10.5px var(--sans);cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.head:hover,.head:focus-visible{background:var(--pol);color:var(--surface)}
+.head.corp{border-color:var(--corp);color:var(--corp)}
+.head.corp:hover,.head.corp:focus-visible{background:var(--corp);color:var(--surface)}
+.minister-btn{border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);font:700 14px var(--sans);padding:10px 12px;border-radius:9px;cursor:pointer;letter-spacing:.02em}
+.minister-btn:hover,.minister-btn.on{background:var(--accent);color:var(--surface)}
+.head.stat{border-color:var(--accent);font-size:14px;background:var(--surface)}
+.pol-legend .lbl.stat{color:var(--accent)}
+.pol-legend .pol.stat{border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:var(--accent-soft)}
+.pol-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:10px;font-size:13px}
+.pol-legend .lbl{color:var(--pol);margin-right:4px;flex-basis:100%;font-weight:600}
+.pol-legend .lbl.corp{color:var(--corp);margin-top:4px}
+.pol-legend .pol.corp{border-color:color-mix(in srgb,var(--corp) 45%,transparent);background:color-mix(in srgb,var(--corp) 10%,transparent)}
+.pol-legend .pol.corp:hover{border-color:var(--corp)}
+.pol-legend .pol{border:1px solid color-mix(in srgb,var(--pol) 45%,transparent);background:color-mix(in srgb,var(--pol) 10%,transparent);color:var(--ink);border-radius:7px;padding:5px 9px;font:13px var(--sans);cursor:pointer;text-align:left}
+.pol-legend .pol span{color:var(--muted);font-size:12px}
+.pol-legend .pol:hover{border-color:var(--pol)}
+.pol-legend .hint{flex-basis:100%}
+.pol-legend .hint a{color:var(--accent)}
+.chart-readout,.ref-legend{display:none}
+.cum-inline{display:none}
+@media (max-width:600px){
+  .wrap{padding-inline:12px;gap:16px}
+  .panel{padding:14px}
+  .chart-box{height:420px;margin-inline:-8px}
+  .chart-panel{display:flex;flex-direction:column}
+  .chart-panel .chart-head{display:contents}
+  .chart-panel .chart-head > div:first-child{order:0;margin-bottom:10px}
+  .chart-panel .chart-box{order:1}
+  .chart-panel .ref-legend{order:2}
+  .chart-panel .zoom-hint{order:2;text-align:left}
+  .chart-panel .pol-legend{order:2}
+  .zoom button{width:44px;height:34px}
+  .head{width:22px;height:22px;font-size:8.5px;border-width:1.5px}
+  .chart-panel .chart-readout{order:3}
+  .chart-panel .chart-head > .row{order:4;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);gap:12px}
+  .chart-panel .trap-note{order:5}
+  .chart-panel .seg{display:flex;width:100%}
+  .chart-panel .seg button{flex:1;padding:9px 6px}
+  .chip{padding:8px 13px 8px 11px}
+  .ref-legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px;font-size:12px;color:var(--muted)}
+  .ref-legend span{display:inline-flex;align-items:center;gap:6px}
+  .ref-legend i{width:3px;height:12px;border-radius:1px}
+  .chart-readout:not([hidden]){display:block;position:static;margin-top:10px;box-shadow:none;pointer-events:auto}
+  .chart-readout table{width:100%}
+  .chart-readout td:last-child,.chart-readout th:last-child{text-align:right}
+  .rates thead{display:none}
+  .rates tr{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .rates td{border:0;padding:0;text-align:left}
+  .rates td:first-child,.rates td.wide{grid-column:1/-1}
+  .rates td[data-label]::before{content:attr(data-label);display:block;margin-bottom:2px;font:600 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .rates .rate{font-size:20px}
+  .bd td,.bd th{padding:7px 5px;font-size:12.5px}
+  .bd td.lab{min-width:0}
+  .bd .c-cum,.bd:not(.split) .c-share{display:none}
+  .cum-inline{display:block;color:var(--accent);font-size:11.5px}
+}
 .empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px}
 .ref{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
 .ref section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
@@ -181,7 +243,7 @@ header{position:relative}
 <div id="app" v-cloak>
 <div class="wrap">
   <header>
-    <div class="eyebrow">{{ t('eyebrow') }}</div>
+    <div class="eyebrow">{{ t(minister ? 'eyebrowMinister' : 'eyebrow') }}</div>
     <h1>{{ t('h1') }}</h1>
     <p>{{ t('lead') }}</p>
     <div class="share-box">
@@ -195,19 +257,30 @@ header{position:relative}
   <div class="grid">
     <aside class="panel inputs">
       <div class="field">
-        <label for="salary">{{ t('grossSalary') }} <span class="hint">{{ t('optional') }}</span></label>
+        <button type="button" class="minister-btn" :class="{on: minister}" @click="toggleMinister">{{ t(minister ? 'ministerOff' : 'ministerOn') }}</button>
+        <template v-if="minister">
+          <div class="seg full">
+            <button :class="{on:!s.pm}" @click="s.pm=false">{{ t('minRole.minister') }}</button>
+            <button :class="{on:s.pm}" @click="s.pm=true">{{ t('minRole.pm') }}</button>
+          </div>
+          <div class="hint">{{ t('ministerHint') }} <span v-tip.panel="'ministerRules'">ⓘ</span></div>
+        </template>
+      </div>
+      <div class="field">
+        <label for="salary">{{ t('grossSalary') }}</label>
         <div class="row">
           <div class="money"><input id="salary" type="number" min="0" step="100" v-model.number="s.salary" :placeholder="t('salaryPh')"><span>€</span></div>
-          <div class="seg">
+          <div class="seg" v-if="!minister">
             <button :class="{on:s.period==='month'}" @click="setPeriod('month')">{{ t('perMonth') }}</button>
             <button :class="{on:s.period==='year'}" @click="setPeriod('year')">{{ t('perYear') }}</button>
           </div>
         </div>
-        <div class="lbl" style="margin-top:4px">{{ t('monthsPaid') }}</div>
-        <div class="seg full">
+        <div class="lbl" style="margin-top:4px" v-if="!minister">{{ t('monthsPaid') }}</div>
+        <div class="seg full" v-if="!minister">
           <button v-for="f in [12,13.85,13.92]" :key="f" :class="{on:s.factor===f}" @click="s.factor=f" v-tip.panel="'factor'+f">{{ num(f, 2) }}</button>
         </div>
-        <div class="hint" v-if="s.salary">{{ s.period==='month' ? t('yearlyGross', eur(annualGross)) : t('monthlyGross', eur(annualGross / s.factor)) }}</div>
+        <div class="hint" v-if="minister">{{ t('minSalaryHint') }}</div>
+        <div class="hint" v-else-if="s.salary">{{ s.period==='month' ? t('yearlyGross', eur(annualGross)) : t('monthlyGross', eur(annualGross / s.factor)) }}</div>
       </div>
 
       <div class="divider"></div>
@@ -284,7 +357,7 @@ header{position:relative}
 
       <div class="divider"></div>
 
-      <div class="field">
+      <div class="field" v-if="!minister">
         <div class="lbl">{{ t('employerSize') }}</div>
         <div class="seg full">
           <button :class="{on:!s.bigEmployer}" @click="s.bigEmployer=false">{{ t('under20') }}</button>
@@ -299,18 +372,18 @@ header{position:relative}
           <h2>{{ t('yourTaxRate') }}</h2>
         </div>
         <div class="tbl-wrap">
-          <table>
+          <table class="rates">
             <thead><tr><th>{{ t('thScope') }}</th><th>{{ t('thAvg') }}</th><th>{{ t('thNext') }}</th><th>{{ t('thTaxYear') }}</th><th>{{ t('thBaseYear') }}</th></tr></thead>
             <tbody>
               <tr v-for="r in rows" :key="r.key">
                 <td><div class="name" :style="{'--dot':r.color}" v-tip.left="'row-'+r.key"><span class="sw"></span><div><b>{{ t('row.' + r.key) }}</b><small>{{ t('rowDesc.' + r.key) }}</small></div></div></td>
                 <template v-if="cur">
-                  <td class="rate">{{ pct(r.avg) }}</td>
-                  <td><span class="rate">{{ pct(r.marg) }}</span><div class="keep">{{ t('youKeepPer', cents(1 - r.marg)) }}</div></td>
-                  <td v-tip="'row-'+r.key">{{ eur(r.tax) }}</td>
-                  <td v-tip="r.baseKey">{{ eur(r.base) }}<div class="keep">{{ r.baseName }}</div></td>
+                  <td :data-label="t('thAvg')"><span class="rate">{{ pct(r.avg) }}</span><div class="keep">{{ t('afterTax', eur(r.base - r.tax)) }}</div></td>
+                  <td :data-label="t('thNext')"><span class="rate">{{ pct(r.marg) }}</span><div class="keep">{{ t('youKeepPer', cents(1 - r.marg)) }}</div></td>
+                  <td v-tip="'row-'+r.key" :data-label="t('thTaxYear')">{{ eur(r.tax) }}</td>
+                  <td v-tip="r.baseKey" :data-label="t('thBaseYear')">{{ eur(r.base) }}<div class="keep">{{ r.baseName }}</div></td>
                 </template>
-                <template v-else><td colspan="4" style="text-align:center;color:var(--muted);font-family:var(--sans)">{{ t('enterSalary') }}</td></template>
+                <template v-else><td colspan="4" class="wide" style="text-align:center;color:var(--muted);font-family:var(--sans)">{{ t('enterSalary') }}</td></template>
               </tr>
             </tbody>
           </table>
@@ -326,27 +399,27 @@ header{position:relative}
         </div>
         <div class="tbl-wrap" style="margin-top:12px">
           <table class="bd split">
-            <thead><tr><th style="text-align:left">{{ t('thGoesTo') }}</th><th>{{ t('thPerYear') }}</th><th>{{ t('thShare') }}</th><th>{{ t('thCum') }}</th></tr></thead>
+            <thead><tr><th style="text-align:left">{{ t('thGoesTo') }}</th><th>{{ t('thPerYear') }}</th><th class="c-share">{{ t('thShare') }}</th><th class="c-cum">{{ t('thCum') }}</th></tr></thead>
             <tbody>
               <tr v-for="seg in splitRows" :key="seg.k" :class="seg.cls">
                 <td class="lab" v-tip="seg.k"><span v-if="seg.child" class="indent">↳</span><i class="dot" :style="{background:seg.color}"></i>{{ seg.label }}</td>
                 <td v-tip="seg.k">{{ eur(seg.v) }}</td>
-                <td>{{ pct(seg.share) }}</td>
-                <td class="cum">{{ seg.cum != null ? pct(seg.cum) : '' }}</td>
+                <td class="c-share">{{ pct(seg.share) }}<span class="cum-inline" v-if="seg.cum != null">Σ {{ pct(seg.cum) }}</span></td>
+                <td class="cum c-cum">{{ seg.cum != null ? pct(seg.cum) : '' }}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <div class="callout" style="margin-top:16px" v-html="raiseHtml"></div>
+        <div class="callout" style="margin-top:16px" v-if="!minister" v-html="raiseHtml"></div>
 
         <details class="more" style="margin-top:14px" open>
           <summary>{{ t('fullBreakdown') }}</summary>
           <div class="tbl-wrap">
           <table class="bd">
-            <thead><tr><th></th><th style="text-align:left">{{ t('thItem') }}</th><th>{{ t('thPerYear') }}</th><th>{{ t('thPerMonth') }}</th><th>{{ t('thShare') }}</th><th>{{ t('thCum') }}</th></tr></thead>
+            <thead><tr><th></th><th style="text-align:left">{{ t('thItem') }}</th><th>{{ t('thPerYear') }}</th><th>{{ t('thPerMonth') }}</th><th class="c-share">{{ t('thShare') }}</th><th class="c-cum">{{ t('thCum') }}</th></tr></thead>
             <tbody>
-              <tr v-for="(l, i) in breakdown" :key="i" :class="l.cls"><td class="op">{{ l.op }}</td><td class="lab" v-tip.left="l.k">{{ l.label }}</td><td v-tip.left="l.k">{{ eur(l.v) }}</td><td>{{ eur(l.v/12) }}</td><td>{{ pct(l.share) }}</td><td class="cum">{{ l.cum != null ? pct(l.cum) : '' }}</td></tr>
+              <tr v-for="(l, i) in breakdown" :key="i" :class="l.cls"><td class="op">{{ l.op }}</td><td class="lab" v-tip.left="l.k">{{ l.label }}</td><td v-tip.left="l.k">{{ eur(l.v) }}</td><td>{{ eur(l.v/12) }}</td><td class="c-share">{{ pct(l.share) }}</td><td class="cum c-cum">{{ l.cum != null ? pct(l.cum) : '' }}</td></tr>
             </tbody>
           </table>
           </div>
@@ -356,7 +429,7 @@ header{position:relative}
     </main>
   </div>
 
-  <div class="panel">
+  <div class="panel chart-panel">
     <div class="chart-head">
       <div>
         <h2>{{ t('chartTitle') }}</h2>
@@ -364,8 +437,13 @@ header{position:relative}
       </div>
       <div class="row">
         <div class="chips">
-          <button v-for="r in rowDefs" :key="r.key" class="chip" :class="{on:s.show[r.key]}" :style="{'--dot':r.color}" @click="s.show[r.key]=!s.show[r.key]" v-tip.above="'chip-'+r.key"><i></i>{{ t('row.' + r.key) }}</button>
-          <button class="chip" :class="{on:s.show.power}" style="--dot:var(--c-power)" @click="s.show.power=!s.show.power" v-tip.above="'chip-power'"><i></i>{{ t('buyingPower') }}</button>
+          <button v-for="r in rowDefs" :key="r.key" class="chip" :class="{on:s.show[r.key]}" :style="{'--dot':r.color}" @click="s.show[r.key]=!s.show[r.key]" v-tip.above.hover="'chip-'+r.key"><i></i>{{ t('row.' + r.key) }}</button>
+          <button class="chip" :class="{on:s.show.power}" style="--dot:var(--c-power)" @click="s.show.power=!s.show.power" v-tip.above.hover="'chip-power'"><i></i>{{ t('buyingPower') }}</button>
+        </div>
+        <div class="zoom" role="group" :aria-label="t('zoom')">
+          <button type="button" @click="zoomBy(2)" :aria-label="t('zoomOut')" :title="t('zoomOut')">−</button>
+          <button type="button" @click="zoomBy(.5)" :aria-label="t('zoomIn')" :title="t('zoomIn')">+</button>
+          <button type="button" @click="resetZoom" :aria-label="t('zoomReset')" :title="t('zoomReset')">⟲</button>
         </div>
         <div class="seg">
           <button :class="{on:s.lines==='both'}" @click="s.lines='both'">{{ t('both') }}</button>
@@ -374,16 +452,33 @@ header{position:relative}
         </div>
       </div>
     </div>
-    <div class="chart-box"><canvas id="chart" :aria-label="t('chartAria')"></canvas><div id="chartTip" class="chart-tip" hidden></div></div>
-    <div class="trap-note">
+    <div class="chart-box"><canvas id="chart" :aria-label="t('chartAria')"></canvas>
+      <button v-for="h in heads" :key="h.i" type="button" :class="['head', POLITICIANS[h.i].kind]" :style="{left: h.x + 'px', top: h.top + 'px'}" v-tip="'pol-' + h.i" :aria-label="polName(POLITICIANS[h.i])">{{ h.initials }}</button><div id="chartTip" class="chart-tip" hidden></div></div>
+    <div class="hint zoom-hint">{{ t('zoomHint') }}</div>
+    <div class="ref-legend"><span v-for="r in refLegend" :key="r.label"><i :style="{background: r.color}"></i>{{ r.label }}</span></div>
+    <div class="pol-legend">
+      <template v-for="g in polLegend" :key="g.kind">
+        <span class="lbl" :class="g.kind">{{ t('polTitle.' + g.kind) }}</span>
+        <button v-for="p in g.people" :key="p.idx" type="button" class="pol" :class="p.kind" @click="showPolitician(POLITICIANS[p.idx])" v-tip.above="'pol-' + p.idx">{{ p.name }}</button>
+      </template>
+      <span class="hint" v-html="t('polNote', link('cumuleoRanking'))"></span>
+    </div>
+    <div id="chartReadout" class="chart-tip chart-readout" hidden></div>
+    <div class="trap-note" v-if="!minister">
       <b>{{ t('trapTitle', trapText[0], trapText[1]) }}</b>
       <span v-html="t('trapBody', trapText[1])"></span>
     </div>
-    <div class="trap-note top-note" v-if="topText">
+    <div class="trap-note top-note" v-if="topText && !minister">
       <b>{{ t('topTitle', topText[0], topText[1]) }}</b>
       <span v-html="t('topBody', topText[0], eur(P.brackets[2][0]), topText[1], eur(bbszCap))"></span>
     </div>
   </div>
+
+  <a class="inherit" href="inheritance.html">
+    <span class="eyebrow">{{ t('inheritEyebrow') }}</span>
+    <b>{{ t('inheritTitle') }}</b>
+    <span>{{ t('inheritLink') }}</span>
+  </a>
 
   <div>
     <div class="eyebrow" style="margin-bottom:10px">{{ t('refEyebrow') }}</div>
@@ -396,12 +491,6 @@ header{position:relative}
       </section>
     </div>
   </div>
-
-  <a class="inherit" href="inheritance.html">
-    <span class="eyebrow">{{ t('inheritEyebrow') }}</span>
-    <b>{{ t('inheritTitle') }}</b>
-    <span>{{ t('inheritLink') }}</span>
-  </a>
 
   <footer>
     {{ t('sources') }}: <span v-html="allSources"></span>.
@@ -441,6 +530,37 @@ const REF_WAGES = [
   { key: 'avg', m: 4076, year: 2022, color: '--w-avg' },
 ];
 
+const GOV = {
+  minister: { salary: 254433.93, holFix: 1545.01, holPct: .011, eoyFix: 480.03, eoyPct: .025, repr: 392.45 * 12, reprPM: 784.91 * 12, housing: 1962.28 * 12 },
+  mp: { pay: 107888.16, pension: .085, expenses: 31798.56, forfait: [[7540, .287], [14970, .10], [24920, .05], [Infinity, .03]], forfaitMax: 5210 },
+};
+const MIN_TOTAL = GOV.minister.salary * (1 + GOV.minister.holPct + GOV.minister.eoyPct) + GOV.minister.holFix + GOV.minister.eoyFix;
+const DOC_MINISTERS = 'https://www.lachambre.be/FLWB/PDF/56/0918/56K0918001.pdf';
+const DOC_MP = 'https://www.lachambre.be/kvvcr/pdf_sections/depute/statut%20du%20membre.pdf';
+
+// Total declared gross pay for 2024, all mandates, from Cumuleo (federal declaration 2026). Brackets give a range;
+// pub is the part paid by the public company itself.
+const CUMULEO_RANKING = 'https://www.cumuleo.be/cumul-mandats/remuneration-2024.php';
+const POLITICIANS = [
+  { kind: 'stat', key: 'pm', icon: '⭐', regime: 'pm', lo: MIN_TOTAL, hi: MIN_TOTAL, url: DOC_MINISTERS },
+  { kind: 'stat', key: 'minister', icon: '💼', regime: 'minister', lo: MIN_TOTAL, hi: MIN_TOTAL, url: DOC_MINISTERS },
+  { kind: 'stat', key: 'mp', icon: '🏛️', regime: 'mp', lo: GOV.mp.pay, hi: GOV.mp.pay, url: DOC_MP },
+  { kind: 'gov', name: 'Pierre Wunsch', role: 'bnb', lo: 572602, hi: 699998, url: CUMULEO_RANKING },
+  { kind: 'gov', name: 'Maxime Prévot', role: 'prevot', lo: 365752.40, hi: 533182.40, url: CUMULEO_RANKING },
+  { kind: 'gov', name: 'Alexander De Croo', role: 'pm', regime: 'pm', lo: 279463.46, hi: 279463.46, url: CUMULEO_RANKING },
+  { kind: 'gov', name: 'Bart De Wever', role: 'dewever', lo: 261862.39, hi: 390590.39, url: 'https://www.cumuleo.be/mandataire/11423-bart-de-wever.php' },
+  { kind: 'gov', name: 'Paul Magnette', role: 'magnette', lo: 198582.27, hi: 327313.27, url: 'https://www.cumuleo.be/mandataire/11386-paul-magnette.php' },
+  { kind: 'corp', name: 'Marc Raisière', role: 'belfius', lo: 1149512.78, hi: 1149512.78, pub: 1149512.78, url: 'https://www.cumuleo.be/mandataire/27590-marc-raisiere.php' },
+  { kind: 'corp', name: 'Philippe Lallemand', role: 'ethias', lo: 667710.26, hi: 716749.26, pub: 655448.26, url: 'https://www.cumuleo.be/mandataire/4643-philippe-lallemand.php' },
+  { kind: 'corp', name: 'Dirk Terweduwe', role: 'credendo', lo: 520992.45, hi: 527120.45, pub: 474402.61, url: 'https://www.cumuleo.be/mandataire/11832-dirk-terweduwe.php' },
+  { kind: 'corp', name: 'Sophie Dutordoir', role: 'sncb', lo: 401655.84, hi: 505861.84, pub: 377130.84, url: 'https://www.cumuleo.be/mandataire/11601-sophie-dutordoir.php' },
+  { kind: 'corp', name: 'Jannie Haek', role: 'lottery', lo: 393881.02, hi: 393881.02, pub: 393881.02, url: 'https://www.cumuleo.be/mandataire/5451-jannie-haek.php' },
+  { kind: 'corp', name: 'Benoît Gilson', role: 'infrabel', lo: 373066.97, hi: 379194.97, pub: 373065.97, url: 'https://www.cumuleo.be/mandataire/32482-benoit-gilson.php' },
+  { kind: 'corp', name: 'Koenraad Van Loo', role: 'sfpi', lo: 313280, hi: 417486, pub: 283255, url: 'https://www.cumuleo.be/mandataire/1193-koenraad-van-loo.php' },
+  { kind: 'corp', name: 'Geoffray Robert', role: 'skeyes', lo: 310498.40, hi: 310498.40, pub: 310498.40, url: 'https://www.cumuleo.be/mandataire/31509-geoffray-robert.php' },
+  { kind: 'corp', name: 'Audrey Hanard', role: 'bpost', lo: 280819.52, hi: 308216.52, pub: 158217.52, url: 'https://www.cumuleo.be/mandataire/34411-audrey-hanard.php' },
+];
+
 const SRC = {
   rates: 'https://fin.belgium.be/en/private-individuals/tax-return/income/tax-rates',
   indexed: 'https://www.practicali.be/blog/geindexeerde-bedragen-aj-2027',
@@ -462,6 +582,14 @@ const SRC = {
   bbsz: 'https://www.socialsecurity.be/employer/instructions/dmfa/nl/latest/instructions/special_contributions/other_specialcontributions/specialsocialsecuritycontribution.html',
   vat: 'https://news.belgium.be/nl/hervorming-van-bepaalde-btw-tarieven',
   vatGuide: 'https://www.accountable.eu/nl-be/blog/btw-tarieven-belgie/',
+  cumuleoRanking: 'https://www.cumuleo.be/cumul-mandats/remuneration-2024.php',
+  ministers: DOC_MINISTERS,
+  mpStatute: DOC_MP,
+  bosaHoliday: 'https://bosa.belgium.be/sites/default/files/publications/documents/PP_vakantiegeld_2026_berekening_NL.pdf',
+  bosaEoy: 'https://bosa.belgium.be/sites/default/files/documents/20251127_PP_Eindejaarstoelage_berekeningNL.pdf',
+  dmfaMps: 'https://www.socialsecurity.be/employer/instructions/dmfa/fr/latest/instructions/persons/specific/mps.html',
+  cumuleoDeWever: 'https://www.cumuleo.be/mandataire/11423-bart-de-wever.php',
+  cumuleoMagnette: 'https://www.cumuleo.be/mandataire/11386-paul-magnette.php',
 };
 const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const link = k => `<a href="${SRC[k]}" target="_blank" rel="noopener">${esc(t('src.' + k))}</a>`;
@@ -576,14 +704,52 @@ function erParts(s) {
   ];
 }
 
-function compute(G, s, env) {
-  const u = employeeSide(G, s.factor);
-  const partner = s.household === 'joint' ? env.partner : null;
-  const fed = federalTax(u, partner, s);
+function incomeTaxes(u, s, env) {
+  const fed = federalTax(u, s.household === 'joint' ? env.partner : null, s);
   const keep = 1 - P.autonomy, sur = P.surcharge[s.region];
-  const federal = fed.net * keep;
-  const regional = fed.net * keep * sur;
-  const communal = fed.tax * keep * (1 + sur) * s.communal / 100;
+  return { fed, federal: fed.net * keep, regional: fed.net * keep * sur, communal: fed.tax * keep * (1 + sur) * s.communal / 100 };
+}
+
+// Federal minister, from the Chamber's summary of the 3 Feb 2025 circular and BOSA's payroll guides.
+// G is the yearly taxable total: salary + holiday pay + end-of-year allowance.
+function computeMinister(G, s, env, pm = s.pm) {
+  const m = GOV.minister;
+  const salary = Math.max(0, (G - m.holFix - m.eoyFix) / (1 + m.holPct + m.eoyPct));
+  const hol = G > 0 ? Math.min(G, m.holFix + m.holPct * salary) : 0;
+  // 13.07% only on holiday pay; no contribution on the salary, none from the state as employer.
+  const ee = P.ee * hol;
+  const taxable = G - ee;
+  const prof = Math.min(P.profPct * taxable, P.profMax);
+  const u = { m: G / 12, hol, holExempt: 0, eeBase: hol, erBase: 0, sscGross: ee, wb: 0, ssc: ee, taxable, prof, npi: taxable - prof, fwb: 0, salary, eoy: G - salary - hol };
+  const { fed, federal, regional, communal } = incomeTaxes(u, s, env);
+  const allow = G > 0 ? (pm ? m.reprPM : m.repr) + m.housing : 0;
+  const cost = G + allow;
+  const net = G - ee - federal - regional - communal + allow;
+  const vatShare = s.vatRate / (100 + s.vatRate);
+  const vat = s.vat ? Math.max(0, net) * vatShare : 0;
+  return {
+    G, cost, net, u, fed, allow, structRed: 0, erRate: 0, bbszScale: 'single', vatShare, regime: 'minister',
+    parts: { er: 0, ee, fed: federal, reg: regional, com: communal, bbsz: 0, vat },
+  };
+}
+
+// Federal MP, from the Chamber member statute: 8.5% pension contribution, taxed as profits, 28% tax-free expenses.
+function computeMP(A, s, env) {
+  const m = GOV.mp;
+  const pension = m.pension * A;
+  const taxable = A - pension;
+  let prof = 0, lo = 0;
+  for (const [hi, r] of m.forfait) { if (taxable > lo) prof += (Math.min(taxable, hi) - lo) * r; lo = hi; }
+  prof = Math.min(prof, m.forfaitMax);
+  const u = { taxable, npi: taxable - prof, fwb: 0 };
+  const { federal, regional, communal } = incomeTaxes(u, s, env);
+  return { net: A - pension - federal - regional - communal + m.expenses, allow: m.expenses, taxes: pension + federal + regional + communal };
+}
+
+function compute(G, s, env) {
+  if (s.regime === 'minister') return computeMinister(G, s, env);
+  const u = employeeSide(G, s.factor);
+  const { fed, federal, regional, communal } = incomeTaxes(u, s, env);
   const bbszScale = s.household !== 'joint' ? 'single' : (s.partnerGross > 0 ? 'jointWith' : 'jointWithout');
   const bbsz = G > 0 ? 4 * bbszQuarter(u.eeBase / 12, bbszScale) : 0;
 
@@ -648,6 +814,8 @@ addEventListener('scroll', () => { tip.key = null; }, { passive: true });
 
 const vTip = {
   mounted(el, b) {
+    // .hover: a mouse-only hint, on touch the tap belongs to the button
+    if (b.modifiers.hover && matchMedia('(hover: none)').matches) return;
     el._tipKey = b.value;
     el._tipSide = b.modifiers.panel ? 'panel' : b.modifiers.left ? 'left' : b.modifiers.above ? 'above' : 'auto';
     el.classList.add('has-tip');
@@ -693,7 +861,7 @@ const app = Vue.createApp({
     const { reactive, computed, watch, watchEffect, onMounted, ref, nextTick } = Vue;
     watchEffect(() => { document.title = t('title'); });
     const s = reactive({
-      salary: 3800, period: 'month', factor: 13.92,
+      salary: 3800, period: 'month', factor: 13.92, regime: 'employee', pm: false,
       household: 'single', partnerGross: 0, children: 0, under3: 0,
       commune: 'Antwerpen', region: 'vl', communal: 7,
       vat: true, vatRate: 21,
@@ -706,6 +874,7 @@ const app = Vue.createApp({
       kids: ['children', 'num'], under3: ['under3', 'num'],
       commune: ['commune', 'str'], region: ['region', 'str', ['vl', 'wal', 'bru']], communal: ['communal', 'num'],
       vat: ['vat', 'bool'], vatrate: ['vatRate', 'num'], big: ['bigEmployer', 'bool'],
+      regime: ['regime', 'str', ['employee', 'minister']], pm: ['pm', 'bool'],
     }, watch);
 
     const shareState = reactive({ copied: false, failed: false, url: '' });
@@ -721,6 +890,18 @@ const app = Vue.createApp({
     // VAT rates move in half-percent steps.
     const vr = v => num(v, v % 1 ? 1 : 0);
 
+    const minister = computed(() => s.regime === 'minister');
+    let employeeSalary = null;
+    function toggleMinister() {
+      if (s.regime === 'minister') {
+        s.regime = 'employee';
+        Object.assign(s, employeeSalary || { salary: 3800, period: 'month' });
+      } else {
+        employeeSalary = { salary: s.salary, period: s.period };
+        // A minister's pay isn't 13.92 monthly salaries, so this mode works in yearly totals.
+        Object.assign(s, { regime: 'minister', period: 'year', salary: Math.round(MIN_TOTAL) });
+      }
+    }
     function setPeriod(p) {
       if (p === s.period) return;
       const v = Number(s.salary);
@@ -866,6 +1047,26 @@ const app = Vue.createApp({
     const breakdown = computed(() => {
       const r = cur.value; if (!r) return [];
       const p = r.parts, u = r.u;
+      if (r.regime === 'minister') return withShares(r, [
+        { op: '', k: 'gross', label: t('bd.minGross'), v: r.G },
+        { op: '+', k: 'allow', label: t('bd.allow'), v: r.allow, cls: 'sub' },
+        { op: '=', k: 'cost', label: t('bd.stateCost'), v: r.cost, cls: 'tot' },
+        { op: '', k: 'gross', label: t('bd.minGross'), v: r.G },
+        { op: '−', k: 'ee', label: t('bd.minSoc'), v: p.ee, tax: p.ee },
+        { op: '=', k: 'taxable', label: t('bd.taxable'), v: u.taxable, cls: 'tot' },
+        { op: '−', k: 'prof', label: t('bd.prof'), v: u.prof, cls: 'sub' },
+        { op: '=', k: 'npi', label: t('bd.npi'), v: u.npi, cls: 'sub' },
+        { op: '', k: 'taxable', label: t('bd.taxable'), v: u.taxable },
+        { op: '−', k: 'fed', label: t('comp.fed'), v: p.fed, tax: p.fed },
+        { op: '−', k: 'reg', label: `${t('comp.reg')} (${t('region.' + s.region)})`, v: p.reg, tax: p.reg },
+        { op: '−', k: 'com', label: `${t('comp.com')} (${num(s.communal, 1)}%${commune.value ? ', ' + commune.value.name : ''})`, v: p.com, tax: p.com },
+        { op: '+', k: 'allow', label: t('bd.allow'), v: r.allow, cls: 'sub' },
+        { op: '=', k: 'net', label: t('bd.net'), v: r.net, cls: 'tot' },
+        ...(s.vat ? [
+          { op: '−', k: 'vat', label: t('bd.vat', `${vr(s.vatRate)}/${vr(100 + s.vatRate)}`), v: p.vat, tax: p.vat },
+          { op: '=', k: 'yours', label: t('goodsActually'), v: r.net - p.vat, cls: 'tot' },
+        ] : []),
+      ]);
       const L = [
         { op: '', k: 'gross', label: t('bd.gross'), v: r.G },
         { op: '+', k: 'er', label: t('comp.er'), v: p.er + r.structRed, tax: p.er + r.structRed, cls: 'sub' },
@@ -892,15 +1093,31 @@ const app = Vue.createApp({
         { op: '−', k: 'vat', label: t('bd.vat', `${vr(s.vatRate)}/${vr(100 + s.vatRate)}`), v: p.vat, tax: p.vat },
         { op: '=', k: 'yours', label: t('goodsActually'), v: r.net - p.vat, cls: 'tot' },
       );
+      return withShares(r, L);
+    });
+    function withShares(r, L) {
       let cum = 0;
       return L.map(l => {
         if (l.tax != null) cum += l.tax;
         return { ...l, share: l.v / r.cost, cum: l.tax != null ? cum / r.cost : null };
       });
-    });
+    }
 
     // Tooltip content: what it is, how it's computed with your numbers, and sources.
+    const ministerTips = {
+      gross: r => `<h4>${t('bd.minGross')}</h4><p>${t('tip.minGross', eur(GOV.minister.salary))}</p>${r ? `<table>
+        <tr><td>${t('tip.minSalary')}</td><td>${eur(r.u.salary)}</td></tr>
+        <tr><td>${t('tip.minHol')}</td><td>${eur(r.u.hol)}</td></tr>
+        <tr><td>${t('tip.minEoy')}</td><td>${eur(r.u.eoy)}</td></tr>
+        <tr class="t"><td>${t('total')}</td><td>${eur(r.G)}</td></tr></table>` : ''}${sources('ministers', 'bosaHoliday', 'bosaEoy')}`,
+      allow: r => `<h4>${t('bd.allow')}</h4><p>${t('tip.allow', eur(GOV.minister.repr / 12, 2), eur(GOV.minister.reprPM / 12, 2), eur(GOV.minister.housing / 12, 2))}</p>${r ? `<p><b>${eur(r.allow)}</b>${t('aYear')}</p>` : ''}${sources('ministers')}`,
+      cost: () => `<h4>${t('bd.stateCost')}</h4><p>${t('tip.stateCost')}</p>`,
+      er: () => `<h4>${t('comp.er')}</h4><p>${t('tip.minEr')}</p>${sources('dmfaMps')}`,
+      ee: r => `<h4>${t('bd.minSoc')}</h4><p>${t('tip.minEe')}</p>${r ? `<p>${pct(P.ee, 2)} × ${eur(r.u.hol)} = <b>${eur(r.parts.ee)}</b></p>` : ''}${sources('dmfaMps', 'bosaHoliday', 'bosaEoy')}`,
+      bbsz: () => `<h4>${t('comp.bbsz')}</h4><p>${t('tip.minBbsz')}</p>`,
+    };
     const tipBuilders = {
+      ministerRules: () => `<h4>${t('ministerOn')}</h4><p>${t('tip.ministerRules')}</p>${sources('ministers', 'bosaHoliday', 'dmfaMps')}`,
       factor12: () => `<h4>${t('tip.monthsPaid', 12)}</h4><p>${t('tip.f12')}</p>`,
       'factor13.85': () => `<h4>${t('tip.monthsPaid', num(13.85, 2))}</h4><p>${t('tip.f1385')}</p><p class="m">${t('tip.f1385m')}</p>`,
       'factor13.92': () => `<h4>${t('tip.monthsPaid', num(13.92, 2))}</h4><p>${t('tip.f1392')}</p><p class="m">${t('tip.f1392m')}</p>${sources('rszContrib')}`,
@@ -982,6 +1199,7 @@ const app = Vue.createApp({
         <p class="m">${t('tip.vatM')}</p>${sources('vat', 'vatGuide')}`,
       net: r => `<h4>${t('bd.net')}</h4><p>${t('tip.net', r ? t('tip.netCalc', eur(r.net), eur(r.net / 12)) : '')}</p>`,
       yours: r => `<h4>${s.vat ? t('tip.yoursH') : t('yourNetPay')}</h4><p>${s.vat ? t('tip.yoursVat') : t('tip.yoursNoVat')}${r ? t('tip.yoursCalc', eur(r.net - r.parts.vat), pct((r.net - r.parts.vat) / r.cost)) : ''}</p>`,
+      ...Object.fromEntries(POLITICIANS.map((p, i) => [`pol-${i}`, () => polTip(p)])),
       'chip-full': () => t('chip.full'),
       'chip-work': () => t('chip.work'),
       'chip-power': () => t('chip.power', s.vat),
@@ -990,8 +1208,26 @@ const app = Vue.createApp({
       'row-work': () => `<h4>${t('row.work')}</h4><p><em>${t('rowTip.work')}</em></p><p class="m">${t('rowTipM.work')}</p>`,
       'row-employee': () => `<h4>${t('row.employee')}</h4><p><em>${t('rowTip.employee')}</em></p><p class="m">${t('rowTipM.employee')}</p>`,
     };
+    function polTip(p) {
+      const pl = polPlacement(p), range = (lo, hi) => lo === hi ? eur(lo) : `${eur(lo)} – ${eur(hi)}`;
+      const head = `<h4>${esc(polName(p))}</h4><p>${t('pol.' + (p.role || 'stat.' + p.key))}</p>`;
+      const src = `<div class="src">${t('sources')}: <a href="${p.url}" target="_blank" rel="noopener">${p.kind === 'stat' ? t('src.' + (p.regime === 'mp' ? 'mpStatute' : 'ministers')) : 'Cumuleo: ' + esc(p.name)}</a></div>`;
+      if (pl) return `${head}<table>
+        <tr><td>${t('polGross')}</td><td>${eur(p.lo)}</td></tr>
+        <tr><td>${t('polAllow')}</td><td>+${eur(pl.allow)}</td></tr>
+        <tr class="t"><td>${t('polNet')}</td><td>${eur(pl.net)}</td></tr>
+        <tr><td>${t('polNetMonth')}</td><td>${eur(pl.net / 12)}</td></tr>
+        <tr class="t"><td>${t('polEq')}</td><td>${eur(pl.eq)}</td></tr>
+        <tr><td>${t('polMonth', num(s.factor, 2))}</td><td>${eur(pl.eq / s.factor)}</td></tr>
+        <tr><td>${t('polEqCost')}</td><td>${eur(pl.eqCost)}</td></tr></table>
+        <p class="m">${t(p.regime === 'mp' ? 'polMpNote' : 'polMinNote')}</p>${src}`;
+      return `${head}<table><tr><td>${t('polYear')}</td><td>${range(p.lo, p.hi)}</td></tr>
+        <tr><td>${t('polMonth', num(s.factor, 2))}</td><td>${range(p.lo / s.factor, p.hi / s.factor)}</td></tr>
+        ${p.pub != null && p.pub !== p.lo ? `<tr><td>${t('polPub')}</td><td>${eur(p.pub)}</td></tr>` : ''}</table>
+        <p class="m">${t('polTipNote')}</p>${src}`;
+    }
     const tipHtml = computed(() => {
-      const f = tip.key && tipBuilders[tip.key];
+      const f = tip.key && ((minister.value && ministerTips[tip.key]) || tipBuilders[tip.key]);
       return f ? f(cur.value) : '';
     });
     const tipPos = computed(() => {
@@ -1030,16 +1266,28 @@ const app = Vue.createApp({
         return `<tr><td>${span}</td><td class="num">${pct(r, 0)}</td></tr>`;
       }).join('');
       const br = `<table><tbody>${rows}</tbody></table>`;
-      return ['er', 'ee', 'taxable', 'allow', 'couple', 'levels', 'vat', 'notIncl'].map(k => t('ref.' + k, br));
+      return ['er', 'ee', 'taxable', 'allow', 'couple', 'levels', 'vat', 'minister', 'notIncl'].map(k => t('ref.' + k, br));
     });
 
+    // Chart window in monthly gross. Curves are sampled only across what's visible, so zooming in stays sharp.
+    const MIN_SPAN = 400;
+    // Up to the best-paid public office in the list, in monthly gross.
+    const xLimit = () => Math.ceil(Math.max(...POLITICIANS.map(p => p.hi)) / s.factor * 1.04 / 1000) * 1000;
+    const view = { min: 0, max: 0, custom: false };
+    const defaultView = () => ({ min: 0, max: Math.max(5000, annualGross.value / s.factor + 1000) });
+    function setView(min, max) {
+      const lim = xLimit(), span = Math.min(lim, Math.max(MIN_SPAN, max - min));
+      min = Math.min(Math.max(0, min), lim - span);
+      Object.assign(view, { min, max: min + span, custom: true });
+    }
     function series() {
       const monthly = s.period === 'month';
       const userX = monthly ? annualGross.value / s.factor : annualGross.value;
       const unit = monthly ? 1 : s.factor;
-      const xMax = Math.max(5000 * unit, userX + 1000 * unit);
+      if (!view.custom) Object.assign(view, defaultView());
+      const xMin = view.min * unit, xMax = view.max * unit;
       const N = 260, out = [], pts = [];
-      for (let i = 1; i <= N; i++) pts.push(xMax * i / N);
+      for (let i = 0; i <= N; i++) pts.push(Math.max(1, xMin + (xMax - xMin) * i / N));
       for (const d of rowDefs.value) {
         if (!s.show[d.key]) continue;
         const avg = [], marg = [];
@@ -1065,7 +1313,7 @@ const app = Vue.createApp({
         if (s.lines === 'marg') out.push({ series: label, kind: 'marg', label: label + ' · ' + t('nextEur'), data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
         if (s.lines !== 'marg') out.push({ series: label, kind: 'avg', label: label + ' · ' + t('average'), data: avg, borderColor: color, backgroundColor: color, borderWidth: 1.6, borderDash: [6, 4], pointRadius: 0, tension: .2 });
       }
-      return { out, xMax, userX };
+      return { out, xMin, xMax, userX };
     }
 
     const markerPlugin = {
@@ -1079,7 +1327,7 @@ const app = Vue.createApp({
         ctx.fillStyle = cssVar('--c-full'); ctx.globalAlpha = .07;
         ctx.fillRect(x0, a.top, x1 - x0, a.bottom - a.top);
         ctx.globalAlpha = .8; ctx.font = '600 11px ' + cssVar('--sans'); ctx.textAlign = 'center';
-        ctx.fillText(t('lowWageTrap'), (x0 + x1) / 2, a.bottom - 24);
+        ctx.fillText(t('lowWageTrap'), (x0 + x1) / 2, c.$narrow ? a.top + 14 : a.bottom - 24);
         ctx.restore();
         const top = c.$top;
         if (top) {
@@ -1089,23 +1337,56 @@ const app = Vue.createApp({
             ctx.fillStyle = cssVar('--c-work'); ctx.globalAlpha = .85; ctx.font = '600 11px ' + cssVar('--sans');
             const flip = px > a.right - 90;
             ctx.textAlign = flip ? 'right' : 'left';
-            ctx.fillText(flip ? t('bracket50') + ' →' : '← ' + t('bracket50'), flip ? px - 4 : px + 4, a.bottom - 24);
+            ctx.fillText(flip ? t('bracket50') + ' →' : '← ' + t('bracket50'), flip ? px - 4 : px + 4, c.$narrow ? a.top + 30 : a.bottom - 40);
             ctx.restore();
           }
         }
       },
+      afterDraw(c) {
+        // Place the heads, stacking ones that would overlap.
+        const a = c.chartArea, rows = [], size = c.$narrow ? 22 : 30;
+        heads.value = (c.$pols || []).map((p, i) => ({ i, x: c.scales.x.getPixelForValue(p.x), from: p.from != null ? c.scales.x.getPixelForValue(p.from) : null }))
+          .filter(h => h.x >= a.left && h.x <= a.right)
+          .sort((p, q) => p.x - q.x)
+          .map(h => {
+            let row = 0;
+            while (rows[row] != null && h.x - rows[row] < size) row++;
+            rows[row] = h.x;
+            const p = POLITICIANS[h.i];
+            return { ...h, top: a.top + 4 + row * (size + 2), cy: a.top + 4 + row * (size + 2) + size / 2, initials: p.icon || (w => w[0][0] + w[w.length - 1][0])(p.name.split(' ')) };
+          });
+        // Dotted line back to what they're actually paid gross.
+        const ctx = c.ctx;
+        ctx.save();
+        ctx.strokeStyle = cssVar('--accent'); ctx.fillStyle = cssVar('--surface'); ctx.setLineDash([2, 3]); ctx.lineWidth = 1.2; ctx.globalAlpha = .8;
+        for (const h of heads.value) {
+          if (h.from == null) continue;
+          const fx = Math.min(Math.max(h.from, a.left), a.right);
+          ctx.beginPath(); ctx.moveTo(fx, h.cy); ctx.lineTo(h.x, h.cy); ctx.stroke();
+          if (h.from >= a.left && h.from <= a.right) { ctx.setLineDash([]); ctx.beginPath(); ctx.arc(h.from, h.cy, 3, 0, 7); ctx.fill(); ctx.stroke(); ctx.setLineDash([2, 3]); }
+        }
+        ctx.restore();
+      },
       afterDatasetsDraw(c) {
         const { ctx, chartArea: a, scales } = c;
+        const active = c.tooltip?.getActiveElements?.() || [];
+        if (active.length) {
+          ctx.save();
+          ctx.strokeStyle = cssVar('--muted'); ctx.globalAlpha = .6; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(active[0].element.x, a.top); ctx.lineTo(active[0].element.x, a.bottom); ctx.stroke();
+          ctx.restore();
+        }
         ctx.save();
         ctx.font = '600 11px ' + cssVar('--sans');
         c.$refBoxes = [];
         (c.$refs || []).forEach((r, i) => {
           const px = scales.x.getPixelForValue(r.x);
           if (px < a.left || px > a.right) return;
-          const hot = c.$hoverRef === i;
+          const hot = c.$hoverRef === i || c.$narrow;
           const color = cssVar(hot ? r.color : '--ink');
-          ctx.strokeStyle = color; ctx.globalAlpha = hot ? 1 : .45; ctx.lineWidth = hot ? 2.5 : 1.75;
+          ctx.strokeStyle = color; ctx.globalAlpha = hot ? 1 : .45; ctx.lineWidth = c.$narrow ? 1.5 : hot ? 2.5 : 1.75;
           ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke();
+          if (c.$narrow) return;
           ctx.globalAlpha = hot ? 1 : .75; ctx.fillStyle = color;
           ctx.textAlign = px > a.right - 110 ? 'right' : 'left';
           const ty = a.top + 12 + i * 14, tw = ctx.measureText(r.label).width;
@@ -1130,9 +1411,33 @@ const app = Vue.createApp({
     };
 
     const lineSample = (color, dashed) => `<svg width="22" height="6" viewBox="0 0 22 6" aria-hidden="true"><line x1="0" y1="3" x2="22" y2="3" stroke="${color}" stroke-width="${dashed ? 2 : 3}"${dashed ? ' stroke-dasharray="4 3"' : ''}/></svg>`;
+    // Touch screens and phones get a readout under the chart: a floating box would sit under the finger.
+    const docked = () => matchMedia('(max-width: 600px), (pointer: coarse)').matches;
+    const phone = () => matchMedia('(max-width: 600px)').matches;
+    const heads = ref([]);
+    const polName = p => p.name || t('stat.' + p.key);
+    // What the person nets under their own rules, and the employee gross that nets the same with your settings.
+    function polPlacement(p) {
+      if (!p.regime) return null;
+      const env0 = env.value, plain = { ...s, regime: 'employee', vat: false };
+      const own = p.regime === 'mp' ? computeMP(p.lo, plain, env0) : computeMinister(p.lo, plain, env0, p.regime === 'pm');
+      let lo = 0, hi = 5e6;
+      for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (compute(mid, plain, env0).net < own.net) lo = mid; else hi = mid; }
+      return { net: own.net, allow: own.allow, eq: hi, eqCost: compute(hi, plain, env0).cost };
+    }
+    const polLegend = computed(() => ['stat', 'gov', 'corp'].map(kind => ({ kind, people: POLITICIANS.filter(p => p.kind === kind).map(p => ({ ...p,
+      idx: POLITICIANS.indexOf(p), name: polName(p), amount: p.lo === p.hi ? eur(p.lo) : `${eur(p.lo)} – ${eur(p.hi)}`, roleText: t('pol.' + (p.role || 'stat.' + p.key)) })) })));
+    function showPolitician(p) {
+      const pl = polPlacement(p);
+      setView(0, Math.max(p.hi, pl ? pl.eq : 0) / s.factor * 1.15);
+      draw();
+    }
+    const refLegend = computed(() => REF_WAGES.map(r => ({ color: `var(${r.color})`, label: `${t('refWage.' + r.key)} ${eur(Math.round(r.m))}/${t('unit.mo')} (${r.year})` })));
     function chartTooltip({ chart: c, tooltip: tt }) {
-      const el = document.getElementById('chartTip');
-      if (!tt.opacity || !tt.dataPoints?.length) { el.hidden = true; return; }
+      const dock = docked();
+      document.getElementById(dock ? 'chartTip' : 'chartReadout').hidden = true;
+      const el = document.getElementById(dock ? 'chartReadout' : 'chartTip');
+      if (!tt.opacity || !tt.dataPoints?.length) { if (!dock) el.hidden = true; return; }
       const rowsBy = new Map();
       for (const p of tt.dataPoints) {
         const ds = p.dataset;
@@ -1152,6 +1457,7 @@ const app = Vue.createApp({
         ${[...rowsBy].map(([name, r]) => `<tr><td class="ct-name">${esc(name)}</td>${hasM ? cell(r.marg, r.color, false) : ''}${hasA ? cell(r.avg, r.color, true) : ''}</tr>`).join('')}
         </tbody></table>`;
       el.hidden = false;
+      if (dock) return;
       const box = c.canvas.parentNode, w = el.offsetWidth, h = el.offsetHeight;
       let left = tt.caretX + 16;
       if (left + w > box.clientWidth) left = tt.caretX - w - 16;
@@ -1160,14 +1466,15 @@ const app = Vue.createApp({
     }
 
     let chart = null;
-    function draw() {
-      const { out, xMax, userX } = series();
+    function draw(panning) {
+      const { out, xMin, xMax, userX } = series();
       const muted = cssVar('--muted'), line = cssVar('--line');
       const monthly = s.period === 'month';
-      const tickFmt = v => monthly ? eurK(v, v % 1000 ? 1 : 0) : eurK(Math.round(v / 1000) * 1000);
+      const tickFmt = v => eurK(v, v % 100 ? 2 : v % 1000 ? 1 : 0);
       const xTitle = monthly ? t('xMonth', num(s.factor, 2)) : t('xYear');
       const yTitle = t('yTitle');
-      const refs = REF_WAGES.map(r => ({ x: monthly ? r.m : r.m * s.factor, label: `${t('refWage.' + r.key)} ${eur(Math.round(r.m))}/${t('unit.mo')} (${r.year})`, color: r.color }));
+      const narrow = phone();
+      const refs = REF_WAGES.map(r => ({ x: monthly ? r.m : r.m * s.factor, label: narrow ? t('refWage.' + r.key) : `${t('refWage.' + r.key)} ${eur(Math.round(r.m))}/${t('unit.mo')} (${r.year})`, color: r.color }));
       if (!chart) {
         chart = new Chart(document.getElementById('chart'), {
           type: 'line',
@@ -1175,6 +1482,8 @@ const app = Vue.createApp({
           plugins: [markerPlugin],
           options: {
             animation: false, responsive: true, maintainAspectRatio: false, parsing: false,
+            // No touchmove: a finger dragging pans the chart instead of scrubbing the readout.
+            events: ['mousemove', 'mouseout', 'click', 'touchstart'],
             interaction: { mode: 'index', intersect: false },
             onHover: (e, _, c) => {
               const hit = e.type === 'mouseout' ? null
@@ -1183,8 +1492,8 @@ const app = Vue.createApp({
               if (i !== (c.$hoverRef ?? -1)) { c.$hoverRef = i; c.draw(); }
             },
             scales: {
-              x: { type: 'linear', min: 0, max: xMax, ticks: { color: muted, callback: tickFmt, maxTicksLimit: 10 }, grid: { color: line }, title: { display: true, text: xTitle, color: muted, font: { family: cssVar('--sans'), size: 12.5, weight: '600' } } },
-              y: { min: 0, max: 100, ticks: { color: muted, callback: v => v + '%', stepSize: 10 }, grid: { color: line }, title: { display: true, text: yTitle, color: muted, font: { family: cssVar('--sans'), size: 12.5, weight: '600' } } },
+              x: { type: 'linear', min: xMin, max: xMax, ticks: { color: muted, callback: tickFmt, maxTicksLimit: narrow ? 6 : 10 }, grid: { color: line }, title: { display: true, text: xTitle, color: muted, font: { family: cssVar('--sans'), size: 12.5, weight: '600' } } },
+              y: { min: 0, max: 100, ticks: { color: muted, callback: v => v + '%', stepSize: narrow ? 20 : 10 }, grid: { color: line }, title: { display: !narrow, text: yTitle, color: muted, font: { family: cssVar('--sans'), size: 12.5, weight: '600' } } },
             },
             plugins: {
               legend: { display: false },
@@ -1194,18 +1503,106 @@ const app = Vue.createApp({
         });
       } else {
         chart.data.datasets = out;
+        chart.options.scales.x.min = xMin;
         chart.options.scales.x.max = xMax;
         chart.options.scales.x.ticks.callback = tickFmt;
         chart.options.scales.x.title.text = xTitle;
         chart.options.scales.y.title.text = yTitle;
+        chart.options.scales.x.ticks.maxTicksLimit = narrow ? 6 : 10;
+        chart.options.scales.y.title.display = !narrow;
+        chart.options.scales.y.ticks.stepSize = narrow ? 20 : 10;
         chart.options.scales.x.title.color = muted; chart.options.scales.y.title.color = muted;
         chart.options.scales.x.ticks.color = muted; chart.options.scales.y.ticks.color = muted;
         chart.options.scales.x.grid.color = line; chart.options.scales.y.grid.color = line;
       }
       chart.$userX = userX;
+      chart.$narrow = narrow;
       chart.$refs = refs;
+      const unitOf = v => monthly ? v / s.factor : v;
+      chart.$pols = POLITICIANS.map(p => {
+        const pl = polPlacement(p);
+        return pl ? { x: unitOf(pl.eq), from: unitOf(p.lo) } : { x: unitOf((p.lo + p.hi) / 2), from: null };
+      });
       chart.$trap = trapMonthly.value.map(v => monthly ? v : v * s.factor);
       chart.$top = topMonthly.value[0] && (monthly ? topMonthly.value[0] : topMonthly.value[0] * s.factor);
+      chart.update('none');
+      if (docked() && !panning) pinReadout(userX);
+    }
+
+    let panFrame = 0;
+    const redrawSoon = () => { if (!panFrame) panFrame = requestAnimationFrame(() => { panFrame = 0; draw(true); }); };
+    const toMonthly = v => s.period === 'month' ? v : v / s.factor;
+    function zoomBy(k, centerM = (view.min + view.max) / 2) {
+      setView(centerM - (centerM - view.min) * k, centerM + (view.max - centerM) * k);
+      redrawSoon();
+    }
+    function resetZoom() { view.custom = false; draw(); }
+
+    // Drag to pan, pinch (two fingers) or ctrl+wheel to zoom; only the x axis moves.
+    function bindPanZoom(canvas) {
+      const ptrs = new Map();
+      let start = null;
+      const valAt = clientX => {
+        const a = chart.chartArea, r = canvas.getBoundingClientRect();
+        const f = (clientX - r.left - a.left) / (a.right - a.left);
+        return view.min + f * (view.max - view.min);
+      };
+      const snapshot = () => {
+        const xs = [...ptrs.values()];
+        const mid = xs.reduce((t, x) => t + x, 0) / xs.length;
+        start = { view: { ...view }, mid, midVal: valAt(mid), dist: xs.length > 1 ? Math.abs(xs[0] - xs[1]) : 0 };
+      };
+      canvas.addEventListener('pointerdown', e => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        ptrs.set(e.pointerId, e.clientX);
+        canvas.setPointerCapture(e.pointerId);
+        snapshot();
+      });
+      canvas.addEventListener('pointermove', e => {
+        if (!ptrs.has(e.pointerId)) return;
+        ptrs.set(e.pointerId, e.clientX);
+        const xs = [...ptrs.values()], a = chart.chartArea;
+        const perPx = (start.view.max - start.view.min) / (a.right - a.left);
+        if (xs.length === 1) {
+          const dx = xs[0] - start.mid;
+          if (Math.abs(dx) < 4 && !canvas.classList.contains('panning')) return;
+          canvas.classList.add('panning');
+          setView(start.view.min - dx * perPx, start.view.max - dx * perPx);
+        } else {
+          const dist = Math.abs(xs[0] - xs[1]) || 1, mid = (xs[0] + xs[1]) / 2;
+          const k = start.dist / dist;
+          const min = start.midVal - (start.midVal - start.view.min) * k;
+          const shift = (mid - start.mid) * perPx * k;
+          setView(min - shift, min - shift + (start.view.max - start.view.min) * k);
+        }
+        redrawSoon();
+      });
+      const end = e => {
+        ptrs.delete(e.pointerId);
+        if (ptrs.size) snapshot(); else canvas.classList.remove('panning');
+      };
+      canvas.addEventListener('pointerup', end);
+      canvas.addEventListener('pointercancel', end);
+      canvas.addEventListener('wheel', e => {
+        // Plain vertical scrolling stays with the page.
+        if (e.ctrlKey) { e.preventDefault(); zoomBy(Math.exp(e.deltaY * .002), valAt(e.clientX)); }
+        else if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.shiftKey) {
+          e.preventDefault();
+          const d = (e.shiftKey ? e.deltaY : e.deltaX) * (view.max - view.min) / (chart.chartArea.right - chart.chartArea.left);
+          setView(view.min + d, view.max + d); redrawSoon();
+        }
+      }, { passive: false });
+      canvas.addEventListener('dblclick', resetZoom);
+    }
+
+    // Until the chart is touched, the readout shows the user's own salary.
+    function pinReadout(x) {
+      const el = document.getElementById('chartReadout');
+      const data = chart.data.datasets[0]?.data;
+      if (!x || !data?.length) { el.hidden = true; return; }
+      const i = data.reduce((best, p, j) => Math.abs(p.x - x) < Math.abs(data[best].x - x) ? j : best, 0);
+      const els = chart.data.datasets.map((_, d) => ({ datasetIndex: d, index: i }));
+      chart.tooltip.setActiveElements(els, { x: chart.scales.x.getPixelForValue(data[i].x), y: chart.chartArea.top });
       chart.update('none');
     }
 
@@ -1216,7 +1613,15 @@ const app = Vue.createApp({
     watch(() => s.children, n => { if (s.under3 > n) s.under3 = n; });
     onMounted(() => {
       draw();
+      bindPanZoom(document.getElementById('chart'));
       matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', schedule);
+      // Phones fire resize when the URL bar hides on scroll; only a width change needs a redraw.
+      let lastW = innerWidth;
+      addEventListener('resize', () => { if (innerWidth !== lastW) { lastW = innerWidth; schedule(); } });
+      document.addEventListener('touchstart', e => {
+        if (!e.target.closest('.tip, .has-tip')) tip.key = null;
+        if (chart && docked() && e.target.id !== 'chart') pinReadout(chart.$userX);
+      }, { passive: true });
       new MutationObserver(schedule).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     });
 
@@ -1224,8 +1629,8 @@ const app = Vue.createApp({
       s, P, setPeriod, communes, commune, communesError, REGIONS, rateRange,
       combo, comboList, filtered, openCombo, moveHi, pickCommune,
       annualGross, vatShare, trapText, topText, bbszCap, rowDefs, rows, cur, barSegs, splitRows, raiseHtml, breakdown,
-      tipHtml, tipPos, tipEl, keepTip, hideTipSoon, allSources, refSections,
-      eur, num, pct, cents, t, lang, LANGS, setLang,
+      heads, POLITICIANS, polName, minister, toggleMinister, tipHtml, tipPos, tipEl, keepTip, hideTipSoon, allSources, refSections, refLegend, polLegend, showPolitician, link,
+      eur, num, pct, cents, t, lang, LANGS, setLang, zoomBy, resetZoom,
     };
   },
 });
