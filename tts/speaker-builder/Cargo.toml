@@ -1,0 +1,58 @@
+[package]
+name = "speaker-builder"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Pure-Rust WavTokenizer encoder for in-browser voice cloning"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+ndarray = "0.16"
+safetensors = { version = "0.4", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+realfft = "3"
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+console_error_panic_hook = { version = "0.1", optional = true }
+
+# WebGPU acceleration. Native build picks up vulkan/metal/dx12 from defaults;
+# the `webgpu` feature is what lights up the browser's WebGPU API in WASM.
+wgpu = { version = "24", optional = true, features = ["webgpu"] }
+bytemuck = { version = "1", features = ["derive"], optional = true }
+wasm-bindgen-futures = { version = "0.4", optional = true }
+pollster = { version = "0.4", optional = true }
+futures-channel = { version = "0.3", optional = true }
+
+[dev-dependencies]
+criterion = { version = "0.5", default-features = false, features = ["plotters", "cargo_bench_support"] }
+approx = "0.5"
+
+[[bench]]
+name = "encoder_bench"
+harness = false
+
+[features]
+default = ["panic-hook", "webgpu"]
+panic-hook = ["dep:console_error_panic_hook"]
+webgpu = ["dep:wgpu", "dep:bytemuck", "dep:wasm-bindgen-futures", "dep:pollster", "dep:futures-channel"]
+cli = []
+
+[[bin]]
+name = "encode"
+path = "src/bin/encode.rs"
+required-features = ["cli"]
+
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O3", "--enable-bulk-memory", "--enable-simd", "--enable-nontrapping-float-to-int", "--enable-mutable-globals", "--enable-sign-ext"]

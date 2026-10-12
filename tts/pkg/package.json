@@ -1,0 +1,17 @@
+{
+  "name": "speaker-builder",
+  "type": "module",
+  "description": "Pure-Rust WavTokenizer encoder for in-browser voice cloning",
+  "version": "0.1.0",
+  "license": "MIT",
+  "files": [
+    "speaker_builder_bg.wasm",
+    "speaker_builder.js",
+    "speaker_builder.d.ts"
+  ],
+  "main": "speaker_builder.js",
+  "types": "speaker_builder.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

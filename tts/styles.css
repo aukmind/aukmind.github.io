@@ -1,0 +1,419 @@
+[v-cloak] { display: none; }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f5f5f5;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+.app-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+
+@media (min-width: 768px) {
+  .app-container { padding: 32px 32px 48px; }
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.app-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.025em;
+}
+
+.app-header p {
+  color: #6b7280;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.header-badges {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* ─── Loading panel (cold-load progress) ──────────────────────────── */
+.loading-panel {
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #eff6ff 0%, #f9fafb 100%);
+  border: 1px solid #e5e7eb;
+}
+
+.loading-panel__title {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.loading-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.loading-row:first-of-type { border-top: none; padding-top: 0; }
+
+.loading-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 600;
+  font-size: 13px;
+  color: #2563eb;
+}
+
+.loading-icon--done   { color: #22c55e; }
+.loading-icon--error  { color: #ef4444; }
+
+.loading-row__body { flex: 1; min-width: 0; }
+.loading-row__label {
+  font-size: 13px;
+  color: #1f2937;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loading-bar {
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+  border-radius: 2px;
+  transition: width 0.18s ease;
+}
+
+.loading-bar__fill--done { background: #22c55e; }
+.loading-bar__fill--error { background: #ef4444; }
+
+/* When the underlying lib doesn't surface progress (e.g. OuteTTS),
+   `percent` stays at 0. Animate a sliding gradient so the user sees
+   the engine isn't hung. The percent itself is unchanged — width: 0
+   plus position: relative + the ::after pseudo provides the motion. */
+.loading-bar--indeterminate {
+  position: relative;
+  overflow: hidden;
+}
+.loading-bar--indeterminate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(37, 99, 235, 0.45) 35%,
+    rgba(37, 99, 235, 0.65) 50%,
+    rgba(37, 99, 235, 0.45) 65%,
+    transparent 100%);
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: indeterminate-slide 1.4s linear infinite;
+}
+@keyframes indeterminate-slide {
+  0%   { background-position: -40% 0; }
+  100% { background-position: 140% 0; }
+}
+
+.loading-percent {
+  font-size: 11px;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.loading-fade-enter-active,
+.loading-fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.loading-fade-enter-from,
+.loading-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* ─── Inline spinner ──────────────────────────────────────────────── */
+.loading-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgba(37, 99, 235, 0.25);
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .main-layout { flex-direction: row; }
+}
+
+.sidebar {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .sidebar { width: 320px; }
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.upload-dragger {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 16px !important;
+  text-align: center;
+}
+
+.engine-status {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.muted { color: #6b7280; }
+
+.advanced-toggle {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.advanced-toggle summary {
+  cursor: pointer;
+  color: #6b7280;
+  user-select: none;
+  padding: 4px 0;
+}
+.advanced-toggle summary:hover { color: #2563eb; }
+
+/* ─── Per-stage cloning progress ──────────────────────────────────── */
+.clone-stages {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.clone-stage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.clone-stage__icon {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.clone-stage--active { color: #1f2937; font-weight: 500; }
+.clone-stage--active .clone-stage__icon { color: #2563eb; }
+.clone-stage--done { color: #22c55e; }
+.clone-stage--done .clone-stage__icon { color: #22c55e; }
+
+.clone-stage__label { flex: 1; }
+.clone-stage__percent {
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* ─── Voice list waiting placeholder ──────────────────────────────── */
+.voice-list__placeholder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  color: #6b7280;
+  font-size: 13px;
+  justify-content: center;
+}
+
+.voice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.voice-item {
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.voice-item:hover { border-color: #93c5fd; }
+
+.voice-item--selected {
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.voice-item__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.voice-item__name {
+  font-weight: 500;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.voice-item__meta {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.generate-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.generate-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.char-count {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.output-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.output-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fafafa;
+}
+
+.output-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.output-item__name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.output-item__meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.output-item__audio {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.output-item__waveform {
+  width: 100%;
+  height: 56px;
+  display: block;
+  margin-bottom: 8px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+/* ─── Generation progress ─────────────────────────────────────────── */
+.gen-progress {
+  margin-top: 14px;
+}
+.gen-progress__detail {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.output-item__actions {
+  display: flex;
+  gap: 8px;
+}

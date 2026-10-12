@@ -1,0 +1,4 @@
+node_modules/
+.vite/
+test-results/
+.DS_Store

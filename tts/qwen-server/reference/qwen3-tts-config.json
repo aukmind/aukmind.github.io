@@ -1,0 +1,31 @@
+{
+  "model_type": "qwen3_tts",
+  "num_hidden_layers": 28,
+  "hidden_size": 1024,
+  "num_attention_heads": 16,
+  "num_key_value_heads": 8,
+  "head_dim": 128,
+  "vocab_size": 3072,
+  "text_vocab_size": 151936,
+  "num_code_groups": 16,
+  "tts_bos_token_id": 151672,
+  "tts_eos_token_id": 151673,
+  "tts_pad_token_id": 151671,
+  "codec_bos_id": 2149,
+  "codec_eos_token_id": 2150,
+  "codec_pad_id": 2148,
+  "codec_language_id": {
+    "chinese": 2055,
+    "english": 2050,
+    "german": 2053,
+    "italian": 2070,
+    "portuguese": 2071,
+    "spanish": 2054,
+    "japanese": 2058,
+    "korean": 2064,
+    "french": 2061,
+    "russian": 2069
+  },
+  "position_id_per_seconds": 13,
+  "sample_rate": 24000
+}

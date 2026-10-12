@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS Studio</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/naive-ui"></script>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <n-config-provider :theme-overrides="theme">
+            <n-message-provider>
+                <tts-app></tts-app>
+            </n-message-provider>
+        </n-config-provider>
+    </div>
+
+    <template id="tts-app-template">
+        <div class="app-container">
+            <header class="app-header">
+                <h1>TTS Studio</h1>
+                <p>Fast text-to-speech with voice cloning · 100% local · runs in your browser</p>
+                <div class="header-badges" v-if="backendLabel || cloneBackendLabel || cachedMB > 0">
+                    <n-tag v-if="backendLabel" :type="backendLabel.type" size="small" round>
+                        {{ backendLabel.text }}
+                    </n-tag>
+                    <n-tag v-if="cloneBackendLabel" :type="cloneBackendLabel.type" size="small" round>
+                        {{ cloneBackendLabel.text }}
+                    </n-tag>
+                    <n-tag size="small" round
+                           :title="'Click to clear all browser caches (Kokoro/OuteTTS/Qwen). Forces re-download next load'"
+                           style="cursor: pointer;"
+                           @click="clearModelCache">
+                        💾 {{ cachedMB > 0 ? cachedMB.toLocaleString() + ' MB cached · clear' : 'clear cache' }}
+                    </n-tag>
+                </div>
+            </header>
+
+            <!-- Cold-load progress: model downloads happening in the background. -->
+            <transition name="loading-fade">
+                <n-card v-if="isBusy" class="loading-panel" :bordered="false">
+                    <div class="loading-panel__title">Initializing</div>
+                    <div v-for="task in taskList" :key="task.id" class="loading-row">
+                        <span class="loading-icon" :class="'loading-icon--' + task.status">
+                            <span v-if="task.status === 'done'">✓</span>
+                            <span v-else-if="task.status === 'error'">✗</span>
+                            <span v-else class="loading-spinner"></span>
+                        </span>
+                        <div class="loading-row__body">
+                            <div class="loading-row__label">{{ task.label }}</div>
+                            <div class="loading-bar"
+                                 :class="{ 'loading-bar--indeterminate': task.status === 'loading' && !task.percent }">
+                                <div class="loading-bar__fill"
+                                     :style="{ width: (task.percent || 0) + '%' }"
+                                     :class="'loading-bar__fill--' + task.status"></div>
+                            </div>
+                        </div>
+                        <span class="loading-percent">{{ task.percent || 0 }}%</span>
+                    </div>
+                </n-card>
+            </transition>
+
+            <div class="main-layout">
+                <div class="sidebar">
+                    <n-card title="Engine">
+                        <n-radio-group v-model:value="engine" size="small">
+                            <n-space vertical>
+                                <n-radio value="kokoro">Kokoro 82M (fast, 28 voices)</n-radio>
+                                <n-radio value="outetts">OuteTTS 500M (voice cloning)</n-radio>
+                                <n-radio value="qwen">Qwen3-TTS (self-hosted or cloud · 13 voices)</n-radio>
+                            </n-space>
+                        </n-radio-group>
+                        <div class="engine-status">
+                            <n-tag :type="statusTag.type" size="small" round>{{ statusTag.text }}</n-tag>
+                            <n-tag v-if="device" size="small" round>{{ device }}</n-tag>
+                        </div>
+
+                        <details v-if="engine === 'qwen'" class="advanced-toggle" open>
+                            <summary>Qwen settings</summary>
+                            <n-radio-group v-model:value="qwenMode" size="small" style="margin-top: 8px; margin-bottom: 8px;">
+                                <n-space vertical>
+                                    <n-radio value="http">HTTP: DashScope or self-hosted server</n-radio>
+                                    <n-radio value="browser">Browser: ONNX in this tab</n-radio>
+                                </n-space>
+                            </n-radio-group>
+
+                            <template v-if="qwenMode === 'http'">
+                                <n-input
+                                    v-model:value="qwenEndpoint"
+                                    placeholder="Endpoint URL, e.g. http://127.0.0.1:8000 for self-hosted, blank for DashScope"
+                                    size="small"
+                                    style="margin-bottom: 6px;"></n-input>
+                                <n-input
+                                    v-model:value="qwenApiKey"
+                                    type="password"
+                                    show-password-on="click"
+                                    placeholder="API key (only needed for DashScope)"
+                                    size="small"
+                                    style="margin-bottom: 6px;"></n-input>
+                                <n-input
+                                    v-model:value="qwenModel"
+                                    placeholder="Model (default: qwen3-tts-flash)"
+                                    size="small"
+                                    style="margin-bottom: 6px;"></n-input>
+                                <n-text depth="3" style="font-size: 11px;">
+                                    Qwen3-TTS is open source. Run <code>qwen-server/serve_qwen.py</code> for a fully local setup, or use DashScope. The key is only sent on remote endpoints.
+                                </n-text>
+                            </template>
+
+                            <template v-else>
+                                <n-text depth="3" style="font-size: 11px; display: block; margin-bottom: 8px;">
+                                    Browser mode runs Qwen3-TTS entirely in this tab (~3.9 GB fp32). There's no public ONNX of Qwen3-TTS yet, so you generate the artefacts once with <code>qwen-server/export_to_onnx.py</code>, host them anywhere CORS-friendly, then paste the directory URL below. Don't have one? Switch to <strong>HTTP</strong> above. The simplest path is local <code>serve_qwen.py</code>.
+                                </n-text>
+                                <n-input
+                                    v-model:value="qwenBaseUrl"
+                                    placeholder="Base URL, e.g. https://huggingface.co/your-user/qwen3-tts-onnx/resolve/main"
+                                    size="small"
+                                    style="margin-bottom: 6px;"></n-input>
+                                <n-input
+                                    v-model:value="qwenTokenizerId"
+                                    placeholder="Tokenizer HF id (default: Qwen/Qwen3-0.6B)"
+                                    size="small"
+                                    style="margin-bottom: 6px;"></n-input>
+                            </template>
+                        </details>
+                    </n-card>
+
+                    <n-card title="Voices">
+                        <details v-if="engine === 'qwen'" class="advanced-toggle">
+                            <summary>Add cloned voice ID</summary>
+                            <n-input
+                                v-model:value="qwenCustomVoiceId"
+                                placeholder="DashScope voice_id (from a clone job)"
+                                size="small"
+                                style="margin-top: 6px; margin-bottom: 6px;"></n-input>
+                            <n-input
+                                v-model:value="qwenCustomVoiceName"
+                                placeholder="Display name"
+                                size="small"
+                                style="margin-bottom: 6px;"></n-input>
+                            <n-button
+                                type="primary" block size="small"
+                                :disabled="!qwenCustomVoiceId.trim()"
+                                @click="addQwenCustomVoice"
+                            >Add voice</n-button>
+                        </details>
+                        <n-tabs v-if="engine === 'outetts'" type="segment" size="small" v-model:value="cloneTab" style="margin-bottom: 12px;">
+                            <n-tab-pane name="audio" tab="From audio">
+                                <details class="advanced-toggle">
+                                    <summary>Encoder URLs</summary>
+                                    <n-input
+                                        v-model:value="encoderWeightsUrl"
+                                        placeholder="WavTokenizer encoder weights URL (.safetensors)"
+                                        size="small"
+                                        style="margin-top: 6px; margin-bottom: 6px;"></n-input>
+                                    <n-input
+                                        v-model:value="encoderConfigUrl"
+                                        placeholder="Encoder config URL (.json)"
+                                        size="small"
+                                        style="margin-bottom: 8px;"></n-input>
+                                </details>
+                                <n-upload
+                                    accept="audio/*"
+                                    :show-file-list="false"
+                                    :default-upload="false"
+                                    v-model:file-list="audioCloneFileList"
+                                    @change="handleAudioPick"
+                                    style="margin-bottom: 8px;"
+                                >
+                                    <n-upload-dragger class="upload-dragger">
+                                        <n-text style="font-size: 13px;">
+                                            <strong>Drop a 5-15 s reference clip</strong>
+                                            <br v-if="pendingAudio"><span v-if="pendingAudio" class="muted">{{ pendingAudio.name }}</span>
+                                        </n-text>
+                                    </n-upload-dragger>
+                                </n-upload>
+                                <n-input
+                                    v-model:value="cloneTranscript"
+                                    type="textarea"
+                                    placeholder="Exact transcript of the clip"
+                                    :autosize="{ minRows: 2, maxRows: 4 }"
+                                    size="small"
+                                    style="margin-bottom: 6px;"></n-input>
+                                <n-button
+                                    block size="small" tertiary
+                                    :loading="transcribing"
+                                    :disabled="!pendingAudio"
+                                    @click="autoTranscribe"
+                                    style="margin-bottom: 8px;"
+                                >Auto-transcribe with Whisper</n-button>
+                                <n-input
+                                    v-model:value="cloneName"
+                                    placeholder="Voice name"
+                                    size="small"
+                                    style="margin-bottom: 8px;"></n-input>
+                                <n-button
+                                    type="primary" block size="small"
+                                    :loading="cloning"
+                                    :disabled="!pendingAudio || !cloneTranscript.trim() || !cloneName.trim() || !encoderWeightsUrl || !encoderConfigUrl"
+                                    @click="cloneFromAudio"
+                                >{{ cloning ? 'Building voice…' : 'Build voice' }}</n-button>
+
+                                <!-- Per-stage cloning progress -->
+                                <div v-if="cloneStages.length > 0" class="clone-stages">
+                                    <div v-for="s in cloneStages" :key="s.key" class="clone-stage" :class="'clone-stage--' + s.status">
+                                        <span class="clone-stage__icon">
+                                            <span v-if="s.status === 'done'">✓</span>
+                                            <span v-else-if="s.status === 'active'" class="loading-spinner"></span>
+                                            <span v-else>·</span>
+                                        </span>
+                                        <span class="clone-stage__label">{{ s.label }}</span>
+                                        <span v-if="s.status === 'active' && s.percent" class="clone-stage__percent">{{ s.percent }}%</span>
+                                    </div>
+                                </div>
+                            </n-tab-pane>
+                            <n-tab-pane name="json" tab="Speaker JSON">
+                                <n-upload
+                                    accept=".json,application/json"
+                                    :show-file-list="false"
+                                    :default-upload="false"
+                                    v-model:file-list="cloneFileList"
+                                    @change="handleVoiceUpload"
+                                >
+                                    <n-upload-dragger class="upload-dragger">
+                                        <n-text style="font-size: 13px;">
+                                            <strong>Drop an OuteTTS speaker JSON</strong>
+                                            <br><span class="muted" style="font-size: 11px;">Pre-built via the Python <code>outetts</code> package</span>
+                                        </n-text>
+                                    </n-upload-dragger>
+                                </n-upload>
+                            </n-tab-pane>
+                        </n-tabs>
+
+                        <div class="voice-list">
+                            <div
+                                v-for="v in voices"
+                                :key="v.id"
+                                @click="selectedVoiceId = v.id"
+                                :class="['voice-item', { 'voice-item--selected': selectedVoiceId === v.id }]"
+                            >
+                                <div class="voice-item__info">
+                                    <span class="voice-item__name">{{ v.label }}</span>
+                                    <span class="voice-item__meta">{{ v.meta }}</span>
+                                </div>
+                                <n-button
+                                    v-if="v.removable"
+                                    circle size="tiny" tertiary type="error"
+                                    @click.stop="removeVoice(v)"
+                                    title="Remove"
+                                >×</n-button>
+                            </div>
+                            <n-empty v-if="voices.length === 0 && engineStatus === 'ready'" description="No voices loaded" size="small"></n-empty>
+                            <div v-else-if="voices.length === 0" class="voice-list__placeholder">
+                                <span class="loading-spinner"></span>
+                                <span>Waiting for engine…</span>
+                            </div>
+                        </div>
+                    </n-card>
+                </div>
+
+                <div class="content-area">
+                    <n-card title="Text">
+                        <n-input
+                            v-model:value="text"
+                            type="textarea"
+                            placeholder="Type or paste text here…"
+                            :autosize="{ minRows: 8, maxRows: 20 }"
+                            size="large"></n-input>
+                        <div class="generate-row">
+                            <span class="char-count">{{ text.length.toLocaleString() }} chars</span>
+                            <div class="generate-actions">
+                                <n-button
+                                    v-if="generating"
+                                    size="large"
+                                    @click="cancelGenerate"
+                                >Cancel</n-button>
+                                <n-button
+                                    v-if="!generating"
+                                    size="large"
+                                    :disabled="!text.trim() || !selectedVoiceId || engineStatus !== 'ready'"
+                                    @click="handleGenerate('download')"
+                                    title="Generate and save as WAV"
+                                >Download TTS</n-button>
+                                <n-button
+                                    type="primary"
+                                    size="large"
+                                    :loading="generating"
+                                    :disabled="!text.trim() || !selectedVoiceId || engineStatus !== 'ready'"
+                                    @click="handleGenerate('live')"
+                                >
+                                    {{ generating ? 'Generating…' : 'Live TTS ▶' }}
+                                </n-button>
+                            </div>
+                        </div>
+                        <div v-if="generating" class="gen-progress">
+                            <n-progress
+                                :percentage="genTotalChars > 0 ? Math.round((genDoneChars / genTotalChars) * 100) : Math.round(progress * 100)"
+                                :show-indicator="false"
+                                :height="8"
+                            />
+                            <div class="gen-progress__detail">
+                                <span>{{ genDoneChars.toLocaleString() }} / {{ genTotalChars.toLocaleString() }} chars</span>
+                                <span v-if="genEtaSeconds !== null">est. {{ genEtaSeconds }}s remaining</span>
+                            </div>
+                        </div>
+                    </n-card>
+
+                    <n-card v-if="outputs.length > 0" title="Generated audio">
+                        <div class="output-list">
+                            <div v-for="(out, idx) in outputs" :key="out.id" class="output-item">
+                                <div class="output-item__header">
+                                    <span class="output-item__name">{{ out.name }}</span>
+                                    <span class="output-item__meta">{{ out.voice }} · {{ out.duration }}s · {{ out.elapsed }}ms</span>
+                                </div>
+                                <svg v-if="out.waveform" class="output-item__waveform" viewBox="0 0 1000 100" preserveAspectRatio="none">
+                                    <path :d="out.waveform" stroke="#2563eb" stroke-width="1" fill="none" stroke-linecap="round"/>
+                                </svg>
+                                <audio :src="out.url" controls :autoplay="out.autoplay" class="output-item__audio"></audio>
+                                <div class="output-item__actions">
+                                    <n-button size="small" @click="downloadOutput(out)">Download WAV</n-button>
+                                    <n-button size="small" tertiary type="error" @click="removeOutput(idx)">Remove</n-button>
+                                </div>
+                            </div>
+                        </div>
+                    </n-card>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script type="module" src="tts-handler.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
