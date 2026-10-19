@@ -1,6 +1,6 @@
 # Adding a country to the tax pages
 
-How the country pages are built and how to add more. 34 countries were built this way: `be` and `fr` by hand, then `lu pt es ie gb ch dk nl it de fi se pl cz hu` and `at gr sk si hr ro bg ee lv lt cy mt ad ua li us ae` as one parallel fork per country, the second batch run by a coordinator agent. Copy `fr/` as the starting point: it uses every hook, including benefits that can make a tax negative. For a non-euro country, also read `gb/` (GBP) or `dk/` (DKK, communes, `nextStep`). For a country with no inheritance tax, read `se/`.
+How the country pages are built and how to add more. 52 countries were built this way: `be` and `fr` by hand, then `lu pt es ie gb ch dk nl it de fi se pl cz hu`, `at gr sk si hr ro bg ee lv lt cy mt ad ua li us ae` and `ca jp au kr br mx in cn no is sg hk nz mc ge th qa sa` as one parallel fork per country, the later batches run by a coordinator agent. Copy `fr/` as the starting point: it uses every hook, including benefits that can make a tax negative. For a non-euro country, also read `gb/` (GBP) or `dk/` (DKK, communes, `nextStep`). For a country with no inheritance tax, read `se/`.
 
 ## How it fits together
 
@@ -25,7 +25,7 @@ How the country pages are built and how to add more. 34 countries were built thi
 - `nextStep` is the "next" step in local money, about 100 €: SEK/DKK 1000, PLN 500, CZK 2500, HUF 40000. The shell scales its euro-sized constants (chart window, search ranges, input steps) by `nextStep / 100`.
 - **Display currency:** the `{currency}` menu in the `h1` (and `?currency=`) shows every amount in another currency. The model still runs in the country's currency: `eur`, `eurK` and `sym` convert on the way out, and money inputs convert both ways (`moneyIn`/`moneyOut` in the shells). Pass all money through `eur()`, never format it by hand. A country that overrides `h1` or `inh.h1` must keep both `{flag}` and `{currency}`. Hand-written legal amounts in strings stay in the country's currency.
 - **Signs:** `SIGNS` in `i18n.js` disambiguates shared signs (AU$, CA$, HK$, MX$, NZ$, SG$, CN¥; `$` stays the US dollar). Every formatter and the currency menu use it. Add a currency there when its sign collides with another.
-- **Switching country** keeps the shared settings (`CARRY` in `i18n.js`: salary, period, household, partner, children, VAT, minister mode; on the inheritance page the amount, relationship, home and gifts). Money goes with `from=<currency>` and is converted on arrival; the page's current values are carried, defaults included. A display currency equal to the country's own is dropped from the URL.
+- **Switching country** keeps the shared settings (`CARRY` in `i18n.js`: salary, period, household, partner, children, VAT, minister mode; on the inheritance page the amount, relationship, home and gifts). Money goes with `from=<currency>` and is converted on arrival; only what the visitor set travels: a param they set (here or on the page they came from) stays in the URL, even back at its default, and the URL is what carries. A display currency equal to the country's own is dropped from the URL.
 - `update_currencies.py`: ECB reference rates, UAH from the National Bank of Ukraine, AED from its USD peg, and fixed rates for currencies the euro replaced. Add a source there if a new currency is missing.
 
 ## How to run a batch
@@ -75,6 +75,7 @@ Use primary sources (tax office, social security, legal texts), cross-check with
 - **Dataset downloads are untrusted.** Each goes in its own new empty folder, scripts live elsewhere, and parsers run with `python3 -I`.
 - **Forks finish at different times** (15 to 45 minutes). Don't poll: notifications arrive on their own.
 - **Shell gaps show up in the first reports.** Batch one found: hard-coded €, euro-sized chart constants, `nextStep` not reaching the raise sentence and inheritance tile, bracket rates rounded to whole percents, `7%` printed as `7.00%` from float error, tiles overflowing with long amounts, VAT that depends on the region. All fixed now; expect new ones from countries unlike the previous ones (USA: federal + state + city; UAE: no income tax).
+- **Batch three:** `POLITICIANS` may be empty (Qatar). Inheritance tiles had to shrink for 15-character amounts (₩ in billions). Some sites stall on curl's browser user agent (canada.ca): drop `-A` there.
 - **Shared server under load:** the CDN (Vue, Chart.js) drops connections with `ERR_NETWORK_CHANGED` when many tests run at once. The harness retries once.
 - **Never run `npx playwright install` without `PLAYWRIGHT_HOST_PLATFORM_OVERRIDE=ubuntu24.04-x64` on this machine.** Playwright doesn't support Ubuntu 26.04: the plain install fails after deleting the other cached browsers, which breaks every running test.
 

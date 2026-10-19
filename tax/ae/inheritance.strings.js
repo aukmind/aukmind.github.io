@@ -1,5 +1,5 @@
 window.TAX_STRINGS = {
-  title: { en: 'UAE Inheritance Tax', nl: 'Erfbelasting in de Emiraten', fr: 'Droits de succession aux Émirats' },
+  title: { en: 'Emirati Inheritance Tax', nl: 'Erfbelasting in de Emiraten', fr: 'Droits de succession aux Émirats' },
   eyebrow: { en: 'United Arab Emirates (Dubai) · deaths in 2026 · no inheritance tax', nl: 'Verenigde Arabische Emiraten (Dubai) · overlijdens in 2026 · geen erfbelasting', fr: 'Émirats arabes unis (Dubaï) · décès en 2026 · pas de droits de succession' },
   lead: {
     en: 'What you pay on what you inherit in the UAE: nothing. There is no inheritance, estate or gift tax, federal or in Dubai. What matters is who inherits: Sharia shares for Muslims, the civil law or a registered will for non-Muslims.',

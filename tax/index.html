@@ -57,6 +57,8 @@ header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
 .flag-menu{max-height:min(60vh,440px);overflow-y:auto}
 .flag-filter{position:sticky;top:-5px;z-index:1;margin:-5px -5px 3px;padding:9px 11px;border:0;border-bottom:1px solid var(--line);border-radius:9px 9px 0 0;background:var(--surface);color:var(--ink);font:500 14.5px var(--sans);outline:none}
 .flag-filter:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.gaps-intro{margin:0 0 8px;color:var(--muted);font-size:13.5px}
+.gaps-list{margin:0;padding-left:20px;font-size:13.5px;line-height:1.55;display:grid;gap:5px}
 .flag-none{padding:7px 10px;color:var(--muted);font:14px var(--sans)}
 .flag-menu a span.cur-code{font:600 13px var(--mono);min-width:3.2em}
 .flag-menu a span.cur-sign{font:500 14px var(--mono);color:var(--muted);min-width:1.8em;margin-left:-4px}
@@ -536,6 +538,12 @@ header{position:relative}
     </div>
   </details>
 
+  <details class="ref-acc gaps" v-if="C.GAPS && C.GAPS.length">
+    <summary class="eyebrow">{{ t('gapsTitle', C.GAPS.length) }}</summary>
+    <p class="gaps-intro">{{ t('gapsIntro') }}</p>
+    <ul class="gaps-list"><li v-for="k in C.GAPS" :key="k" v-html="t('gap.' + k)"></li></ul>
+  </details>
+
   <footer>
     {{ t('sources') }}: <span v-html="allSources"></span>.
     {{ t('disclaimer') }}
@@ -621,8 +629,9 @@ const vTip = {
 
 // Mirrors panel settings in the query string; only values that differ from the defaults are written.
 function bindUrlState(s, fields, watch) {
-  const defaults = Object.fromEntries(Object.values(fields).map(([k]) => [k, s[k]]));
   const q = new URLSearchParams(location.search);
+  // A param the visitor set, here or on the page they came from, stays in the URL even back at its default.
+  const touched = new Set();
   for (const [param, [key, type, allowed]] of Object.entries(fields)) {
     if (!q.has(param)) continue;
     const raw = q.get(param);
@@ -630,28 +639,36 @@ function bindUrlState(s, fields, watch) {
     if (type === 'num' && v !== '' && !Number.isFinite(v)) continue;
     if (allowed && !allowed.includes(v)) continue;
     s[key] = v;
+    touched.add(param);
   }
+  // Only changes that follow a real input count: communes loading or a default settling don't.
+  let user = false;
+  for (const ev of ['input', 'change', 'click', 'keydown']) document.addEventListener(ev, () => { user = true; setTimeout(() => { user = false; }); }, true);
+  const values = () => Object.values(fields).map(([k]) => s[k]);
+  let last = values();
   const write = () => {
+    const now = values();
+    if (user) Object.keys(fields).forEach((param, i) => { if (now[i] !== last[i]) touched.add(param); });
+    last = now;
     const out = new URLSearchParams();
     const cur = new URLSearchParams(location.search);
     for (const k of ['country', 'lang', 'currency']) if (cur.get(k)) out.set(k, cur.get(k));
     for (const [param, [key, type]] of Object.entries(fields)) {
-      if (s[key] === defaults[key]) continue;
+      if (!touched.has(param)) continue;
       out.set(param, type === 'bool' ? (s[key] ? '1' : '0') : String(s[key]));
     }
     const qs = out.toString();
     try { history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash); } catch (e) {}
     TaxI18n.syncUrl();
   };
-  watch(() => Object.values(fields).map(([k]) => s[k]), write);
-  write();  TaxI18n.setCarry(() => Object.fromEntries(Object.entries(fields).map(([param, [key, type]]) =>
-    [param, type === 'bool' ? (s[key] ? '1' : '0') : s[key] == null ? '' : String(s[key])])));
+  watch(values, write);
+  write();
 }
 
 const app = Vue.createApp({
   setup() {
     const { reactive, computed, watch, watchEffect, onMounted, ref, nextTick } = Vue;
-    watchEffect(() => { document.title = t('title'); TaxI18n.syncUrl(); });
+    watchEffect(() => { document.title = `${t('title')} ${TaxI18n.FLAGS[country]}`; TaxI18n.syncUrl(); });
     const s = reactive({
       period: 'month', regime: 'employee', household: 'single', partnerGross: 0, children: 0, vat: true,
       show: { full: true, work: true, employee: true, power: true }, lines: 'both',
@@ -925,7 +942,7 @@ const app = Vue.createApp({
     // Chart window in monthly gross. Curves are sampled only across what's visible, so zooming in stays sharp.
     const MIN_SPAN = 400 * SCALE;
     // Up to the best-paid public office in the list, in monthly gross.
-    const xLimit = () => Math.ceil(Math.max(...POLITICIANS.map(p => p.hi)) / s.factor * 1.04 / (1000 * SCALE)) * 1000 * SCALE;
+    const xLimit = () => Math.ceil((POLITICIANS.length ? Math.max(...POLITICIANS.map(p => p.hi)) : 180000 * SCALE) / s.factor * 1.04 / (1000 * SCALE)) * 1000 * SCALE;
     const view = { min: 0, max: 0, custom: false };
     const defaultView = () => ({ min: 0, max: Math.max(5000 * SCALE, annualGross.value / s.factor + 1000 * SCALE) });
     function setView(min, max) {

@@ -181,10 +181,10 @@ async function inheritance(browser, base, cc) {
     try {
       const o = await open(browser, `${W}?lang=${l}`);
       const problems = [...(await checkContent(o.frame)).bad];
-      // Every option button in the inputs: relationships, regions, switches.
+      // Every option button in the inputs: relationships, regions, switches. An option can hide others.
       const n = await o.frame.evaluate(() => document.querySelectorAll('aside .seg button').length);
       for (let i = 0; i < n; i++) {
-        await o.frame.evaluate(i => document.querySelectorAll('aside .seg button')[i].click(), i);
+        await o.frame.evaluate(i => document.querySelectorAll('aside .seg button')[i]?.click(), i);
         await o.page.waitForTimeout(80);
         const bad = await o.frame.evaluate(() => /\bNaN\b|\bundefined\b|Infinity/.test(document.querySelector('main').innerText));
         if (bad) problems.push(`NaN/undefined after option ${i}`);

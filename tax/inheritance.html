@@ -57,6 +57,10 @@ header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
 .flag-menu{max-height:min(60vh,440px);overflow-y:auto}
 .flag-filter{position:sticky;top:-5px;z-index:1;margin:-5px -5px 3px;padding:9px 11px;border:0;border-bottom:1px solid var(--line);border-radius:9px 9px 0 0;background:var(--surface);color:var(--ink);font:500 14.5px var(--sans);outline:none}
 .flag-filter:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.ref-acc summary{cursor:pointer;margin-bottom:0}
+.ref-acc[open] summary{margin-bottom:10px}
+.gaps-intro{margin:0 0 8px;color:var(--muted);font-size:13.5px}
+.gaps-list{margin:0;padding-left:20px;font-size:13.5px;line-height:1.55;display:grid;gap:5px}
 .flag-none{padding:7px 10px;color:var(--muted);font:14px var(--sans)}
 .flag-menu a span.cur-code{font:600 13px var(--mono);min-width:3.2em}
 .flag-menu a span.cur-sign{font:500 14px var(--mono);color:var(--muted);min-width:1.8em;margin-left:-4px}
@@ -83,7 +87,7 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 .panel h2{font-size:17px;margin:0 0 12px;font-weight:600}
 .big{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
 .big div{display:flex;flex-direction:column;gap:2px;padding-left:12px;border-left:4px solid var(--dot);min-width:0;container-type:inline-size}
-.big b{font-family:var(--mono);font-size:min(26px,12cqi);font-weight:500;white-space:nowrap}
+.big b{font-family:var(--mono);font-size:min(26px,10cqi);font-weight:500;white-space:nowrap}
 .big span{font-size:12.5px;color:var(--muted)}
 .tbl-wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
@@ -119,7 +123,7 @@ td.heat{border-radius:3px}
   .chart-box{height:360px;margin-inline:-8px}
   td,th{padding:7px 5px;font-size:12.5px}
   td:first-child{white-space:normal}
-  .big b{font-size:min(22px,12cqi)}
+  .big b{font-size:min(22px,10cqi)}
 }
 footer a{color:var(--accent)}
 header{position:relative}
@@ -240,6 +244,12 @@ details.more .field+.field{margin-top:16px}
     </div>
   </div>
 
+  <details class="ref-acc gaps" v-if="C.GAPS && C.GAPS.length">
+    <summary class="eyebrow">{{ t('gapsTitle', C.GAPS.length) }}</summary>
+    <p class="gaps-intro">{{ t('gapsIntro') }}</p>
+    <ul class="gaps-list"><li v-for="k in C.GAPS" :key="k" v-html="t('gap.' + k)"></li></ul>
+  </details>
+
   <footer>
     {{ t('sources') }}:
     <template v-for="(src, i) in C.SOURCES" :key="src[0]"><a :href="src[1]" target="_blank" rel="noopener">{{ t('src.' + src[0]) }}</a>{{ i < C.SOURCES.length - 1 ? ' · ' : '. ' }}</template>
@@ -263,8 +273,9 @@ const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(
 
 // Mirrors panel settings in the query string; only values that differ from the defaults are written.
 function bindUrlState(s, fields, watch) {
-  const defaults = Object.fromEntries(Object.values(fields).map(([k]) => [k, s[k]]));
   const q = new URLSearchParams(location.search);
+  // A param the visitor set, here or on the page they came from, stays in the URL even back at its default.
+  const touched = new Set();
   for (const [param, [key, type, allowed]] of Object.entries(fields)) {
     if (!q.has(param)) continue;
     const raw = q.get(param);
@@ -272,22 +283,30 @@ function bindUrlState(s, fields, watch) {
     if (type === 'num' && v !== '' && !Number.isFinite(v)) continue;
     if (allowed && !allowed.includes(v)) continue;
     s[key] = v;
+    touched.add(param);
   }
+  // Only changes that follow a real input count: communes loading or a default settling don't.
+  let user = false;
+  for (const ev of ['input', 'change', 'click', 'keydown']) document.addEventListener(ev, () => { user = true; setTimeout(() => { user = false; }); }, true);
+  const values = () => Object.values(fields).map(([k]) => s[k]);
+  let last = values();
   const write = () => {
+    const now = values();
+    if (user) Object.keys(fields).forEach((param, i) => { if (now[i] !== last[i]) touched.add(param); });
+    last = now;
     const out = new URLSearchParams();
     const cur = new URLSearchParams(location.search);
     for (const k of ['country', 'lang', 'currency']) if (cur.get(k)) out.set(k, cur.get(k));
     for (const [param, [key, type]] of Object.entries(fields)) {
-      if (s[key] === defaults[key]) continue;
+      if (!touched.has(param)) continue;
       out.set(param, type === 'bool' ? (s[key] ? '1' : '0') : String(s[key]));
     }
     const qs = out.toString();
     try { history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash); } catch (e) {}
     TaxI18n.syncUrl();
   };
-  watch(() => Object.values(fields).map(([k]) => s[k]), write);
-  write();  TaxI18n.setCarry(() => Object.fromEntries(Object.entries(fields).map(([param, [key, type]]) =>
-    [param, type === 'bool' ? (s[key] ? '1' : '0') : s[key] == null ? '' : String(s[key])])));
+  watch(values, write);
+  write();
 }
 
 // One input from the country's field list: money, number, seg (row or column), check or stepper.
@@ -314,7 +333,7 @@ const InhField = {
 const app = Vue.createApp({
   setup() {
     const { reactive, computed, watch, watchEffect, onMounted } = Vue;
-    watchEffect(() => { document.title = t('title'); TaxI18n.syncUrl(); });
+    watchEffect(() => { document.title = `${t('title')} ${TaxI18n.FLAGS[country]}`; TaxI18n.syncUrl(); });
     const s = reactive({ ...C.state });
     bindUrlState(s, C.urlFields, watch);
     const mainFields = C.fields.filter(f => !f.more), moreFields = C.fields.filter(f => f.more);

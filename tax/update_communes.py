@@ -12,6 +12,10 @@
     python3 update_communes.py li   # tax/li/communes.js: Gemeindesteuerzuschlag from each Gemeinderat's published decision
     python3 update_communes.py hr   # tax/hr/communes.js: city income tax rates (Porezna uprava) + counties (Ministry of Demography) + assisted areas (NN 3/2024)
     python3 update_communes.py us   # tax/us/communes.js: state income + sales tax (Tax Foundation) + curated local income taxes; needs openpyxl
+    python3 update_communes.py is   # tax/is/communes.js: útsvar per municipality (Samband íslenskra sveitarfélaga); needs xlrd
+    python3 update_communes.py jp   # tax/jp/communes.js: Kyokai Kenpo health rate per prefecture (Japan Health Insurance Association); needs openpyxl
+    python3 update_communes.py ca   # tax/ca/communes.js: federal + provincial brackets and basic amounts (CRA T4127) + curated 2026 changes and Quebec rules
+    python3 update_communes.py mx   # tax/mx/communes.js: state payroll tax (ISN) per state, curated table
 
 Needs curl, and pdftotext (poppler-utils) for Belgium, Liechtenstein and Croatia. Downloads go to a temporary folder.
 Update the URLs and dates below when a new year is published.
@@ -822,5 +826,218 @@ def update_us():
     print(f'{path}: {os.path.getsize(path) // 1024} KB')
 
 
+IS_XLS = 'https://samband-islenskra-sveitarfelaga.cdn.prismic.io/samband-islenskra-sveitarfelaga/aVuhgXNYClf9oyAY_%C3%9Atsvarspr%C3%B3sentur_net.xls'
+IS_YEAR = 2026
+# Landshluti from the first digit of the municipality number.
+
+IS_REGIONS = {'0': 'Höfuðborgarsvæðið', '1': 'Höfuðborgarsvæðið', '2': 'Suðurnes', '3': 'Vesturland', '4': 'Vestfirðir',
+              '5': 'Norðurland vestra', '6': 'Norðurland eystra', '7': 'Austurland', '8': 'Suðurland'}
+IS_NAMES = {'Svalbarðsstrandarhr.': 'Svalbarðsstrandarhreppur', 'Húnaþing Vestra': 'Húnaþing vestra'}
+
+
+def build_is(tmpdir):
+    import xlrd
+    sh = xlrd.open_workbook(fetch(IS_XLS, os.path.join(tmpdir, 'utsvar.xls'), '-A', 'Mozilla/5.0')).sheet_by_index(0)
+    head = next(r for r in range(sh.nrows) if sh.cell_value(r, 1) == '' and IS_YEAR in sh.row_values(r) and r > 5)
+    col = sh.row_values(head).index(IS_YEAR)
+    rows = []
+    for r in range(head + 1, sh.nrows):
+        num, name, rate = sh.cell_value(r, 0), str(sh.cell_value(r, 1)).strip(), sh.cell_value(r, col)
+        if num == '' or not name or rate == '':
+            continue
+        code = f'{int(num):04d}'
+        rows.append([IS_NAMES.get(name, name), round(rate * 100, 2), IS_REGIONS[code[0]], code])
+    rows.sort(key=lambda x: x[0])
+    if len({r[3] for r in rows}) != len(rows) or not 50 < len(rows) < 80:
+        sys.exit(f'is: unexpected rows ({len(rows)})')
+    print(f'is: {len(rows)} municipalities')
+    return 'window.COMMUNES = ' + json.dumps(rows, ensure_ascii=False, separators=(',', ':')) + ';\n'
+
+
+def update_is():
+    path = os.path.join(HERE, 'is', 'communes.js')
+    with tempfile.TemporaryDirectory() as tmp:
+        js = build_is(tmp)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(js)
+    print(f'{path}: {os.path.getsize(path) // 1024} KB')
+
+
+JP_KENPO_XLSX = 'https://www.kyoukaikenpo.or.jp/assets/r8ippan3.xlsx'
+# Sheet name -> (JIS prefecture code, English name).
+JP_PREFS = {
+    '北海道': ('01', 'Hokkaido'), '青森': ('02', 'Aomori'), '岩手': ('03', 'Iwate'), '宮城': ('04', 'Miyagi'),
+    '秋田': ('05', 'Akita'), '山形': ('06', 'Yamagata'), '福島': ('07', 'Fukushima'), '茨城': ('08', 'Ibaraki'),
+    '栃木': ('09', 'Tochigi'), '群馬': ('10', 'Gunma'), '埼玉': ('11', 'Saitama'), '千葉': ('12', 'Chiba'),
+    '東京': ('13', 'Tokyo'), '神奈川': ('14', 'Kanagawa'), '新潟': ('15', 'Niigata'), '富山': ('16', 'Toyama'),
+    '石川': ('17', 'Ishikawa'), '福井': ('18', 'Fukui'), '山梨': ('19', 'Yamanashi'), '長野': ('20', 'Nagano'),
+    '岐阜': ('21', 'Gifu'), '静岡': ('22', 'Shizuoka'), '愛知': ('23', 'Aichi'), '三重': ('24', 'Mie'),
+    '滋賀': ('25', 'Shiga'), '京都': ('26', 'Kyoto'), '大阪': ('27', 'Osaka'), '兵庫': ('28', 'Hyogo'),
+    '奈良': ('29', 'Nara'), '和歌山': ('30', 'Wakayama'), '鳥取': ('31', 'Tottori'), '島根': ('32', 'Shimane'),
+    '岡山': ('33', 'Okayama'), '広島': ('34', 'Hiroshima'), '山口': ('35', 'Yamaguchi'), '徳島': ('36', 'Tokushima'),
+    '香川': ('37', 'Kagawa'), '愛媛': ('38', 'Ehime'), '高知': ('39', 'Kochi'), '福岡': ('40', 'Fukuoka'),
+    '佐賀': ('41', 'Saga'), '長崎': ('42', 'Nagasaki'), '熊本': ('43', 'Kumamoto'), '大分': ('44', 'Oita'),
+    '宮崎': ('45', 'Miyazaki'), '鹿児島': ('46', 'Kagoshima'), '沖縄': ('47', 'Okinawa'),
+}
+JP_SUFFIX = {'北海道': '', '東京': '都', '京都': '府', '大阪': '府'}
+
+
+def build_jp(tmpdir):
+    import openpyxl
+    dest = os.path.join(tmpdir, 'kenpo.xlsx')
+    subprocess.run(['curl', '-sSfL', '--retry', '3', '-A', 'Mozilla/5.0', '-o', dest, JP_KENPO_XLSX], check=True)
+    wb = openpyxl.load_workbook(dest, read_only=True, data_only=True)
+    rows = []
+    for sheet in wb.sheetnames:
+        if sheet not in JP_PREFS:
+            sys.exit(f'jp: unexpected sheet {sheet}')
+        code, name = JP_PREFS[sheet]
+        rate = None
+        # The rate row holds the health rate (no care), the rate with care, then the child levy and pension rates.
+        for r in wb[sheet].iter_rows(min_row=1, max_row=12, values_only=True):
+            if r and r[0] == '等級' and isinstance(r[5], float):
+                rate, care = r[5], r[7] - r[5]
+                break
+        if rate is None or not .08 < rate < .12 or abs(care - .0162) > 1e-6:
+            sys.exit(f'jp: bad rates for {sheet}: {rate}')
+        rows.append([name, round(rate * 100, 2), sheet + JP_SUFFIX.get(sheet, '県'), code])
+    if len(rows) != 47:
+        sys.exit(f'jp: expected 47 prefectures, got {len(rows)}')
+    rows.sort(key=lambda r: r[3])
+    return 'window.COMMUNES = ' + json.dumps(rows, ensure_ascii=False, separators=(',', ':')) + ';\n'
+
+
+def update_jp():
+    path = os.path.join(HERE, 'jp', 'communes.js')
+    with tempfile.TemporaryDirectory() as tmp:
+        js = build_jp(tmp)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(js)
+    print(f'{path}: {os.path.getsize(path) // 1024} KB')
+
+
+CA_T4127 = 'https://www.canada.ca/content/dam/cra-arc/formspubs/pub/t4127-jan/'
+CA_RATES = CA_T4127 + 'rtsncmtrshldcnstnt-01-26e.csv'
+CA_OTHER = CA_T4127 + 'thrrtsmnts-01-26e.csv'
+# Province code, English name, sales tax (GST + HST/PST/QST).
+CA_PROVS = [
+    ('AB', 'Alberta', 5), ('BC', 'British Columbia', 12), ('MB', 'Manitoba', 12), ('NB', 'New Brunswick', 15),
+    ('NL', 'Newfoundland and Labrador', 15), ('NS', 'Nova Scotia', 14), ('NT', 'Northwest Territories', 5),
+    ('NU', 'Nunavut', 5), ('ON', 'Ontario', 13), ('PE', 'Prince Edward Island', 15), ('QC', 'Quebec', 14.975),
+    ('SK', 'Saskatchewan', 11), ('YT', 'Yukon', 5),
+]
+# Full-year 2026 values from budgets announced after January (CA_T4127 July 2026, Option 2).
+CA_OVERRIDES = {
+    'BC': {'rate0': .056, 'red': {'max': 690, 'from': 25570, 'to': 44952, 'rate': .0356}},
+    'NL': {'bpa': 13094},
+    'PE': {'add': [200000, .20]},
+}
+# Rules the tables don't carry. eht: employer health or payroll tax for a large employer, ehtS for a small one (%).
+# ptax: payroll tax withheld from the employee (%).
+CA_EXTRA = {
+    'AB': {'supp': {'floor': 4896, 'rate': .25}},
+    'BC': {'eht': 1.95},
+    'MB': {'eht': 2.15, 'bpaPhase': [200000, 400000]},
+    'NL': {'eht': 2.0},
+    'NT': {'ptax': 2},
+    'NU': {'ptax': 2},
+    'ON': {'eht': 1.95, 'surtax': [[5818, .20], [7446, .36]], 'ohp': 1, 'otr': {'base': 300, 'kid': 554}},
+    'QC': {'b': [[0, .14], [54345, .19], [108680, .24], [132245, .2575]], 'bpa': 18952,
+           'empDed': {'rate': .06, 'max': 1450}, 'eht': 4.26, 'ehtS': 1.65, 'wsdrf': 1, 'cnt': .06},
+    'YT': {'bpaFed': 1, 'cea': 1501},
+}
+
+
+def ca_num(x):
+    x = x.replace(',', '').replace('*', '').strip()
+    x = ''.join(ch for ch in x if ch in '0123456789.')
+    return float(x) if x else None
+
+
+def ca_csv(url, tmpdir):
+    # canada.ca stalls when curl sends a browser user agent.
+    path = fetch(url, os.path.join(tmpdir, url.rsplit('/', 1)[1]))
+    with open(path, encoding='latin-1') as f:
+        return list(csv.reader(f))
+
+
+def build_ca(tmpdir):
+    rows = ca_csv(CA_RATES, tmpdir)
+    tables, cur = {}, None
+    for r in rows:
+        if len(r) < 3:
+            continue
+        if r[0].strip():
+            cur = r[0].strip()
+        if r[1] in ('A', 'V'):
+            tables.setdefault(cur, {})[r[1]] = [v for v in (ca_num(x) for x in r[2:]) if v is not None]
+    bpa = {}
+    for r in ca_csv(CA_OTHER, tmpdir):
+        if len(r) > 1 and r[0].strip() in dict((p[0], 1) for p in CA_PROVS):
+            bpa[r[0].strip()] = ca_num(r[1])
+
+    out = []
+    for code, name, sales in CA_PROVS:
+        spec = {}
+        if code in tables:
+            t = tables[code]
+            spec['b'] = [[int(a), round(v, 4)] for a, v in zip(t['A'], t['V'])]
+            if bpa.get(code):
+                spec['bpa'] = int(bpa[code])
+        o = CA_OVERRIDES.get(code, {})
+        if 'rate0' in o:
+            spec['b'][0][1] = o['rate0']
+        if 'bpa' in o:
+            spec['bpa'] = o['bpa']
+        if 'add' in o and spec['b'][-1][0] < o['add'][0]:
+            spec['b'].append(o['add'])
+        if 'red' in o:
+            spec['red'] = o['red']
+        spec.update(CA_EXTRA.get(code, {}))
+        if code == 'MB':
+            spec['bpa'] = 15780
+        top = round(spec['b'][-1][1] * 100, 3)
+        out.append([name, code, top, sales, spec])
+    assert len(out) == 13 and all(e[4].get('b') and (e[4].get('bpa') or e[4].get('bpaFed')) for e in out), 'incomplete table'
+    return 'window.COMMUNES = ' + json.dumps(out, ensure_ascii=False, separators=(',', ':')) + ';\n'
+
+
+def update_ca():
+    path = os.path.join(HERE, 'ca', 'communes.js')
+    with tempfile.TemporaryDirectory() as tmp:
+        js = build_ca(tmp)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(js)
+    print(f'{path}: {os.path.getsize(path) // 1024} KB')
+
+
+# State payroll tax (ISN) by state, 2026: [name, rate %, INEGI code]. No dataset to download; flat approximations.
+MX_ISN = [
+    ('Aguascalientes', 2.5, '01'), ('Baja California', 3.0, '02'), ('Baja California Sur', 2.5, '03'),
+    ('Campeche', 3.0, '04'), ('Coahuila', 3.0, '05'), ('Colima', 3.0, '06'), ('Chiapas', 2.0, '07'),
+    ('Chihuahua', 4.0, '08'), ('Ciudad de México', 4.0, '09'), ('Durango', 2.5, '10'),
+    ('Guanajuato', 3.0, '11'), ('Guerrero', 2.3, '12'), ('Hidalgo', 3.0, '13'), ('Jalisco', 3.0, '14'),
+    ('Estado de México', 3.0, '15'), ('Michoacán', 3.0, '16'), ('Morelos', 2.0, '17'), ('Nayarit', 2.0, '18'),
+    ('Nuevo León', 4.0, '19'), ('Oaxaca', 3.0, '20'), ('Puebla', 3.0, '21'), ('Querétaro', 2.0, '22'),
+    ('Quintana Roo', 3.0, '23'), ('San Luis Potosí', 2.5, '24'), ('Sinaloa', 3.0, '25'), ('Sonora', 2.0, '26'),
+    ('Tabasco', 3.0, '27'), ('Tamaulipas', 3.0, '28'), ('Tlaxcala', 3.0, '29'), ('Veracruz', 3.0, '30'),
+    ('Yucatán', 3.0, '31'), ('Zacatecas', 3.0, '32'),
+]
+
+
+def build_mx(tmpdir):
+    rows = [[name, rate, code] for name, rate, code in MX_ISN]
+    return 'window.COMMUNES = ' + json.dumps(rows, ensure_ascii=False, separators=(',', ':')) + ';\n'
+
+
+def update_mx():
+    path = os.path.join(HERE, 'mx', 'communes.js')
+    with tempfile.TemporaryDirectory() as tmp:
+        js = build_mx(tmp)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(js)
+    print(f'{path}: {os.path.getsize(path) // 1024} KB')
+
+
 if __name__ == '__main__':
-    {'be': update_be, 'fr': update_fr, 'ch': update_ch, 'dk': update_dk, 'pt': update_pt, 'fi': update_fi, 'it': update_it, 'se': update_se, 'li': update_li, 'hr': update_hr, 'us': update_us}.get(sys.argv[1] if len(sys.argv) > 1 else '', lambda: sys.exit(__doc__))()
+    {'be': update_be, 'fr': update_fr, 'ch': update_ch, 'dk': update_dk, 'pt': update_pt, 'fi': update_fi, 'it': update_it, 'se': update_se, 'li': update_li, 'hr': update_hr, 'us': update_us, 'is': update_is, 'jp': update_jp, 'ca': update_ca, 'mx': update_mx}.get(sys.argv[1] if len(sys.argv) > 1 else '', lambda: sys.exit(__doc__))()

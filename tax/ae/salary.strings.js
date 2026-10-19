@@ -1,5 +1,5 @@
 window.TAX_STRINGS = {
-  title: { en: `UAE Buying Power`, nl: `Koopkracht in de Emiraten`, fr: `Pouvoir d'achat aux Émirats` },
+  title: { en: `Emirati Buying Power`, nl: `Koopkracht in de Emiraten`, fr: `Pouvoir d'achat aux Émirats` },
   eyebrow: { en: `United Arab Emirates (Dubai) · 2026 · employee`, nl: `Verenigde Arabische Emiraten (Dubai) · 2026 · werknemer`, fr: `Émirats arabes unis (Dubaï) · 2026 · salarié` },
   eyebrowMinister: { en: `United Arab Emirates · 2026 · public office`, nl: `Verenigde Arabische Emiraten · 2026 · openbaar ambt`, fr: `Émirats arabes unis · 2026 · fonction publique` },
   lead: {

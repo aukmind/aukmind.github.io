@@ -1,5 +1,5 @@
 window.TAX_STRINGS = {
-  title: { en: 'US Estate Tax', nl: 'Amerikaanse erfbelasting', fr: 'Droits de succession aux États-Unis' },
+  title: { en: 'American Estate Tax', nl: 'Amerikaanse erfbelasting', fr: 'Droits de succession aux États-Unis' },
   eyebrow: { en: 'United States · deaths in 2026 · estate and inheritance tax', nl: 'Verenigde Staten · overlijdens in 2026 · estate en inheritance tax', fr: 'États-Unis · décès en 2026 · estate tax et inheritance tax' },
   lead: {
     en: 'The federal estate tax is paid by the estate, not the heir: 40% above $15 million, nothing between spouses. Twelve states and DC add their own estate tax with much lower exemptions, and five states tax what each heir receives.',

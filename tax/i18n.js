@@ -3,7 +3,7 @@
   const LANGS = ['en', 'nl', 'fr'];
   // Signs several currencies share ($, ¥) get the country in front, everywhere amounts are shown.
   const SIGNS = { AUD: 'AU$', CAD: 'CA$', HKD: 'HK$', MXN: 'MX$', NZD: 'NZ$', SGD: 'SG$', CNY: 'CN¥' };
-  const COUNTRIES = ['be', 'fr', 'lu', 'pt', 'es', 'ie', 'gb', 'ch', 'dk', 'nl', 'it', 'de', 'fi', 'se', 'pl', 'cz', 'hu', 'at', 'gr', 'sk', 'si', 'hr', 'ro', 'bg', 'ee', 'lv', 'lt', 'cy', 'mt', 'ad', 'ua', 'li', 'us', 'ae'];
+  const COUNTRIES = ['be', 'fr', 'lu', 'pt', 'es', 'ie', 'gb', 'ch', 'dk', 'nl', 'it', 'de', 'fi', 'se', 'pl', 'cz', 'hu', 'at', 'gr', 'sk', 'si', 'hr', 'ro', 'bg', 'ee', 'lv', 'lt', 'cy', 'mt', 'ad', 'ua', 'li', 'us', 'ae', 'ca', 'jp', 'au', 'kr', 'br', 'mx', 'in', 'cn', 'no', 'is', 'sg', 'hk', 'nz', 'mc', 'ge', 'th', 'qa', 'sa'];
   const KEY = 'aukmind.tax.lang';
   const GEO_URL = 'https://get.geojs.io/v1/ip/geo.json';
 
@@ -52,7 +52,7 @@
     st.set(v);
     return v;
   }
-  const FLAGS = { be: '🇧🇪', fr: '🇫🇷', lu: '🇱🇺', pt: '🇵🇹', es: '🇪🇸', ie: '🇮🇪', gb: '🇬🇧', ch: '🇨🇭', dk: '🇩🇰', nl: '🇳🇱', it: '🇮🇹', de: '🇩🇪', fi: '🇫🇮', se: '🇸🇪', pl: '🇵🇱', cz: '🇨🇿', hu: '🇭🇺', at: '🇦🇹', gr: '🇬🇷', sk: '🇸🇰', si: '🇸🇮', hr: '🇭🇷', ro: '🇷🇴', bg: '🇧🇬', ee: '🇪🇪', lv: '🇱🇻', lt: '🇱🇹', cy: '🇨🇾', mt: '🇲🇹', ad: '🇦🇩', ua: '🇺🇦', li: '🇱🇮', us: '🇺🇸', ae: '🇦🇪' };
+  const FLAGS = { be: '🇧🇪', fr: '🇫🇷', lu: '🇱🇺', pt: '🇵🇹', es: '🇪🇸', ie: '🇮🇪', gb: '🇬🇧', ch: '🇨🇭', dk: '🇩🇰', nl: '🇳🇱', it: '🇮🇹', de: '🇩🇪', fi: '🇫🇮', se: '🇸🇪', pl: '🇵🇱', cz: '🇨🇿', hu: '🇭🇺', at: '🇦🇹', gr: '🇬🇷', sk: '🇸🇰', si: '🇸🇮', hr: '🇭🇷', ro: '🇷🇴', bg: '🇧🇬', ee: '🇪🇪', lv: '🇱🇻', lt: '🇱🇹', cy: '🇨🇾', mt: '🇲🇹', ad: '🇦🇩', ua: '🇺🇦', li: '🇱🇮', us: '🇺🇸', ae: '🇦🇪', ca: '🇨🇦', jp: '🇯🇵', au: '🇦🇺', kr: '🇰🇷', br: '🇧🇷', mx: '🇲🇽', 'in': '🇮🇳', cn: '🇨🇳', no: '🇳🇴', is: '🇮🇸', sg: '🇸🇬', hk: '🇭🇰', nz: '🇳🇿', mc: '🇲🇨', ge: '🇬🇪', th: '🇹🇭', qa: '🇶🇦', sa: '🇸🇦' };
   // Inside a tax/<country>/ wrapper (embed.js), the page reports its URL so the address bar stays shareable.
   const wrapper = (() => { try { return window.parent !== window ? window.parent.TaxEmbed || null : null; } catch (e) { return null; } })();
   function syncUrl() {
@@ -73,16 +73,14 @@
   };
   const thisPage = () => location.pathname.split('/').pop().replace(/\.html$/, '') || 'index';
   let localCur = 'EUR';
-  // The page registers its current values, defaults included: a default here isn't one there.
-  let carryNow = () => Object.fromEntries(new URLSearchParams(location.search));
-  const setCarry = f => { carryNow = f; };
   // `shown` is the display currency picked by hand (null for the country's own); it follows the visitor.
   const pageLink = (c, page, lang, shown) => {
     const q = new URLSearchParams({ lang });
     if (shown) q.set('currency', shown);
     if (page === thisPage()) {
-      const cur = carryNow();
-      for (const k of CARRY[page].keep) if (cur[k] != null && cur[k] !== '') q.set(k, cur[k]);
+      // Only what the visitor set travels, and that is exactly what is in the URL.
+      const cur = new URLSearchParams(location.search);
+      for (const k of CARRY[page].keep) if (cur.has(k)) q.set(k, cur.get(k));
       if (CARRY[page].money.some(k => q.has(k))) q.set('from', localCur);
     }
     return { href: `${wrapPath(c, page)}?${q}`, target: '_top' };
@@ -247,5 +245,5 @@
     if (!(from in r) || !(to in r)) return null;
     return v / r[from] * r[to];
   };
-  window.TaxI18n = { create, fx, setCarry, loadCountry, syncUrl, shareUrl, pageLink, FlagTitle, COUNTRIES };
+  window.TaxI18n = { create, fx, FLAGS, loadCountry, syncUrl, shareUrl, pageLink, FlagTitle, COUNTRIES };
 })();

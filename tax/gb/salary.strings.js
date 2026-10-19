@@ -1,5 +1,5 @@
 window.TAX_STRINGS = {
-  title: { en: `UK Buying Power`, nl: `Britse koopkracht`, fr: `Pouvoir d'achat au Royaume-Uni` },
+  title: { en: `British Buying Power`, nl: `Britse koopkracht`, fr: `Pouvoir d'achat au Royaume-Uni` },
   eyebrow: { en: `United Kingdom · tax year 2026/27 · employee`, nl: `Verenigd Koninkrijk · belastingjaar 2026/27 · werknemer`, fr: `Royaume-Uni · année fiscale 2026/27 · salarié` },
   eyebrowMinister: { en: `United Kingdom · tax year 2026/27 · minister`, nl: `Verenigd Koninkrijk · belastingjaar 2026/27 · minister`, fr: `Royaume-Uni · année fiscale 2026/27 · ministre` },
   lead: {

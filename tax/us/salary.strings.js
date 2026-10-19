@@ -1,5 +1,5 @@
 window.TAX_STRINGS = {
-  title: { en: `US Buying Power`, nl: `Amerikaanse koopkracht`, fr: `Pouvoir d'achat aux États-Unis` },
+  title: { en: `American Buying Power`, nl: `Amerikaanse koopkracht`, fr: `Pouvoir d'achat aux États-Unis` },
   eyebrow: { en: `United States · tax year 2026 · employee`, nl: `Verenigde Staten · belastingjaar 2026 · werknemer`, fr: `États-Unis · année fiscale 2026 · salarié` },
   eyebrowMinister: { en: `United States · tax year 2026 · federal official`, nl: `Verenigde Staten · belastingjaar 2026 · federale ambtsdrager`, fr: `États-Unis · année fiscale 2026 · élu ou ministre fédéral` },
   lead: {

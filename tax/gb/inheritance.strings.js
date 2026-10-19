@@ -1,5 +1,5 @@
 window.TAX_STRINGS = {
-  title: { en: 'UK Inheritance Tax', nl: 'Britse erfbelasting', fr: 'Droits de succession au Royaume-Uni' },
+  title: { en: 'British Inheritance Tax', nl: 'Britse erfbelasting', fr: 'Droits de succession au Royaume-Uni' },
   eyebrow: { en: 'United Kingdom · deaths in tax year 2026/27 · Inheritance Tax', nl: 'Verenigd Koninkrijk · overlijdens in belastingjaar 2026/27 · Inheritance Tax', fr: 'Royaume-Uni · décès sur l\'année fiscale 2026/27 · Inheritance Tax' },
   lead: {
     en: 'In the UK the estate pays, not the heir: one 40% rate above the allowances, whatever the relationship. What changes the bill is who gets the home and whether a spouse inherits.',

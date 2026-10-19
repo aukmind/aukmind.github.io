@@ -64,6 +64,7 @@ function check(cc) {
     for (const k of literalKeys(read('i18n.js'))) need(k, 'i18n.js');
     for (const k of literalKeys(read(file))) need(k, file);
 
+    for (const k of C.GAPS || []) need('gap.' + k, 'GAPS');
     if (page === 'salary') {
       for (const k of C.regions || []) need('region.' + k, 'regions');
       for (const k of C.sizes || []) need('size.' + k, 'sizes');
