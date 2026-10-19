@@ -2,3 +2,5 @@ node_modules/
 .vite/
 test-results/
 .DS_Store
+tax/tests/shots/
+__pycache__/

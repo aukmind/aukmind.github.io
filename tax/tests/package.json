@@ -1,0 +1,12 @@
+{
+  "name": "tax-tests",
+  "private": true,
+  "scripts": {
+    "test": "node strings.js && node run.js",
+    "strings": "node strings.js",
+    "browser": "node run.js"
+  },
+  "devDependencies": {
+    "playwright": "1.58.0"
+  }
+}

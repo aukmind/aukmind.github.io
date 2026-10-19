@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script src="currencies.js"></script>
 <script src="i18n.js"></script>
 <script src="common.strings.js"></script>
 <style>
@@ -15,7 +16,7 @@
   --bg:#f3f5f8; --surface:#ffffff; --sunk:#e9edf3; --ink:#152033; --muted:#5d6879; --line:#d8dee8;
   --accent:#2446b8; --accent-soft:#e3e9fb;
   --r-vl:#e0a100; --r-wal:#c8403a; --r-bru:#2f55d4;
-  --r-partner:#2d9a67; --r-child:#2f55d4; --r-grandchild:#0e97ad; --r-sibling:#e0a100; --r-nephew:#d9762f; --r-relative:#b03a7a; --r-other:#c8403a;
+  --r-partner:#2d9a67; --r-child:#2f55d4; --r-grandchild:#0e97ad; --r-sibling:#e0a100; --r-nephew:#d9762f; --r-relative:#b03a7a; --r-other:#c8403a; --r-parent:#7a5cd6; --r-step:#5b6b7a;
   --k-tax:#d9482f; --k-keep:#2d9a67; --k-rate:#b03a7a; --k-next:#4f5fd8;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -25,14 +26,14 @@
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#0f141c; --surface:#171e2a; --sunk:#1f2836; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2b3546;
-    --accent:#8aa6ff; --accent-soft:#233154; --r-vl:#f2c14e; --r-wal:#f0726b; --r-bru:#7f9cff; --r-partner:#4cc79c; --r-child:#7f9cff; --r-grandchild:#4fc6d8; --r-sibling:#f2c14e; --r-nephew:#f0a060; --r-relative:#e27ab3; --r-other:#f0726b;
+    --accent:#8aa6ff; --accent-soft:#233154; --r-vl:#f2c14e; --r-wal:#f0726b; --r-bru:#7f9cff; --r-partner:#4cc79c; --r-child:#7f9cff; --r-grandchild:#4fc6d8; --r-sibling:#f2c14e; --r-nephew:#f0a060; --r-relative:#e27ab3; --r-other:#f0726b; --r-parent:#b79bf0; --r-step:#9aabbd;
     --k-tax:#f0726b; --k-keep:#4cc79c; --k-rate:#e27ab3; --k-next:#8aa6ff;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#0f141c; --surface:#171e2a; --sunk:#1f2836; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2b3546;
-  --accent:#8aa6ff; --accent-soft:#233154; --r-vl:#f2c14e; --r-wal:#f0726b; --r-bru:#7f9cff; --r-partner:#4cc79c; --r-child:#7f9cff; --r-grandchild:#4fc6d8; --r-sibling:#f2c14e; --r-nephew:#f0a060; --r-relative:#e27ab3; --r-other:#f0726b;
+  --accent:#8aa6ff; --accent-soft:#233154; --r-vl:#f2c14e; --r-wal:#f0726b; --r-bru:#7f9cff; --r-partner:#4cc79c; --r-child:#7f9cff; --r-grandchild:#4fc6d8; --r-sibling:#f2c14e; --r-nephew:#f0a060; --r-relative:#e27ab3; --r-other:#f0726b; --r-parent:#b79bf0; --r-step:#9aabbd;
   --k-tax:#f0726b; --k-keep:#4cc79c; --k-rate:#e27ab3; --k-next:#8aa6ff;
 }
 *{box-sizing:border-box}
@@ -53,6 +54,14 @@ header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
 .flag-menu a span{font-size:20px}
 .flag-menu a:hover{background:var(--accent-soft)}
 .flag-menu a.on{font-weight:600;background:var(--sunk)}
+.flag-menu{max-height:min(60vh,440px);overflow-y:auto}
+.flag-filter{position:sticky;top:-5px;z-index:1;margin:-5px -5px 3px;padding:9px 11px;border:0;border-bottom:1px solid var(--line);border-radius:9px 9px 0 0;background:var(--surface);color:var(--ink);font:500 14.5px var(--sans);outline:none}
+.flag-filter:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.flag-none{padding:7px 10px;color:var(--muted);font:14px var(--sans)}
+.flag-menu a span.cur-code{font:600 13px var(--mono);min-width:3.2em}
+.flag-menu a span.cur-sign{font:500 14px var(--mono);color:var(--muted);min-width:1.8em;margin-left:-4px}
+.flag.cur-pick{align-items:baseline;line-height:inherit;padding:0 .14em 0 .12em;border-radius:.18em;vertical-align:baseline}
+.flag.cur-pick .chev{align-self:center}
 .eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:22px;align-items:start}
 @media (max-width:860px){.grid{grid-template-columns:1fr}}
@@ -73,8 +82,8 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline
 .results{display:flex;flex-direction:column;gap:18px;min-width:0}
 .panel h2{font-size:17px;margin:0 0 12px;font-weight:600}
 .big{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
-.big div{display:flex;flex-direction:column;gap:2px;padding-left:12px;border-left:4px solid var(--dot)}
-.big b{font-family:var(--mono);font-size:26px;font-weight:500}
+.big div{display:flex;flex-direction:column;gap:2px;padding-left:12px;border-left:4px solid var(--dot);min-width:0;container-type:inline-size}
+.big b{font-family:var(--mono);font-size:min(26px,12cqi);font-weight:500;white-space:nowrap}
 .big span{font-size:12.5px;color:var(--muted)}
 .tbl-wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
@@ -110,7 +119,7 @@ td.heat{border-radius:3px}
   .chart-box{height:360px;margin-inline:-8px}
   td,th{padding:7px 5px;font-size:12.5px}
   td:first-child{white-space:normal}
-  .big b{font-size:22px}
+  .big b{font-size:min(22px,12cqi)}
 }
 footer a{color:var(--accent)}
 header{position:relative}
@@ -138,9 +147,9 @@ details.more .field+.field{margin-top:16px}
 <div id="app" v-cloak>
 <div class="wrap">
   <header>
-    <a class="back" :href="TaxI18n.pageLink(country, 'index', lang).href" target="_top">{{ t('inh.back') }}</a>
+    <a class="back" :href="TaxI18n.pageLink(country, 'index', lang, money.shown.value).href" target="_top">{{ t('inh.back') }}</a>
     <div class="eyebrow" style="margin-top:14px">{{ t('eyebrow') }}</div>
-    <flag-title :text="t('inh.h1')" :country="country" page="inheritance" :lang="lang" :t="t"></flag-title>
+    <flag-title :text="t('inh.h1')" :country="country" page="inheritance" :lang="lang" :t="t" :money="money"></flag-title>
     <p>{{ t('lead') }}</p>
     <div class="share-box">
       <button class="share" type="button" @click="shareLink">{{ t('share') }}</button>
@@ -169,7 +178,7 @@ details.more .field+.field{margin-top:16px}
         <div class="big">
           <div style="--dot:var(--k-tax)"><b>{{ eur(res.tax) }}</b><span>{{ t('inh.tileTax') }}</span></div>
           <div style="--dot:var(--k-rate)"><b>{{ pct(res.avg) }}</b><span>{{ t('inh.tileAvg') }}</span></div>
-          <div style="--dot:var(--k-next)"><b>{{ pct(res.marg) }}</b><span>{{ t('inh.tileNext') }}</span></div>
+          <div style="--dot:var(--k-next)"><b>{{ pct(res.marg) }}</b><span>{{ t('inh.tileNext', eur(NEXT_STEP)) }}</span></div>
           <div style="--dot:var(--k-keep)"><b>{{ eur(res.total - res.tax) }}</b><span>{{ t('inh.tileKeep') }}</span></div>
         </div>
         <template v-if="res.total > 0">
@@ -188,7 +197,7 @@ details.more .field+.field{margin-top:16px}
           <table>
             <thead><tr><th>{{ t('inh.step') }}</th><th>{{ t('inh.amount') }}</th><th>{{ t('inh.rate') }}</th><th>{{ t('inh.tax') }}</th></tr></thead>
             <tbody>
-              <tr v-for="(l, i) in res.lines" :key="i" :class="l.cls"><td><i v-if="l.rate != null" class="dot" :style="{background: heat(l.rate, 1)}"></i>{{ l.label }}</td><td>{{ l.amt != null ? eur(l.amt) : '' }}</td><td class="heat" :style="l.rate != null ? {background: heat(l.rate)} : null">{{ l.rate != null ? pct(l.rate, l.rate * 100 % 1 ? 2 : 0) : '' }}</td><td>{{ l.tax != null ? eur(l.tax) : '' }}</td></tr>
+              <tr v-for="(l, i) in res.lines" :key="i" :class="l.cls"><td><i v-if="l.rate != null" class="dot" :style="{background: heat(l.rate, 1)}"></i>{{ l.label }}</td><td>{{ l.amt != null ? eur(l.amt) : '' }}</td><td class="heat" :style="l.rate != null ? {background: heat(l.rate)} : null">{{ l.rate != null ? pct(l.rate, Math.round(l.rate * 1e4) % 100 ? 2 : 0) : '' }}</td><td>{{ l.tax != null ? eur(l.tax) : '' }}</td></tr>
               <tr class="tot"><td>{{ t(C.totalLabel) }}</td><td></td><td>{{ pct(res.avg) }}</td><td>{{ eur(res.tax) }}</td></tr>
             </tbody>
           </table>
@@ -242,8 +251,14 @@ details.more .field+.field{margin-top:16px}
 <script>
 // The country module (<country>/inheritance.js) holds the rules and the fields it needs; this page renders them.
 TaxI18n.loadCountry('inheritance').then(country => {
-const { lang, LANGS, t, eur, eurK, pct, setLang, ready } = TaxI18n.create(TAX_STRINGS);
+const { lang, LANGS, t, eur, eurK, sym, setCurrency, money, pct, setLang, ready } = TaxI18n.create(TAX_STRINGS);
+// Money inputs show the display currency; the state keeps the country's own.
+const moneyIn = v => v === '' || v == null || !money.shown.value ? v : Math.round(money.toShown(v));
+const moneyOut = v => v === '' ? '' : money.shown.value ? Math.round(money.fromShown(+v) * 1e4) / 1e4 : +v;
+
 const C = TAX_INHERIT({ t, eur, pct });
+setCurrency(C.currency);
+const NEXT_STEP = C.nextStep || 100;
 const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 // Mirrors panel settings in the query string; only values that differ from the defaults are written.
@@ -261,7 +276,7 @@ function bindUrlState(s, fields, watch) {
   const write = () => {
     const out = new URLSearchParams();
     const cur = new URLSearchParams(location.search);
-    for (const k of ['country', 'lang']) if (cur.get(k)) out.set(k, cur.get(k));
+    for (const k of ['country', 'lang', 'currency']) if (cur.get(k)) out.set(k, cur.get(k));
     for (const [param, [key, type]] of Object.entries(fields)) {
       if (s[key] === defaults[key]) continue;
       out.set(param, type === 'bool' ? (s[key] ? '1' : '0') : String(s[key]));
@@ -271,12 +286,14 @@ function bindUrlState(s, fields, watch) {
     TaxI18n.syncUrl();
   };
   watch(() => Object.values(fields).map(([k]) => s[k]), write);
-  write();
+  write();  TaxI18n.setCarry(() => Object.fromEntries(Object.entries(fields).map(([param, [key, type]]) =>
+    [param, type === 'bool' ? (s[key] ? '1' : '0') : s[key] == null ? '' : String(s[key])])));
 }
 
 // One input from the country's field list: money, number, seg (row or column), check or stepper.
 const InhField = {
   props: ['f', 's', 't'],
+  setup: () => ({ sym, money, moneyIn, moneyOut }),
   template: `
     <template v-if="f.type === 'check'">
       <label class="check"><input type="checkbox" v-model="s[f.key]"> {{ t(f.label) }}</label>
@@ -284,7 +301,7 @@ const InhField = {
     <template v-else>
       <label v-if="f.type === 'money' || f.type === 'int'" :for="f.key">{{ t(f.label) }}</label>
       <div v-else class="lbl">{{ t(f.label) }}</div>
-      <div v-if="f.type === 'money'" class="money"><input :id="f.key" type="number" min="0" :step="f.step || 5000" v-model.number="s[f.key]"><span>€</span></div>
+      <div v-if="f.type === 'money'" class="money"><input :id="f.key" type="number" min="0" :step="money.shown.value ? 'any' : f.step || 5000" :value="moneyIn(s[f.key])" @input="s[f.key] = moneyOut($event.target.value)"><span>{{ sym() }}</span></div>
       <input v-else-if="f.type === 'int'" :id="f.key" type="number" :min="f.min" :max="f.max" step="1" v-model.number="s[f.key]">
       <div v-else-if="f.type === 'seg' || f.type === 'segCol'" class="seg" :class="{col: f.type === 'segCol'}">
         <button v-for="o in f.options" :key="o" :class="{on: s[f.key] === o}" @click="s[f.key] = o">{{ t(f.optLabel + o) }}</button>
@@ -313,8 +330,8 @@ const app = Vue.createApp({
 
     const res = computed(() => {
       const r = C.compute(s);
-      const next = C.compute({ ...s, share: Math.max(0, Number(s.share) || 0) + 100 });
-      return { ...r, marg: Math.max(0, (next.tax - r.tax) / 100) };
+      const next = C.compute({ ...s, share: Math.max(0, Number(s.share) || 0) + NEXT_STEP });
+      return { ...r, marg: Math.max(0, (next.tax - r.tax) / NEXT_STEP) };
     });
     // Rate shading: 0% is clear, 80% is a strong tax red.
     const heat = (r, full) => `color-mix(in srgb, var(--k-tax) ${Math.round((full ? 25 + r * 94 : r * 70))}%, transparent)`;
@@ -360,7 +377,7 @@ const app = Vue.createApp({
         chart.update('none');
       }
     }
-    watch(() => [C.chart.deps(s), lang.value], draw, { deep: true });
+    watch(() => [C.chart.deps(s), lang.value, money.shown.value], draw, { deep: true });
     onMounted(() => {
       draw();
       // Touch has no "mouse out": a tap elsewhere closes the chart tooltip.
@@ -372,7 +389,7 @@ const app = Vue.createApp({
       matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', draw);
     });
 
-    return { shareState, shareLink, C, country, TaxI18n, s, res, compare, heat, barSegs, refSections, mainFields, moreFields, hasExtras, eur, pct, t, lang, LANGS, setLang };
+    return { shareState, shareLink, NEXT_STEP, money, C, country, TaxI18n, s, res, compare, heat, barSegs, refSections, mainFields, moreFields, hasExtras, eur, pct, t, lang, LANGS, setLang };
   },
 });
 app.component('inh-field', InhField);

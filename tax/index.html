@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script src="currencies.js"></script>
 <script src="i18n.js"></script>
 <script src="common.strings.js"></script>
 <style>
@@ -53,6 +54,14 @@ header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
 .flag-menu a span{font-size:20px}
 .flag-menu a:hover{background:var(--accent-soft)}
 .flag-menu a.on{font-weight:600;background:var(--sunk)}
+.flag-menu{max-height:min(60vh,440px);overflow-y:auto}
+.flag-filter{position:sticky;top:-5px;z-index:1;margin:-5px -5px 3px;padding:9px 11px;border:0;border-bottom:1px solid var(--line);border-radius:9px 9px 0 0;background:var(--surface);color:var(--ink);font:500 14.5px var(--sans);outline:none}
+.flag-filter:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.flag-none{padding:7px 10px;color:var(--muted);font:14px var(--sans)}
+.flag-menu a span.cur-code{font:600 13px var(--mono);min-width:3.2em}
+.flag-menu a span.cur-sign{font:500 14px var(--mono);color:var(--muted);min-width:1.8em;margin-left:-4px}
+.flag.cur-pick{align-items:baseline;line-height:inherit;padding:0 .14em 0 .12em;border-radius:.18em;vertical-align:baseline}
+.flag.cur-pick .chev{align-self:center}
 .eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .grid{display:grid;grid-template-columns:320px minmax(0,1fr);gap:22px;align-items:start}
 @media (max-width:900px){.grid{grid-template-columns:1fr}}
@@ -271,7 +280,7 @@ header{position:relative}
 <div class="wrap">
   <header>
     <div class="eyebrow">{{ t(minister ? 'eyebrowMinister' : 'eyebrow') }}</div>
-    <flag-title :text="t('h1')" :country="country" page="index" :lang="lang" :t="t"></flag-title>
+    <flag-title :text="t('h1')" :country="country" page="index" :lang="lang" :t="t" :money="money"></flag-title>
     <p>{{ t('lead') }}</p>
     <div class="share-box">
       <button class="share" type="button" @click="shareLink">{{ t('share') }}</button>
@@ -295,7 +304,7 @@ header{position:relative}
       <div class="field">
         <label for="salary">{{ t('grossSalary') }}</label>
         <div class="row">
-          <div class="money"><input id="salary" type="number" min="0" step="100" v-model.number="s.salary" :placeholder="t('salaryPh')"><span>€</span></div>
+          <div class="money"><input id="salary" type="number" min="0" :step="money.shown.value ? 'any' : NEXT_STEP" :value="moneyIn(s.salary)" @input="s.salary = moneyOut($event.target.value)" :placeholder="t('salaryPh')"><span>{{ sym() }}</span></div>
           <div class="seg" v-if="!minister">
             <button :class="{on:s.period==='month'}" @click="setPeriod('month')">{{ t('perMonth') }}</button>
             <button :class="{on:s.period==='year'}" @click="setPeriod('year')">{{ t('perYear') }}</button>
@@ -323,7 +332,7 @@ header{position:relative}
 
       <div class="field" v-if="s.household==='joint'">
         <label for="partner">{{ t('partnerGross') }}</label>
-        <div class="money"><input id="partner" type="number" min="0" step="1000" v-model.number="s.partnerGross"><span>€</span></div>
+        <div class="money"><input id="partner" type="number" min="0" :step="money.shown.value ? 'any' : NEXT_STEP * 10" :value="moneyIn(s.partnerGross)" @input="s.partnerGross = moneyOut($event.target.value)"><span>{{ sym() }}</span></div>
       </div>
 
       <div :class="C.features.under3 ? 'pair' : ''">
@@ -342,9 +351,9 @@ header{position:relative}
         <label class="switch"><input type="checkbox" v-model="s.pa"> <span v-tip.panel="'paToggle'">{{ t('includePa') }}</span></label>
       </div>
 
-      <div class="divider"></div>
+      <div class="divider" v-if="hasCommunes || hasRegions || C.local"></div>
 
-      <div class="field">
+      <div class="field" v-if="hasCommunes">
         <label for="commune">{{ t('commune') }}</label>
         <div class="combo">
           <input id="commune" class="text" type="text" role="combobox" autocomplete="off" spellcheck="false"
@@ -366,13 +375,13 @@ header{position:relative}
         <div class="hint" v-if="commune">{{ C.communeHint(commune) }}</div>
         <div class="hint" v-else-if="communesError">{{ t('communesError') }}</div>
       </div>
-      <div class="field">
+      <div class="field" v-if="hasRegions">
         <div class="lbl">{{ t('region') }} <span class="hint" v-if="commune">{{ t('setByCommune') }}</span></div>
         <div class="seg full">
           <button v-for="k in C.regions" :key="k" :class="{on:s.region===k}" @click="s.region=k" v-tip.panel="'reg'">{{ t('region.' + k) }}</button>
         </div>
       </div>
-      <div class="field" v-if="!(minister && C.local.hideInMinister)">
+      <div class="field" v-if="C.local && !(minister && C.local.hideInMinister)">
         <label for="local"><span v-if="C.local.tip" v-tip.panel="C.local.tip">{{ t(C.local.label) }}</span><template v-else>{{ t(C.local.label) }}</template> <span style="font-family:var(--mono)">{{ num(s.local, C.local.digits) }}%</span> <span class="hint" v-if="C.local.notDue(s)">{{ t('vmNotDue') }}</span></label>
         <input id="local" type="range" :min="localRange[0]" :max="localRange[1]" :step="C.local.step" v-model.number="s.local">
         <div class="row hint" style="justify-content:space-between"><span>{{ t('lowest', num(localRange[0], C.local.digits) + '%') }}</span><span>{{ t('highest', num(localRange[1], C.local.digits) + '%') }}</span></div>
@@ -383,14 +392,14 @@ header{position:relative}
       <div class="field">
         <label class="switch"><input type="checkbox" id="vatOn" v-model="s.vat"> {{ t('includeVat') }}</label>
         <template v-if="s.vat">
-          <label for="vatRate">{{ t('vatRateLabel') }} <span style="font-family:var(--mono)">{{ num(s.vatRate, 1) }}%</span> <span class="hint" v-if="s.vatRate!==C.vatStandard">{{ t('vatStandard') }}</span></label>
+          <label for="vatRate">{{ t('vatRateLabel') }} <span style="font-family:var(--mono)">{{ num(s.vatRate, 1) }}%</span> <span class="hint" v-if="s.vatRate!==vatStd">{{ t('vatStandard') }}</span></label>
           <input id="vatRate" type="range" min="0" max="30" step="0.5" v-model.number="s.vatRate">
         </template>
       </div>
 
-      <div class="divider"></div>
+      <div class="divider" v-if="C.sizes && C.sizes.length"></div>
 
-      <div class="field" v-if="!minister">
+      <div class="field" v-if="!minister && C.sizes && C.sizes.length">
         <div class="lbl">{{ t('employerSize') }}</div>
         <div class="seg full">
           <button v-for="k in C.sizes" :key="k" :class="{on:s.size===k}" @click="s.size=k" v-tip.panel="'size'">{{ t('size.' + k) }}</button>
@@ -405,13 +414,13 @@ header{position:relative}
         </div>
         <div class="tbl-wrap">
           <table class="rates">
-            <thead><tr><th>{{ t('thScope') }}</th><th>{{ t('thAvg') }}</th><th>{{ t('thNext') }}</th><th>{{ t('thTaxYear') }}</th><th>{{ t('thBaseYear') }}</th></tr></thead>
+            <thead><tr><th>{{ t('thScope') }}</th><th>{{ t('thAvg') }}</th><th>{{ t('thNext', eur(NEXT_STEP)) }}</th><th>{{ t('thTaxYear') }}</th><th>{{ t('thBaseYear') }}</th></tr></thead>
             <tbody>
               <tr v-for="r in rows" :key="r.key">
                 <td><div class="name" :style="{'--dot':r.color}" v-tip.left="'row-'+r.key"><span class="sw"></span><div><b>{{ t('row.' + r.key) }}</b><small>{{ t('rowDesc.' + r.key) }}</small></div></div></td>
                 <template v-if="cur">
                   <td :data-label="t('thAvg')"><span class="rate">{{ pct(r.avg) }}</span><div class="keep">{{ t('afterTax', eur(r.base - r.tax)) }}</div></td>
-                  <td :data-label="t('thNext')"><span class="rate">{{ pct(r.marg) }}</span><div class="keep">{{ t('youKeepNext', eur(Math.max(0, NEXT_STEP * (1 - r.marg)))) }}</div></td>
+                  <td :data-label="t('thNext', eur(NEXT_STEP))"><span class="rate">{{ pct(r.marg) }}</span><div class="keep">{{ t('youKeepNext', eur(Math.max(0, NEXT_STEP * (1 - r.marg)))) }}</div></td>
                   <td v-tip="'row-'+r.key" :data-label="t('thTaxYear')">{{ eur(r.tax) }}</td>
                   <td v-tip="r.baseKey" :data-label="t('thBaseYear')">{{ eur(r.base) }}<div class="keep">{{ r.baseName }}</div></td>
                 </template>
@@ -479,7 +488,7 @@ header{position:relative}
         </div>
         <div class="seg">
           <button :class="{on:s.lines==='both'}" @click="s.lines='both'">{{ t('both') }}</button>
-          <button :class="{on:s.lines==='marg'}" @click="s.lines='marg'"><svg class="ls" viewBox="0 0 18 4" aria-hidden="true"><line x1="0" y1="2" x2="18" y2="2"/></svg>{{ t('nextEur') }}</button>
+          <button :class="{on:s.lines==='marg'}" @click="s.lines='marg'"><svg class="ls" viewBox="0 0 18 4" aria-hidden="true"><line x1="0" y1="2" x2="18" y2="2"/></svg>{{ t('nextEur', eur(NEXT_STEP)) }}</button>
           <button :class="{on:s.lines==='avg'}" @click="s.lines='avg'"><svg class="ls" viewBox="0 0 18 4" aria-hidden="true"><line x1="0" y1="2" x2="18" y2="2" stroke-dasharray="4 3"/></svg>{{ t('average') }}</button>
         </div>
       </div>
@@ -509,7 +518,7 @@ header{position:relative}
     </details>
   </div>
 
-  <a class="inherit" :href="TaxI18n.pageLink(country, 'inheritance', lang).href" target="_top">
+  <a class="inherit" :href="TaxI18n.pageLink(country, 'inheritance', lang, money.shown.value).href" target="_top">
     <span class="eyebrow">{{ t('inheritEyebrow') }}</span>
     <b>{{ t('inheritTitle') }}</b>
     <span>{{ t('inheritLink') }}</span>
@@ -540,7 +549,11 @@ header{position:relative}
 <script>
 // The country module (<country>/salary.js) holds the rules; this page holds everything that looks the same everywhere.
 TaxI18n.loadCountry('salary').then(country => {
-const { lang, LANGS, t, eur, eurK, num, int, pct, setLang, ready } = TaxI18n.create(TAX_STRINGS);
+const { lang, LANGS, t, eur, eurK, sym, setCurrency, money, num, int, pct, setLang, ready } = TaxI18n.create(TAX_STRINGS);
+// Money inputs show the display currency; the state keeps the country's own.
+const moneyIn = v => v === '' || v == null || !money.shown.value ? v : Math.round(money.toShown(v));
+const moneyOut = v => v === '' ? '' : money.shown.value ? Math.round(money.fromShown(+v) * 1e4) / 1e4 : +v;
+
 const eur2 = v => eur(v, 2);
 // VAT rates move in half-percent steps.
 const vr = v => num(v, v % 1 ? 1 : 0);
@@ -548,11 +561,14 @@ const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const link = k => `<a href="${C.SRC[k]}" target="_blank" rel="noopener">${esc(t('src.' + k))}</a>`;
 const sources = (...ks) => `<div class="src">${t('sources')}: ${ks.map(link).join(' · ')}</div>`;
 const C = TAX_COUNTRY({ t, eur, eur2, num, pct, int, vr, esc, link, sources });
+setCurrency(C.currency);
 const { compute, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP, POLITICIANS, REF_WAGES } = C;
 
 const sumSet = (r, set) => set.reduce((tot, k) => tot + r.parts[k], 0);
-// "Next" rate = tax on the next 100 € of monthly gross, so thresholds don't show as one-euro spikes.
-const NEXT_STEP = 100;
+// "Next" rate = tax on the next 100 (local currency) of monthly gross, so thresholds don't show as one-unit spikes.
+const NEXT_STEP = C.nextStep || 100;
+// Euro-sized constants below are multiplied by this for other currencies.
+const SCALE = NEXT_STEP / 100;
 function rates(G, def, s, env) {
   const r = compute(G, s, env);
   const b = compute(G + NEXT_STEP * s.factor, s, env);
@@ -618,7 +634,7 @@ function bindUrlState(s, fields, watch) {
   const write = () => {
     const out = new URLSearchParams();
     const cur = new URLSearchParams(location.search);
-    for (const k of ['country', 'lang']) if (cur.get(k)) out.set(k, cur.get(k));
+    for (const k of ['country', 'lang', 'currency']) if (cur.get(k)) out.set(k, cur.get(k));
     for (const [param, [key, type]] of Object.entries(fields)) {
       if (s[key] === defaults[key]) continue;
       out.set(param, type === 'bool' ? (s[key] ? '1' : '0') : String(s[key]));
@@ -628,7 +644,8 @@ function bindUrlState(s, fields, watch) {
     TaxI18n.syncUrl();
   };
   watch(() => Object.values(fields).map(([k]) => s[k]), write);
-  write();
+  write();  TaxI18n.setCarry(() => Object.fromEntries(Object.entries(fields).map(([param, [key, type]]) =>
+    [param, type === 'bool' ? (s[key] ? '1' : '0') : s[key] == null ? '' : String(s[key])])));
 }
 
 const app = Vue.createApp({
@@ -679,9 +696,15 @@ const app = Vue.createApp({
     const communesError = ref(false);
     const commune = computed(() => communes.value.find(c => c.id === s.commune) || null);
     const communeLabel = computed(() => commune.value ? C.communeLabel(commune.value) : '');
-    const localRange = computed(() => C.local.range(communes.value));
+    const localRange = computed(() => C.local ? C.local.range(communes.value, s) : [0, 0]);
+    const hasCommunes = C.communes !== false;
+    // A region can have its own standard VAT (Madeira, the Azores); the slider follows it unless moved by hand.
+    const vatStd = computed(() => typeof C.vatStandard === 'function' ? C.vatStandard(s.region) : C.vatStandard);
+    watch(vatStd, (v, old) => { if (s.vatRate === old) s.vatRate = v; });
+    if (s.vatRate === C.state.vatRate) s.vatRate = vatStd.value;
+    const hasRegions = !!(C.regions && C.regions.length);
     // A script tag rather than fetch, so the page also works from file://.
-    new Promise((ok, fail) => {
+    if (hasCommunes) new Promise((ok, fail) => {
       const el = document.createElement('script');
       el.src = country + '/communes.js';
       el.onload = () => window.COMMUNES ? ok(window.COMMUNES) : fail();
@@ -748,7 +771,7 @@ const app = Vue.createApp({
     }));
 
     // Smallest monthly gross where test(m) turns true (monotonic), by bisection.
-    const firstMonthly = (test, lo = 0, hi = 200000) => {
+    const firstMonthly = (test, lo = 0, hi = 200000 * SCALE) => {
       if (!test(hi)) return null;
       for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (test(mid)) hi = mid; else lo = mid; }
       return hi;
@@ -772,7 +795,7 @@ const app = Vue.createApp({
     const barSegs = computed(() => {
       const r = cur.value; if (!r) return [];
       const total = r.cost + received(r).reduce((tot, x) => tot + x.v, 0);
-      const segs = COMP_KEYS.map(k => ({ k, v: r.parts[k], tax: true, label: t(C.segLabels[k] || 'comp.' + k), color: COMP_COLORS[k] }));
+      const segs = COMP_KEYS.map(k => ({ k, v: r.parts[k], tax: true, label: t(C.segLabels?.[k] || 'comp.' + k), color: COMP_COLORS[k] }));
       const used = segs.reduce((tot, x) => tot + Math.max(0, x.v), 0);
       segs.push({ k: 'yours', v: Math.max(0, total - used), label: t(s.vat ? 'goodsYouGet' : 'yourNetPay'), color: 'var(--k-net)' });
       let cum = 0;
@@ -786,7 +809,7 @@ const app = Vue.createApp({
     const splitRows = computed(() => {
       const r = cur.value; if (!r) return [];
       const rows = barSegs.value.filter(x => x.k !== 'vat' && x.k !== 'yours');
-      for (const { k, v } of received(r)) rows.push({ k, label: t(C.recvLabels[k] || 'comp.' + k), v, share: v / r.cost, cum: null, color: COMP_COLORS[k], cls: 'sub' });
+      for (const { k, v } of received(r)) rows.push({ k, label: t(C.recvLabels?.[k] || 'comp.' + k), v, share: v / r.cost, cum: null, color: COMP_COLORS[k], cls: 'sub' });
       if (!s.vat) return rows.concat(barSegs.value.filter(x => x.k === 'yours').map(x => ({ ...x, label: t('yourNetSalary') })));
       const vat = barSegs.value.find(x => x.k === 'vat');
       const goods = barSegs.value.find(x => x.k === 'yours');
@@ -798,7 +821,7 @@ const app = Vue.createApp({
 
     const raise = computed(() => {
       const G = annualGross.value; if (G <= 0) return {};
-      const add = 100 * s.factor;
+      const add = NEXT_STEP * s.factor;
       const a = compute(G, s, env.value), b = compute(G + add, s, env.value);
       return {
         cost: (b.cost - a.cost) / s.factor,
@@ -809,7 +832,7 @@ const app = Vue.createApp({
     });
     const raiseHtml = computed(() => {
       const r = raise.value; if (r.cost == null) return '';
-      return t('raise', { h: eur(100), cost: eur(r.cost), net: eur(r.net), afterVat: s.vat ? eur(r.afterVat) : null, taxShare: pct(r.taxShare) });
+      return t('raise', { h: eur(NEXT_STEP), cost: eur(r.cost), net: eur(r.net), afterVat: s.vat ? eur(r.afterVat) : null, taxShare: pct(r.taxShare) });
     });
 
     const breakdown = computed(() => {
@@ -893,18 +916,18 @@ const app = Vue.createApp({
       const rows = C.P.brackets.map(([hi, r]) => {
         const span = hi === Infinity ? `&gt; ${int(lo)}` : `${int(lo)} – ${int(hi)}`;
         lo = hi;
-        return `<tr><td>${span}</td><td class="num">${pct(r, 0)}</td></tr>`;
+        return `<tr><td>${span}</td><td class="num">${pct(r, Math.round(r * 1e4) % 100 ? (Math.round(r * 1e4) % 10 ? 2 : 1) : 0)}</td></tr>`;
       }).join('');
       const br = `<table><tbody>${rows}</tbody></table>`;
       return C.refKeys.map(k => t('ref.' + k, br));
     });
 
     // Chart window in monthly gross. Curves are sampled only across what's visible, so zooming in stays sharp.
-    const MIN_SPAN = 400;
+    const MIN_SPAN = 400 * SCALE;
     // Up to the best-paid public office in the list, in monthly gross.
-    const xLimit = () => Math.ceil(Math.max(...POLITICIANS.map(p => p.hi)) / s.factor * 1.04 / 1000) * 1000;
+    const xLimit = () => Math.ceil(Math.max(...POLITICIANS.map(p => p.hi)) / s.factor * 1.04 / (1000 * SCALE)) * 1000 * SCALE;
     const view = { min: 0, max: 0, custom: false };
-    const defaultView = () => ({ min: 0, max: Math.max(5000, annualGross.value / s.factor + 1000) });
+    const defaultView = () => ({ min: 0, max: Math.max(5000 * SCALE, annualGross.value / s.factor + 1000 * SCALE) });
     function setView(min, max) {
       const lim = xLimit(), span = Math.min(lim, Math.max(MIN_SPAN, max - min));
       min = Math.min(Math.max(0, min), lim - span);
@@ -927,7 +950,7 @@ const app = Vue.createApp({
           marg.push({ x, y: r.marg * 100 });
         }
         const color = cssVar(d.color.slice(4, -1)), label = t('row.' + d.key);
-        if (s.lines !== 'avg') out.push({ series: label, kind: 'marg', label: label + ' · ' + t('nextEur'), data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
+        if (s.lines !== 'avg') out.push({ series: label, kind: 'marg', label: label + ' · ' + t('nextEur', eur(NEXT_STEP)), data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
         if (s.lines !== 'marg') out.push({ series: label, kind: 'avg', label: label + ' · ' + t('average'), data: avg, borderColor: color, backgroundColor: color, borderWidth: 1.6, borderDash: [6, 4], pointRadius: 0, tension: .2 });
       }
       if (s.show.power) {
@@ -940,7 +963,7 @@ const app = Vue.createApp({
           marg.push({ x, y: (1 - r.marg) * 100 });
         }
         const color = cssVar('--c-power'), label = t('buyingPower');
-        if (s.lines === 'marg') out.push({ series: label, kind: 'marg', label: label + ' · ' + t('nextEur'), data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
+        if (s.lines === 'marg') out.push({ series: label, kind: 'marg', label: label + ' · ' + t('nextEur', eur(NEXT_STEP)), data: marg, borderColor: color, backgroundColor: color, borderWidth: 2, pointRadius: 0, tension: 0 });
         if (s.lines !== 'marg') out.push({ series: label, kind: 'avg', label: label + ' · ' + t('average'), data: avg, borderColor: color, backgroundColor: color, borderWidth: 1.6, borderDash: [6, 4], pointRadius: 0, tension: .2 });
       }
       return { out, xMin, xMax, userX };
@@ -1051,12 +1074,12 @@ const app = Vue.createApp({
       if (!p.regime) return null;
       const env0 = env.value, plain = { ...s, regime: 'employee', vat: false };
       const own = C.own(p, plain, env0);
-      let lo = 0, hi = 5e6;
+      let lo = 0, hi = 5e6 * SCALE;
       for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (compute(mid, plain, env0).net < own.net) lo = mid; else hi = mid; }
       return { net: own.net, allow: own.allow || 0, eq: hi, eqCost: compute(hi, plain, env0).cost };
     }
     const polLegend = computed(() => ['stat', 'gov', 'corp'].map(kind => ({ kind, people: POLITICIANS.filter(p => p.kind === kind).map(p => ({ ...p,
-      idx: POLITICIANS.indexOf(p), name: polName(p) })) })));
+      idx: POLITICIANS.indexOf(p), name: polName(p) })) })).filter(g => g.people.length));
     function showPolitician(p) {
       const pl = polPlacement(p);
       setView(0, Math.max(p.hi, pl ? pl.eq : 0) / s.factor * 1.15);
@@ -1083,7 +1106,7 @@ const app = Vue.createApp({
       el.innerHTML = `<div class="ct-title">${t('ctGross', eur(x), per)}</div>
         <div class="ct-sub"><span>${t('ctCost')}</span><b>${unit(r.cost)}</b></div>
         <div class="ct-sub"><span>${t('ctNet')}</span><b>${unit(r.net)}</b></div>
-        <table><thead><tr><th></th>${hasM ? `<th>${t('nextEur')}</th>` : ''}${hasA ? `<th>${t('average')}</th>` : ''}</tr></thead><tbody>
+        <table><thead><tr><th></th>${hasM ? `<th>${t('nextEur', eur(NEXT_STEP))}</th>` : ''}${hasA ? `<th>${t('average')}</th>` : ''}</tr></thead><tbody>
         ${[...rowsBy].map(([name, r]) => `<tr><td class="ct-name">${esc(name)}</td>${hasM ? cell(r.marg, r.color, false) : ''}${hasA ? cell(r.avg, r.color, true) : ''}</tr>`).join('')}
         </tbody></table>`;
       el.hidden = false;
@@ -1102,7 +1125,7 @@ const app = Vue.createApp({
       const monthly = s.period === 'month';
       const tickFmt = v => eurK(v, v % 100 ? 2 : v % 1000 ? 1 : 0);
       const xTitle = monthly ? t('xMonth', s.factor) : t('xYear');
-      const yTitle = t('yTitle');
+      const yTitle = t('yTitle', sym());
       const narrow = phone();
       const refs = REF_WAGES.map(r => ({ x: monthly ? r.m : r.m * s.factor, label: narrow ? t('refWage.' + r.key) : `${t('refWage.' + r.key)} ${eur(Math.round(r.m))}/${t('unit.mo')} (${r.year})`, color: r.color }));
       if (!chart) {
@@ -1248,7 +1271,7 @@ const app = Vue.createApp({
     let drawTimer = null;
     const schedule = () => { clearTimeout(drawTimer); drawTimer = setTimeout(draw, 60); };
     watch(() => JSON.stringify(s), schedule);
-    watch(lang, schedule);
+    watch([lang, money.shown], schedule);
     watch(() => s.children, n => { if (s.under3 > n) s.under3 = n; });
     onMounted(() => {
       draw();
@@ -1267,11 +1290,11 @@ const app = Vue.createApp({
 
 
     return { shareState, shareLink, C, country, TaxI18n,
-      s, setPeriod, communes, commune, communeLabel, communesError, localRange, partsHint,
+      money, moneyIn, moneyOut, s, setPeriod, communes, commune, communeLabel, communesError, localRange, hasCommunes, hasRegions, vatStd, partsHint,
       combo, comboList, filtered, shown, openCombo, moveHi, pickCommune,
       annualGross, vatShare, trapText, topText, rowDefs, rows, cur, barSegs, splitRows, raiseHtml, breakdown,
       heads, POLITICIANS, polName, minister, toggleMinister, setMinRole, tipHtml, tipPos, tipEl, keepTip, hideTipSoon, allSources, refSections, refLegend, polLegend, showPolitician, link,
-      eur, num, int, pct, NEXT_STEP, t, lang, LANGS, setLang, zoomBy, resetZoom,
+      eur, sym, num, int, pct, NEXT_STEP, t, lang, LANGS, setLang, zoomBy, resetZoom,
     };
   },
 });
