@@ -55,15 +55,20 @@ input[type=number]{font:500 16px var(--mono)}
 input:focus-visible,button:focus-visible,.has-tip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 input[type=range]{width:100%;accent-color:var(--accent)}
 .money{position:relative;flex:1;min-width:0}
+.money input{padding-right:28px;-moz-appearance:textfield;appearance:textfield}
+.money input::-webkit-inner-spin-button,.money input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .money span{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-family:var(--mono);font-size:13px;pointer-events:none}
 .seg{display:inline-flex;background:var(--sunk);border-radius:8px;padding:3px;gap:2px;flex-wrap:wrap}
 .seg button{border:0;background:transparent;color:var(--muted);font:500 13px var(--sans);padding:6px 10px;border-radius:6px;cursor:pointer}
+.seg button{position:relative}
+.seg button+button::before{content:'';position:absolute;left:-2px;top:28%;bottom:28%;width:1px;background:color-mix(in srgb,var(--muted) 35%,transparent)}
+.seg button.on::before,.seg button.on+button::before{display:none}
 .seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .seg .ls{width:18px;height:4px;margin-right:6px;vertical-align:middle;stroke:currentColor;stroke-width:2;fill:none}
 .seg.full{display:flex}.seg.full button{flex:1}
-.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .stepper button{border:0;background:var(--sunk);color:var(--ink);width:32px;height:32px;font-size:17px;cursor:pointer}
-.stepper output{min-width:34px;text-align:center;font-family:var(--mono)}
+.stepper output{flex:1;min-width:34px;text-align:center;font-family:var(--mono)}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 details.more summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent)}
 details.more[open] summary{margin-bottom:12px}
@@ -124,7 +129,8 @@ td:first-child{font-family:var(--sans)}
 .chart-head h2,.panel h2{font-size:17px;margin:0;font-weight:600}
 .chart-box{position:relative;height:420px}
 .trap-note{margin-top:14px;padding:12px 14px;border-radius:8px;background:color-mix(in srgb,var(--c-full) 9%,transparent);font-size:13.5px;line-height:1.55;max-width:95ch}
-.trap-note b{display:block;margin-bottom:2px}
+.trap-note summary{cursor:pointer;font-weight:700}
+.trap-note[open] summary{margin-bottom:4px}
 .top-note{background:color-mix(in srgb,var(--c-work) 8%,transparent);margin-top:10px}
 .chart-tip{position:absolute;z-index:5;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:10px 12px;box-shadow:0 10px 28px rgba(10,20,40,.18);font-size:13px}
 .chart-tip .ct-title{font-weight:600;margin-bottom:4px;font-variant-numeric:tabular-nums}
@@ -152,7 +158,8 @@ td:first-child{font-family:var(--sans)}
 .head.stat{border-color:var(--accent);font-size:14px;background:var(--surface)}
 .pol-legend .lbl.stat{color:var(--accent)}
 .pol-legend .pol.stat{border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:var(--accent-soft)}
-.pol-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:10px;font-size:13px}
+.pol-acc{margin-top:10px}
+.pol-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;font-size:13px}
 .pol-legend .lbl{color:var(--pol);margin-right:4px;flex-basis:100%;font-weight:600}
 .pol-legend .lbl.corp{color:var(--corp);margin-top:4px}
 .pol-legend .pol.corp{border-color:color-mix(in srgb,var(--corp) 45%,transparent);background:color-mix(in srgb,var(--corp) 10%,transparent)}
@@ -167,22 +174,24 @@ td:first-child{font-family:var(--sans)}
 @media (max-width:600px){
   .wrap{padding-inline:12px;gap:16px}
   .panel{padding:14px}
-  .chart-box{height:420px;margin-inline:-8px}
+  .chart-box{height:360px;margin-inline:-8px}
   .chart-panel{display:flex;flex-direction:column}
   .chart-panel .chart-head{display:contents}
   .chart-panel .chart-head > div:first-child{order:0;margin-bottom:10px}
   .chart-panel .chart-box{order:1}
   .chart-panel .ref-legend{order:2}
   .chart-panel .zoom-hint{order:2;text-align:left}
-  .chart-panel .pol-legend{order:2}
-  .zoom button{width:44px;height:34px}
+  .chart-panel .pol-acc{order:2}
+  .zoom button{width:34px;height:32px}
   .head{width:22px;height:22px;font-size:8.5px;border-width:1.5px}
-  .chart-panel .chart-readout{order:3}
-  .chart-panel .chart-head > .row{order:4;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);gap:12px}
+  .chart-panel .chart-readout{order:1}
+  .chart-panel .chart-head > .row{order:0;margin-bottom:8px;gap:6px}
+  .chart-panel .chart-head > div:first-child h2{margin-bottom:0}
   .chart-panel .trap-note{order:5}
-  .chart-panel .seg{display:flex;width:100%}
-  .chart-panel .seg button{flex:1;padding:9px 6px}
-  .chip{padding:8px 13px 8px 11px}
+  .chart-panel .seg{display:flex;flex:1;flex-wrap:nowrap;min-width:0}
+  .chart-panel .seg button{flex:1 1 auto;min-width:0;padding:7px 3px;font-size:12.5px;white-space:nowrap}
+  .chart-panel .seg .ls{width:12px;margin-right:4px}
+  .chip{padding:6px 10px 6px 8px;font-size:12.5px}
   .ref-legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px;font-size:12px;color:var(--muted)}
   .ref-legend span{display:inline-flex;align-items:center;gap:6px}
   .ref-legend i{width:3px;height:12px;border-radius:1px}
@@ -190,17 +199,20 @@ td:first-child{font-family:var(--sans)}
   .chart-readout table{width:100%}
   .chart-readout td:last-child,.chart-readout th:last-child{text-align:right}
   .rates thead{display:none}
-  .rates tr{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;padding:14px 0;border-bottom:1px solid var(--line)}
-  .rates td{border:0;padding:0;text-align:left}
+  .rates tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 14px;padding:14px 0;border-bottom:1px solid var(--line)}
+  .rates td{border:0;padding:0;text-align:left;white-space:normal;min-width:0}
   .rates td:first-child,.rates td.wide{grid-column:1/-1}
   .rates td[data-label]::before{content:attr(data-label);display:block;margin-bottom:2px;font:600 10.5px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
   .rates .rate{font-size:20px}
+  .rates .keep{font-size:clamp(9px,2.6vw,10.5px);letter-spacing:-.04em}
   .bd td,.bd th{padding:7px 5px;font-size:12.5px}
   .bd td.lab{min-width:0}
   .bd .c-cum,.bd:not(.split) .c-share{display:none}
   .cum-inline{display:block;color:var(--accent);font-size:11.5px}
 }
 .empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:8px}
+.ref-acc summary{cursor:pointer;margin-bottom:0}
+.ref-acc[open] summary{margin-bottom:10px}
 .ref{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
 .ref section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
 .ref h3{margin:0 0 8px;font-size:14.5px}
@@ -413,7 +425,7 @@ header{position:relative}
 
         <div class="callout" style="margin-top:16px" v-if="!minister" v-html="raiseHtml"></div>
 
-        <details class="more" style="margin-top:14px" open>
+        <details class="more" style="margin-top:14px">
           <summary>{{ t('fullBreakdown') }}</summary>
           <div class="tbl-wrap">
           <table class="bd">
@@ -456,22 +468,25 @@ header{position:relative}
       <button v-for="h in heads" :key="h.i" type="button" :class="['head', POLITICIANS[h.i].kind]" :style="{left: h.x + 'px', top: h.top + 'px'}" v-tip="'pol-' + h.i" :aria-label="polName(POLITICIANS[h.i])">{{ h.initials }}</button><div id="chartTip" class="chart-tip" hidden></div></div>
     <div class="hint zoom-hint">{{ t('zoomHint') }}</div>
     <div class="ref-legend"><span v-for="r in refLegend" :key="r.label"><i :style="{background: r.color}"></i>{{ r.label }}</span></div>
-    <div class="pol-legend">
+    <details class="more pol-acc">
+      <summary>{{ t('salaryPoints') }}</summary>
+      <div class="pol-legend">
       <template v-for="g in polLegend" :key="g.kind">
         <span class="lbl" :class="g.kind">{{ t('polTitle.' + g.kind) }}</span>
         <button v-for="p in g.people" :key="p.idx" type="button" class="pol" :class="p.kind" @click="showPolitician(POLITICIANS[p.idx])" v-tip.above="'pol-' + p.idx">{{ p.name }}</button>
       </template>
       <span class="hint" v-html="t('polNote', link('cumuleoRanking'))"></span>
-    </div>
+      </div>
+    </details>
     <div id="chartReadout" class="chart-tip chart-readout" hidden></div>
-    <div class="trap-note" v-if="!minister">
-      <b>{{ t('trapTitle', trapText[0], trapText[1]) }}</b>
+    <details class="trap-note" v-if="!minister">
+      <summary>{{ t('trapTitle', trapText[0], trapText[1]) }}</summary>
       <span v-html="t('trapBody', trapText[1])"></span>
-    </div>
-    <div class="trap-note top-note" v-if="topText && !minister">
-      <b>{{ t('topTitle', topText[0], topText[1]) }}</b>
+    </details>
+    <details class="trap-note top-note" v-if="topText && !minister">
+      <summary>{{ t('topTitle', topText[0], topText[1]) }}</summary>
       <span v-html="t('topBody', topText[0], eur(P.brackets[2][0]), topText[1], eur(bbszCap))"></span>
-    </div>
+    </details>
   </div>
 
   <a class="inherit" href="inheritance.html">
@@ -480,8 +495,8 @@ header{position:relative}
     <span>{{ t('inheritLink') }}</span>
   </a>
 
-  <div>
-    <div class="eyebrow" style="margin-bottom:10px">{{ t('refEyebrow') }}</div>
+  <details class="ref-acc">
+    <summary class="eyebrow">{{ t('refEyebrow') }}</summary>
     <div class="ref">
       <section v-for="sec in refSections" :key="sec.h">
         <h3>{{ sec.h }}</h3>
@@ -490,7 +505,7 @@ header{position:relative}
         </ul>
       </section>
     </div>
-  </div>
+  </details>
 
   <footer>
     {{ t('sources') }}: <span v-html="allSources"></span>.
@@ -1482,7 +1497,7 @@ const app = Vue.createApp({
           plugins: [markerPlugin],
           options: {
             animation: false, responsive: true, maintainAspectRatio: false, parsing: false,
-            // No touchmove: a finger dragging pans the chart instead of scrubbing the readout.
+            // Touch scrubbing is driven from bindPanZoom's pointer handlers.
             events: ['mousemove', 'mouseout', 'click', 'touchstart'],
             interaction: { mode: 'index', intersect: false },
             onHover: (e, _, c) => {
@@ -1563,6 +1578,11 @@ const app = Vue.createApp({
         ptrs.set(e.pointerId, e.clientX);
         const xs = [...ptrs.values()], a = chart.chartArea;
         const perPx = (start.view.max - start.view.min) / (a.right - a.left);
+        if (xs.length === 1 && e.pointerType === 'touch') {
+          const v = valAt(xs[0]);
+          pinReadout(s.period === 'month' ? v : v * s.factor);
+          return;
+        }
         if (xs.length === 1) {
           const dx = xs[0] - start.mid;
           if (Math.abs(dx) < 4 && !canvas.classList.contains('panning')) return;

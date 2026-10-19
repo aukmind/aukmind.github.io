@@ -72,6 +72,7 @@ window.TAX_STRINGS = {
     nl: o => `Een opslag van <b>${o.h} bruto/maand</b> kost je werkgever <b>${o.cost}</b>/maand en levert je <b>${o.net}</b> extra nettoloon op${o.afterVat ? `, waarmee je na btw voor <b>${o.afterVat}</b> aan goederen koopt` : ''}. <b>${o.taxShare}</b> van wat je werkgever voor de opslag betaalt, gaat naar belastingen.`,
     fr: o => `Une augmentation de <b>${o.h} brut/mois</b> coûte <b>${o.cost}</b>/mois à votre employeur et ajoute <b>${o.net}</b> à votre salaire net${o.afterVat ? `, de quoi acheter <b>${o.afterVat}</b> de biens après TVA` : ''}. <b>${o.taxShare}</b> de ce que votre employeur paie pour l'augmentation va aux impôts.`,
   },
+  salaryPoints: { en: `Reference salaries on the chart`, nl: `Referentielonen op de grafiek`, fr: `Salaires de référence sur le graphique` },
   fullBreakdown: { en: `Full breakdown`, nl: `Volledige opsplitsing`, fr: `Détail complet` },
   emptyPanel: {
     en: `Enter a salary to see where the employer's money goes and the full breakdown. The curves below work without one.`,
@@ -91,9 +92,9 @@ window.TAX_STRINGS = {
   zoomOut: { en: `Zoom out`, nl: `Uitzoomen`, fr: `Dézoomer` },
   zoomReset: { en: `Reset view`, nl: `Weergave herstellen`, fr: `Réinitialiser la vue` },
   zoomHint: {
-    en: matchMedia('(pointer: coarse)').matches ? `Pinch to zoom, drag sideways to move, up to the best-paid public office.` : `Ctrl + scroll to zoom, drag to move, double-click to reset. Up to the best-paid public office.`,
-    nl: matchMedia('(pointer: coarse)').matches ? `Knijp om te zoomen, sleep opzij om te verschuiven, tot het best betaalde openbare ambt.` : `Ctrl + scrollen om te zoomen, slepen om te verschuiven, dubbelklik om te herstellen. Tot het best betaalde openbare ambt.`,
-    fr: matchMedia('(pointer: coarse)').matches ? `Pincez pour zoomer, glissez sur le côté pour vous déplacer, jusqu'à la fonction publique la mieux payée.` : `Ctrl + molette pour zoomer, glisser pour se déplacer, double-clic pour réinitialiser. Jusqu'à la fonction publique la mieux payée.`,
+    en: matchMedia('(pointer: coarse)').matches ? `Drag to read values, pinch or two-finger drag to zoom and move, up to the best-paid public office.` : `Ctrl + scroll to zoom, drag to move, double-click to reset. Up to the best-paid public office.`,
+    nl: matchMedia('(pointer: coarse)').matches ? `Sleep om waarden te lezen, knijp of sleep met twee vingers om te zoomen en te verschuiven, tot het best betaalde openbare ambt.` : `Ctrl + scrollen om te zoomen, slepen om te verschuiven, dubbelklik om te herstellen. Tot het best betaalde openbare ambt.`,
+    fr: matchMedia('(pointer: coarse)').matches ? `Glissez pour lire les valeurs, pincez ou glissez à deux doigts pour zoomer et vous déplacer, jusqu'à la fonction publique la mieux payée.` : `Ctrl + molette pour zoomer, glisser pour se déplacer, double-clic pour réinitialiser. Jusqu'à la fonction publique la mieux payée.`,
   },
   ministerOn: { en: `💼 I AM A MINISTER`, nl: `💼 IK BEN MINISTER`, fr: `💼 JE SUIS MINISTRE` },
   ministerOff: { en: `← Back to employee`, nl: `← Terug naar werknemer`, fr: `← Retour au salarié` },
