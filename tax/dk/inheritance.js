@@ -39,6 +39,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
 
   return {
     SOURCES, currency: 'DKK', nextStep: 1000,
+    GAPS: ['bund', 'nephew', 'sibling2027', 'closeList', 'heirsEqual', 'insurance', 'business'],
     state: { share: 1000000, rel: 'child', heirs: 1, uskiftet: false, lived: false },
     urlFields: {
       share: ['share', 'num'], rel: ['rel', 'str', RELS], heirs: ['heirs', 'num'],

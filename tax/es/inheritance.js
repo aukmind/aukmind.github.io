@@ -205,6 +205,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   ];
 
   return {
+    GAPS: ['valencia', 'extremadura', 'balears', 'asturiasHome', 'cataloniaHome', 'homeConditions', 'ceutaMelilla', 'stepchildren', 'crossCheck', 'notIncl'],
     SOURCES: [
       ['hacienda', 'https://www.hacienda.gob.es/sgfal/financiacionterritorial/autonomica/capitulo-iv-tributacion-autonomica-2026.pdf'],
       ['haciendaNews', 'https://www.hacienda.gob.es/sgfal/financiacionterritorial/autonomica/capitulo-ii-tributacion-autonomica-2026.pdf'],

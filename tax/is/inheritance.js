@@ -31,6 +31,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const plain = { share: 0, heirs: 1, prepaid: false };
 
   return {
+    GAPS: ['noWeb', 'equal', 'cohab', 'pension', 'abroad'],
     SOURCES, currency: 'ISK', nextStep: 500000,
     state: { share: 30000000, rel: 'child', heirs: 2, prepaid: false },
     urlFields: {

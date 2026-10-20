@@ -3,17 +3,17 @@ window.TAX_STRINGS = {
   eyebrow: { en: `Thailand · tax year 2026 · employee`, nl: `Thailand · belastingjaar 2026 · werknemer`, fr: `Thaïlande · année fiscale 2026 · salarié` },
   eyebrowMinister: { en: `Thailand · tax year 2026 · public office`, nl: `Thailand · belastingjaar 2026 · openbaar ambt`, fr: `Thaïlande · année fiscale 2026 · fonction publique` },
   lead: {
-    en: `Every compulsory charge on a Thai salary in 2026, from what your employer pays to what you can buy. Income tax starts late thanks to a generous expense deduction and allowances; social security is capped low.`,
-    nl: `Alle verplichte heffingen op een Thais loon in 2026, van wat je werkgever betaalt tot wat jij ermee kunt kopen. De inkomstenbelasting begint laat dankzij een ruime kostenaftrek en vrijstellingen; de sociale zekerheid heeft een laag plafond.`,
-    fr: `Tous les prélèvements obligatoires sur un salaire thaïlandais en 2026, de ce que paie votre employeur à ce que vous pouvez acheter. L'impôt commence tard grâce à une large déduction de frais et aux abattements ; la sécurité sociale est plafonnée bas.`,
+    en: `Everything a Thai salary has to pay in 2026, from what your employer pays to what you can actually buy. You only start paying income tax at a fairly high salary, because a big part of your pay is tax-free. Social security is small and stops growing at a low salary.`,
+    nl: `Alles wat er in 2026 verplicht van een Thais loon af gaat, van wat je werkgever betaalt tot wat jij er echt mee kunt kopen. Je betaalt pas inkomstenbelasting vanaf een vrij hoog loon, omdat een groot deel van je loon belastingvrij is. De sociale zekerheid is klein en stijgt al bij een laag loon niet meer mee.`,
+    fr: `Tout ce qu'un salaire thaïlandais doit payer en 2026, de ce que verse votre employeur à ce que vous pouvez vraiment acheter. Vous ne payez l'impôt qu'à partir d'un salaire assez élevé, car une grande partie du salaire n'est pas imposée. La sécurité sociale est faible et cesse d'augmenter dès un petit salaire.`,
   },
 
   // Inputs panel
   single: { en: `Single`, nl: `Alleenstaand`, fr: `Seul(e)` },
   coupleHint: {
-    en: `Married. Each spouse files alone; a spouse with no income gives the other a 60,000 baht allowance. Each earning parent claims the children.`,
-    nl: `Gehuwd. Elke partner doet apart aangifte; een partner zonder inkomen geeft de andere een vrijstelling van 60.000 baht. Elke ouder met inkomen trekt de kinderen af.`,
-    fr: `Marié(e). Chaque conjoint déclare seul ; un conjoint sans revenu donne à l'autre un abattement de 60 000 bahts. Chaque parent qui a un revenu déduit les enfants.`,
+    en: `Married. Each spouse pays tax on their own pay. If your spouse earns nothing, you get 60,000 baht more tax-free. Each parent who earns gets the tax-free amount for the children.`,
+    nl: `Gehuwd. Elke partner betaalt belasting op zijn eigen loon. Verdient je partner niets, dan krijg je 60.000 baht extra belastingvrij. Elke ouder die verdient, krijgt het belastingvrije bedrag voor de kinderen.`,
+    fr: `Marié(e). Chaque conjoint paie l'impôt sur son propre salaire. Si votre conjoint ne gagne rien, 60 000 bahts de plus ne sont pas imposés chez vous. Chaque parent qui travaille a droit à la part non imposée pour les enfants.`,
   },
   vatStandard: { en: `(Thai rate is 7%, cut from 10% until September 2027)`, nl: `(Thais tarief is 7%, verlaagd van 10% tot september 2027)`, fr: `(le taux thaïlandais est de 7%, réduit de 10% jusqu'en septembre 2027)` },
   'refWage.min': { en: `Minimum (400 baht a day)`, nl: `Minimum (400 baht per dag)`, fr: `Minimum (400 bahts par jour)` },
@@ -25,36 +25,36 @@ window.TAX_STRINGS = {
   'minRole.dpm': { en: `Deputy PM`, nl: `Vicepremier`, fr: `Vice-Premier ministre` },
   'minRole.pm': { en: `Prime Minister`, nl: `Premier`, fr: `Premier ministre` },
   ministerHint: {
-    en: `Monthly salary + position allowance set by royal decree, taxed as employment income. Political office holders don't pay social security.`,
-    nl: `Maandloon + ambtstoelage vastgelegd bij koninklijk besluit, belast als arbeidsinkomen. Politieke ambtsdragers betalen geen sociale zekerheid.`,
-    fr: `Salaire mensuel + indemnité de fonction fixés par décret royal, imposés comme un salaire. Les élus et ministres ne cotisent pas à la sécurité sociale.`,
+    en: `A monthly salary plus an extra allowance for the job, both set by royal decree. Both are taxed like a normal salary. Politicians pay no social security.`,
+    nl: `Een maandloon plus een extra toelage voor de functie, allebei vastgelegd bij koninklijk besluit. Allebei worden ze belast zoals een gewoon loon. Politici betalen geen sociale zekerheid.`,
+    fr: `Un salaire mensuel plus une indemnité liée au poste, fixés tous deux par décret royal. Les deux sont imposés comme un salaire normal. Les élus et ministres ne paient pas de sécurité sociale.`,
   },
   minSalaryHint: {
-    en: `Yearly salary + position allowance. Statutory amount by default.`,
-    nl: `Jaarloon + ambtstoelage. Standaard het wettelijke bedrag.`,
-    fr: `Salaire annuel + indemnité de fonction. Montant légal par défaut.`,
+    en: `Yearly salary + position allowance. The amount set by law is filled in by default.`,
+    nl: `Jaarloon + ambtstoelage. Standaard staat het wettelijke bedrag ingevuld.`,
+    fr: `Salaire annuel + indemnité de fonction. Le montant fixé par la loi est mis par défaut.`,
   },
   'tip.ministerRules': {
-    en: `Pay for political office is set by the 2011 royal decree on political officials' salaries: a monthly salary plus a position allowance. Prime Minister 75,590 + 50,000 baht, Deputy Prime Minister 74,420 + 45,500, minister 73,240 + 42,500, MP 71,230 + 42,330. Both parts are taxed as employment income with the same deduction and allowances as any employee. Political officials are outside the Social Security Act, so nothing goes to the Social Security Fund. Not confirmed against the decree itself: only the Prime Minister's figure is checked (Bangkok Post, 2021).`,
-    nl: `Het loon voor politieke ambten is vastgelegd in het koninklijk besluit van 2011 over de lonen van politieke ambtsdragers: een maandloon plus een ambtstoelage. Premier 75.590 + 50.000 baht, vicepremier 74.420 + 45.500, minister 73.240 + 42.500, parlementslid 71.230 + 42.330. Beide delen worden belast als arbeidsinkomen, met dezelfde aftrek en vrijstellingen als elke werknemer. Politieke ambtsdragers vallen buiten de socialezekerheidswet, dus er gaat niets naar het Social Security Fund. Niet nagekeken in het besluit zelf: enkel het bedrag van de premier is bevestigd (Bangkok Post, 2021).`,
-    fr: `La rémunération des fonctions politiques est fixée par le décret royal de 2011 sur les traitements des élus : un salaire mensuel plus une indemnité de fonction. Premier ministre 75 590 + 50 000 bahts, vice-Premier ministre 74 420 + 45 500, ministre 73 240 + 42 500, député 71 230 + 42 330. Les deux sont imposés comme un salaire, avec la même déduction et les mêmes abattements qu'un salarié. Les élus et ministres sont hors du champ de la loi sur la sécurité sociale : rien ne va au Social Security Fund. Non vérifié dans le décret lui-même : seul le montant du Premier ministre est confirmé (Bangkok Post, 2021).`,
+    en: `A 2011 royal decree sets what politicians earn: a monthly salary plus an extra allowance for the job. Prime Minister 75,590 + 50,000 baht, Deputy Prime Minister 74,420 + 45,500, minister 73,240 + 42,500, MP 71,230 + 42,330. Both parts are taxed like any salary, with the same tax-free amounts as any employee. Politicians are not covered by the Social Security Act, so nothing is paid into the Social Security Fund. We could not check the decree itself: only the Prime Minister's pay is confirmed (Bangkok Post, 2021).`,
+    nl: `Een koninklijk besluit van 2011 legt vast wat politici verdienen: een maandloon plus een extra toelage voor de functie. Premier 75.590 + 50.000 baht, vicepremier 74.420 + 45.500, minister 73.240 + 42.500, parlementslid 71.230 + 42.330. Beide delen worden belast zoals elk loon, met dezelfde belastingvrije bedragen als elke werknemer. Politici vallen niet onder de socialezekerheidswet, dus er gaat niets naar het Social Security Fund. Het besluit zelf konden we niet nakijken: enkel het loon van de premier is bevestigd (Bangkok Post, 2021).`,
+    fr: `Un décret royal de 2011 fixe ce que gagnent les élus : un salaire mensuel plus une indemnité liée au poste. Premier ministre 75 590 + 50 000 bahts, vice-Premier ministre 74 420 + 45 500, ministre 73 240 + 42 500, député 71 230 + 42 330. Les deux parts sont imposées comme un salaire, avec les mêmes montants non imposés que pour tout salarié. Les élus ne relèvent pas de la loi sur la sécurité sociale : rien n'est versé au Social Security Fund. Nous n'avons pas pu vérifier le décret lui-même : seul le salaire du Premier ministre est confirmé (Bangkok Post, 2021).`,
   },
   'bd.minGross': { en: `Salary + position allowance`, nl: `Loon + ambtstoelage`, fr: `Salaire + indemnité de fonction` },
   'bd.stateCost': { en: `Total paid by the State`, nl: `Totaal betaald door de staat`, fr: `Total payé par l'État` },
   'tip.minGross': {
-    en: `The monthly salary and position allowance set by royal decree, × 12.`,
-    nl: `Het maandloon en de ambtstoelage vastgelegd bij koninklijk besluit, × 12.`,
-    fr: `Le salaire mensuel et l'indemnité de fonction fixés par décret royal, × 12.`,
+    en: `The monthly salary plus the position allowance set by royal decree, times 12 months.`,
+    nl: `Het maandloon plus de ambtstoelage uit het koninklijk besluit, maal 12 maanden.`,
+    fr: `Le salaire mensuel plus l'indemnité de fonction fixés par décret royal, fois 12 mois.`,
   },
   'tip.stateCost': {
-    en: `The pay itself: there is no employer social security on political office. The work and full tax rates are measured against it.`,
-    nl: `Het loon zelf: op een politiek ambt is er geen werkgeversbijdrage voor sociale zekerheid. De belasting op arbeid en de totale belasting worden hieraan afgemeten.`,
-    fr: `La rémunération elle-même : aucune cotisation patronale sur une fonction politique. La taxation du travail et la taxation totale sont calculées sur ce montant.`,
+    en: `Just the pay itself: the State pays no employer social security for politicians. The work and full tax rates are worked out on this amount.`,
+    nl: `Gewoon het loon zelf: de staat betaalt geen werkgeversbijdrage voor sociale zekerheid voor politici. De belasting op arbeid en de totale belasting worden op dit bedrag berekend.`,
+    fr: `Simplement la rémunération : l'État ne paie pas de cotisation patronale pour les élus. Les taux de taxation du travail et de taxation totale sont calculés sur ce montant.`,
   },
   'tip.minSs': {
-    en: `None: political office holders are not insured under the Social Security Act.`,
-    nl: `Geen: politieke ambtsdragers zijn niet verzekerd onder de socialezekerheidswet.`,
-    fr: `Aucune : les élus et ministres ne sont pas assurés au titre de la loi sur la sécurité sociale.`,
+    en: `None. Politicians are not covered by the Social Security Act.`,
+    nl: `Geen. Politici vallen niet onder de socialezekerheidswet.`,
+    fr: `Aucune. Les élus ne relèvent pas de la loi sur la sécurité sociale.`,
   },
 
   // Politicians on the chart
@@ -67,14 +67,14 @@ window.TAX_STRINGS = {
   'pol.stat.minister': { en: `Salary + position allowance`, nl: `Loon + ambtstoelage`, fr: `Salaire + indemnité de fonction` },
   'pol.stat.mp': { en: `Salary + position allowance, without staff and travel budgets`, nl: `Loon + ambtstoelage, zonder budgetten voor personeel en reizen`, fr: `Salaire + indemnité de fonction, hors budgets de personnel et de déplacement` },
   'polNote.office': {
-    en: `Salary + position allowance taxed as employment income, no social security. Official residence, car and staff not counted. The head sits at the employee salary with the same net, with your household; the dot is their actual gross.`,
-    nl: `Loon + ambtstoelage belast als arbeidsinkomen, geen sociale zekerheid. Ambtswoning, wagen en personeel niet meegeteld. Het hoofdje staat bij het werknemersloon met hetzelfde netto, met jouw gezin; het bolletje is hun echte bruto.`,
-    fr: `Salaire + indemnité de fonction imposés comme un salaire, sans sécurité sociale. Résidence, voiture et personnel non comptés. La tête est au salaire d'un salarié au même net, avec votre foyer ; le point est leur vrai brut.`,
+    en: `Salary + position allowance, taxed like any salary, with no social security. Their official home, car and staff are not counted. The head shows what an employee would need to earn to keep the same amount, with your household. The dot is what they really earn before tax.`,
+    nl: `Loon + ambtstoelage, belast zoals elk loon, zonder sociale zekerheid. Ambtswoning, auto en personeel tellen niet mee. Het hoofdje toont wat een werknemer moet verdienen om hetzelfde over te houden, met jouw gezin. Het bolletje is wat ze echt verdienen vóór belasting.`,
+    fr: `Salaire + indemnité de fonction, imposés comme un salaire, sans sécurité sociale. Logement de fonction, voiture et personnel ne sont pas comptés. La tête montre ce qu'un salarié devrait gagner pour garder la même somme, avec votre foyer. Le point est ce qu'ils gagnent vraiment avant impôt.`,
   },
   polNote: {
-    en: links => `Hover a name for details, click to zoom to them. Yearly gross, shown on the chart as yearly ÷ 12. Office holders are placed where an employee would earn the same net. Pay from the 2011 royal decree, see ${links}.`,
-    nl: links => `Beweeg over een naam voor details, klik om ernaar te zoomen. Jaarlijks bruto, op de grafiek als jaarbedrag ÷ 12. Ambtsdragers staan waar een werknemer hetzelfde netto zou verdienen. Lonen uit het koninklijk besluit van 2011, zie ${links}.`,
-    fr: links => `Survolez un nom pour les détails, cliquez pour zoomer. Brut annuel, placé sur le graphique en montant annuel ÷ 12. Les élus sont placés là où un salarié gagnerait le même net. Rémunérations du décret royal de 2011, voir ${links}.`,
+    en: links => `Hover a name for details, click to zoom in on it. Their yearly pay before tax is shown on the chart divided by 12. Each one sits where an employee would keep the same amount after tax. Pay comes from the 2011 royal decree, see ${links}.`,
+    nl: links => `Beweeg over een naam voor details, klik om erop in te zoomen. Hun jaarloon vóór belasting staat op de grafiek gedeeld door 12. Elk staat waar een werknemer na belasting hetzelfde zou overhouden. De lonen komen uit het koninklijk besluit van 2011, zie ${links}.`,
+    fr: links => `Survolez un nom pour les détails, cliquez pour zoomer dessus. Leur salaire annuel avant impôt est montré sur le graphique divisé par 12. Chacun est placé là où un salarié garderait la même somme après impôt. Les salaires viennent du décret royal de 2011, voir ${links}.`,
   },
   'src.pol.pm': { en: `Wikipedia: Prime Minister of Thailand`, nl: `Wikipedia: premier van Thailand`, fr: `Wikipédia : Premier ministre de Thaïlande` },
   'src.pol.dpm': { en: `Royal decree on political officials' pay, 2011`, nl: `Koninklijk besluit over lonen van politieke ambtsdragers, 2011`, fr: `Décret royal sur les traitements des élus, 2011` },
@@ -89,9 +89,9 @@ window.TAX_STRINGS = {
     fr: () => `Que se passe-t-il aux bas salaires ?`,
   },
   trapBody: {
-    en: (a, free) => `There is no in-work benefit to lose. At the minimum wage (${a}) you pay only 5% social security, and so does your employer. Half your pay (up to 100,000 baht a year), the 60,000 baht personal allowance, your social security and the first 150,000 baht of net income are tax-free, so income tax starts only around ${free || '-'}.`,
-    nl: (a, free) => `Er is geen inkomensaanvulling die wegvalt. Op het minimumloon (${a}) betaal je enkel 5% sociale zekerheid, net als je werkgever. De helft van je loon (tot 100.000 baht per jaar), de persoonlijke vrijstelling van 60.000 baht, je sociale bijdragen en de eerste 150.000 baht netto-inkomen zijn belastingvrij, dus de inkomstenbelasting begint pas rond ${free || '-'}.`,
-    fr: (a, free) => `Aucune prestation liée au travail ne disparaît. Au salaire minimum (${a}), vous ne payez que 5% de sécurité sociale, comme votre employeur. La moitié du salaire (jusqu'à 100 000 bahts par an), l'abattement personnel de 60 000 bahts, vos cotisations et les 150 000 premiers bahts de revenu net sont exonérés : l'impôt ne commence que vers ${free || '-'}.`,
+    en: (a, free) => `Thailand has no extra benefit for low-paid workers, so there is nothing to lose as you earn more. At the minimum wage (${a}) you only pay 5% for social security, and your employer pays the same. Many things are tax-free: half your pay (up to 100,000 baht a year), 60,000 baht for yourself, your social security, and then the first 150,000 baht left over. So you only start paying income tax around ${free || '-'}.`,
+    nl: (a, free) => `Thailand heeft geen extra steun voor laagbetaalde werknemers, dus je verliest niets als je meer verdient. Op het minimumloon (${a}) betaal je enkel 5% voor sociale zekerheid, en je werkgever betaalt hetzelfde. Veel is belastingvrij: de helft van je loon (tot 100.000 baht per jaar), 60.000 baht voor jezelf, je sociale bijdragen, en daarna de eerste 150.000 baht die overblijft. Je betaalt dus pas inkomstenbelasting vanaf ongeveer ${free || '-'}.`,
+    fr: (a, free) => `La Thaïlande n'a pas d'aide en plus pour les bas salaires : vous ne perdez rien en gagnant plus. Au salaire minimum (${a}), vous payez seulement 5% de sécurité sociale, et votre employeur autant. Beaucoup de choses ne sont pas imposées : la moitié du salaire (jusqu'à 100 000 bahts par an), 60 000 bahts pour vous, vos cotisations, puis les 150 000 premiers bahts qui restent. Vous ne payez donc l'impôt qu'à partir d'environ ${free || '-'}.`,
   },
   topTitle: {
     en: top => `What changes above ${top}?`,
@@ -99,9 +99,9 @@ window.TAX_STRINGS = {
     fr: top => `Que change-t-il au-delà de ${top} ?`,
   },
   topBody: {
-    en: (top, end, cap) => `Above ${top} your net income passes 5 million baht a year and each extra baht is taxed at the top rate of 35%. Social security stopped growing long before, at ${cap} a month, so from there on the marginal rate is income tax alone.`,
-    nl: (top, end, cap) => `Boven ${top} gaat je netto-inkomen over 5 miljoen baht per jaar en wordt elke extra baht belast aan het toptarief van 35%. De sociale bijdrage groeit al veel eerder niet meer, vanaf ${cap} per maand, dus vanaf dan is het marginale tarief enkel inkomstenbelasting.`,
-    fr: (top, end, cap) => `Au-delà de ${top}, votre revenu net dépasse 5 millions de bahts par an et chaque baht en plus est taxé au taux maximal de 35%. La sécurité sociale a cessé d'augmenter bien plus bas, à ${cap} par mois : à partir de là, le taux marginal n'est plus que l'impôt.`,
+    en: (top, end, cap) => `Above ${top}, the taxed part of your pay goes over 5 million baht a year. Each extra baht is then taxed at the highest rate, 35%. Social security stopped growing long before, at ${cap} a month. So from there, only income tax takes a share of each pay rise.`,
+    nl: (top, end, cap) => `Boven ${top} gaat het belaste deel van je loon over 5 miljoen baht per jaar. Elke extra baht wordt dan belast aan het hoogste tarief, 35%. De sociale bijdrage groeit al veel eerder niet meer, vanaf ${cap} per maand. Vanaf dan neemt dus enkel de inkomstenbelasting een deel van elke loonsverhoging.`,
+    fr: (top, end, cap) => `Au-delà de ${top}, la part imposée de votre salaire dépasse 5 millions de bahts par an. Chaque baht en plus est alors taxé au taux le plus haut, 35%. La sécurité sociale a cessé d'augmenter bien avant, à ${cap} par mois. À partir de là, seul l'impôt prend une part de chaque augmentation.`,
   },
 
   // Tax components
@@ -114,41 +114,41 @@ window.TAX_STRINGS = {
 
   // Tooltips
   'tip.f12': {
-    en: `12 monthly salaries. Many Thai employers add a yearly bonus: pick 13 or 14 months to include one.`,
-    nl: `12 maandlonen. Veel Thaise werkgevers betalen een jaarlijkse bonus: kies 13 of 14 maanden om die mee te tellen.`,
-    fr: `12 salaires mensuels. Beaucoup d'employeurs thaïlandais versent une prime annuelle : choisissez 13 ou 14 mois pour l'inclure.`,
+    en: `12 monthly salaries. Many Thai employers also pay a yearly bonus: pick 13 or 14 months to add one.`,
+    nl: `12 maandlonen. Veel Thaise werkgevers betalen ook een jaarlijkse bonus: kies 13 of 14 maanden om die toe te voegen.`,
+    fr: `12 salaires mensuels. Beaucoup d'employeurs thaïlandais versent aussi une prime annuelle : choisissez 13 ou 14 mois pour l'ajouter.`,
   },
   'tip.fBonus': {
-    en: `12 monthly salaries plus a bonus worth one or two months. The bonus is taxed like salary but, as a one-off payment, isn't counted for social security, which is capped anyway.`,
-    nl: `12 maandlonen plus een bonus van een of twee maanden. De bonus wordt belast zoals loon, maar telt als eenmalige betaling niet mee voor de sociale zekerheid, die toch al begrensd is.`,
-    fr: `12 salaires mensuels plus une prime d'un ou deux mois. La prime est imposée comme le salaire mais, versée en une fois, n'entre pas dans la sécurité sociale, de toute façon plafonnée.`,
+    en: `12 monthly salaries plus a bonus worth one or two months. The bonus is taxed like normal pay. Because it is paid once, it does not count for social security, which has a low ceiling anyway.`,
+    nl: `12 maandlonen plus een bonus van een of twee maanden. De bonus wordt belast zoals gewoon loon. Omdat hij eenmalig is, telt hij niet mee voor de sociale zekerheid, die sowieso een laag plafond heeft.`,
+    fr: `12 salaires mensuels plus une prime d'un ou deux mois. La prime est imposée comme le salaire normal. Comme elle est versée une seule fois, elle ne compte pas pour la sécurité sociale, de toute façon plafonnée bas.`,
   },
   'tip.jointH': { en: `Couples`, nl: `Koppels`, fr: `Couples` },
   'tip.joint': {
-    en: `Thailand taxes each spouse separately. If your spouse has no income you get a 60,000 baht spouse allowance. Each parent with income deducts 30,000 baht for the first child and 60,000 for each later child born from 2018 (assumed here). Your tax = the household's tax − what it would pay if you earned nothing.`,
-    nl: `Thailand belast elke partner apart. Heeft je partner geen inkomen, dan krijg je een partnervrijstelling van 60.000 baht. Elke ouder met inkomen trekt 30.000 baht af voor het eerste kind en 60.000 voor elk volgend kind geboren vanaf 2018 (hier verondersteld). Jouw belasting = de belasting van het gezin − wat het zou betalen als jij niets verdiende.`,
-    fr: `La Thaïlande impose chaque conjoint séparément. Si votre conjoint n'a pas de revenu, vous avez un abattement de conjoint de 60 000 bahts. Chaque parent qui a un revenu déduit 30 000 bahts pour le premier enfant et 60 000 pour chaque enfant suivant né depuis 2018 (supposé ici). Votre impôt = l'impôt du foyer − ce qu'il paierait sans vos revenus.`,
+    en: `In Thailand each spouse pays tax on their own pay. If your spouse earns nothing, 60,000 baht more of your pay is tax-free. Each parent who earns gets 30,000 baht tax-free for the first child and 60,000 for each next child born from 2018 (we assume they all are). Your tax is what the household pays, minus what it would pay if you earned nothing.`,
+    nl: `In Thailand betaalt elke partner belasting op zijn eigen loon. Verdient je partner niets, dan is 60.000 baht meer van jouw loon belastingvrij. Elke ouder die verdient, krijgt 30.000 baht belastingvrij voor het eerste kind en 60.000 voor elk volgend kind geboren vanaf 2018 (we gaan ervan uit dat dat voor alle kinderen geldt). Jouw belasting is wat het gezin betaalt, min wat het zou betalen als jij niets verdiende.`,
+    fr: `En Thaïlande, chaque conjoint paie l'impôt sur son propre salaire. Si votre conjoint ne gagne rien, 60 000 bahts de plus de votre salaire ne sont pas imposés. Chaque parent qui travaille a 30 000 bahts non imposés pour le premier enfant et 60 000 pour chaque enfant suivant né depuis 2018 (nous supposons que c'est le cas de tous). Votre impôt est ce que paie le foyer, moins ce qu'il paierait si vous ne gagniez rien.`,
   },
-  'tip.costShort': { en: `Gross salary + employer social security.`, nl: `Brutoloon + werkgeversbijdrage sociale zekerheid.`, fr: `Salaire brut + sécurité sociale employeur.` },
+  'tip.costShort': { en: `Your gross salary plus the social security your employer pays on top.`, nl: `Je brutoloon plus de sociale zekerheid die je werkgever erbovenop betaalt.`, fr: `Votre salaire brut plus la sécurité sociale que votre employeur paie en plus.` },
   'tip.er': {
-    en: `Paid by your employer on top of your gross salary: 5% of the monthly wage up to 17,500 baht, so at most 875 baht a month. The State also pays in. The Workmen's Compensation Fund (0.2% to 1% by industry) is left out.`,
-    nl: `Betaald door je werkgever bovenop je brutoloon: 5% van het maandloon tot 17.500 baht, dus hoogstens 875 baht per maand. De staat draagt ook bij. Het Workmen's Compensation Fund (0,2% tot 1% volgens sector) is niet meegeteld.`,
-    fr: `Payée par votre employeur en plus du salaire brut : 5% du salaire mensuel jusqu'à 17 500 bahts, soit 875 bahts par mois au plus. L'État cotise aussi. Le Workmen's Compensation Fund (0,2% à 1% selon le secteur) n'est pas compté.`,
+    en: `Your employer pays this on top of your gross salary: 5% of your monthly pay, counted up to 17,500 baht. So never more than 875 baht a month. The State adds some too. Insurance for accidents at work (the Workmen's Compensation Fund, 0.2% to 1% depending on the industry) is not included.`,
+    nl: `Je werkgever betaalt dit bovenop je brutoloon: 5% van je maandloon, geteld tot 17.500 baht. Dus nooit meer dan 875 baht per maand. De staat legt er ook iets bij. De verzekering voor arbeidsongevallen (het Workmen's Compensation Fund, 0,2% tot 1% volgens de sector) is niet meegeteld.`,
+    fr: `Votre employeur la paie en plus de votre salaire brut : 5% du salaire mensuel, compté jusqu'à 17 500 bahts. Donc jamais plus de 875 bahts par mois. L'État ajoute aussi sa part. L'assurance accidents du travail (le Workmen's Compensation Fund, 0,2% à 1% selon le secteur) n'est pas comptée.`,
   },
   'tip.ee': {
-    en: `Withheld from your pay: 5% of the monthly wage up to 17,500 baht (875 baht a month at most, the ceiling raised from 15,000 in 2026). It covers sickness, maternity, disability, death, child allowance, old age and unemployment, and is deductible from income tax.`,
-    nl: `Ingehouden op je loon: 5% van het maandloon tot 17.500 baht (hoogstens 875 baht per maand, het plafond ging in 2026 omhoog van 15.000). Het dekt ziekte, moederschap, invaliditeit, overlijden, kinderbijslag, ouderdom en werkloosheid, en is aftrekbaar van de inkomstenbelasting.`,
-    fr: `Retenue sur votre paie : 5% du salaire mensuel jusqu'à 17 500 bahts (875 bahts par mois au plus, plafond relevé de 15 000 en 2026). Elle couvre maladie, maternité, invalidité, décès, allocations familiales, vieillesse et chômage, et se déduit de l'impôt sur le revenu.`,
+    en: `Taken from your pay: 5% of your monthly pay, counted up to 17,500 baht. So never more than 875 baht a month (the limit went up from 15,000 in 2026). It pays for sickness, maternity, disability, death, child benefit, old age and unemployment. What you pay here is not taxed.`,
+    nl: `Afgehouden van je loon: 5% van je maandloon, geteld tot 17.500 baht. Dus nooit meer dan 875 baht per maand (de grens ging in 2026 omhoog van 15.000). Het betaalt voor ziekte, moederschap, invaliditeit, overlijden, kinderbijslag, ouderdom en werkloosheid. Wat je hier betaalt, wordt niet belast.`,
+    fr: `Prélevée sur votre paie : 5% du salaire mensuel, compté jusqu'à 17 500 bahts. Donc jamais plus de 875 bahts par mois (la limite est passée de 15 000 à 17 500 en 2026). Elle paie maladie, maternité, invalidité, décès, allocations familiales, vieillesse et chômage. Ce que vous payez ici n'est pas imposé.`,
   },
   'tip.expense': {
-    en: calc => `Employees deduct 50% of their pay as expenses, up to 100,000 baht a year, without receipts. Yours:${calc}`,
-    nl: calc => `Werknemers trekken forfaitair 50% van hun loon af als kosten, tot 100.000 baht per jaar, zonder bewijsstukken. Die van jou:${calc}`,
-    fr: calc => `Les salariés déduisent 50% de leur salaire au titre des frais, jusqu'à 100 000 bahts par an, sans justificatif. La vôtre :${calc}`,
+    en: calc => `Every employee can take half of their pay off the taxed amount as work costs, up to 100,000 baht a year. No receipts needed. Yours:${calc}`,
+    nl: calc => `Elke werknemer mag de helft van zijn loon als werkkosten van het belaste bedrag aftrekken, tot 100.000 baht per jaar. Bonnetjes zijn niet nodig. Die van jou:${calc}`,
+    fr: calc => `Tout salarié peut retirer la moitié de son salaire du montant imposé, au titre des frais de travail, jusqu'à 100 000 bahts par an. Aucun justificatif n'est demandé. La vôtre :${calc}`,
   },
   'tip.allow': {
-    en: `60,000 baht for you, 60,000 for a spouse with no income, 30,000 for the first child and 60,000 for each later child born from 2018.`,
-    nl: `60.000 baht voor jezelf, 60.000 voor een partner zonder inkomen, 30.000 voor het eerste kind en 60.000 voor elk volgend kind geboren vanaf 2018.`,
-    fr: `60 000 bahts pour vous, 60 000 pour un conjoint sans revenu, 30 000 pour le premier enfant et 60 000 pour chaque enfant suivant né depuis 2018.`,
+    en: `Amounts that are never taxed: 60,000 baht for you, 60,000 for a spouse who earns nothing, 30,000 for the first child and 60,000 for each next child born from 2018.`,
+    nl: `Bedragen die nooit belast worden: 60.000 baht voor jezelf, 60.000 voor een partner die niets verdient, 30.000 voor het eerste kind en 60.000 voor elk volgend kind geboren vanaf 2018.`,
+    fr: `Montants jamais imposés : 60 000 bahts pour vous, 60 000 pour un conjoint qui ne gagne rien, 30 000 pour le premier enfant et 60 000 pour chaque enfant suivant né depuis 2018.`,
   },
   'tip.allowPers': { en: `Personal allowance`, nl: `Persoonlijke vrijstelling`, fr: `Abattement personnel` },
   'tip.allowSpouse': { en: `Spouse with no income`, nl: `Partner zonder inkomen`, fr: `Conjoint sans revenu` },
@@ -158,14 +158,14 @@ window.TAX_STRINGS = {
     fr: n => `${n} enfant${n > 1 ? 's' : ''}`,
   },
   'tip.taxable': {
-    en: calc => `Gross pay − expense deduction − allowances − social security contributions${calc}.`,
-    nl: calc => `Brutoloon − kostenaftrek − vrijstellingen − sociale bijdragen${calc}.`,
-    fr: calc => `Salaire brut − déduction de frais − abattements − cotisations sociales${calc}.`,
+    en: calc => `The part of your pay that is taxed: gross pay minus the expense deduction, the allowances and your social security${calc}.`,
+    nl: calc => `Het deel van je loon dat belast wordt: brutoloon min de kostenaftrek, de vrijstellingen en je sociale bijdragen${calc}.`,
+    fr: calc => `La part du salaire qui est imposée : salaire brut moins la déduction de frais, les abattements et vos cotisations sociales${calc}.`,
   },
   'tip.irShort': {
-    en: `Net income through the brackets: 0% to 150,000 baht, then 5% to 35%.`,
-    nl: `Netto-inkomen door de schijven: 0% tot 150.000 baht, daarna 5% tot 35%.`,
-    fr: `Revenu net passé au barème : 0% jusqu'à 150 000 bahts, puis de 5% à 35%.`,
+    en: `The first 150,000 baht of taxed income is not taxed at all. Each slice above that is taxed a bit more, from 5% up to 35%.`,
+    nl: `Op de eerste 150.000 baht belastbaar inkomen betaal je niets. Elke schijf daarboven wordt iets zwaarder belast, van 5% tot 35%.`,
+    fr: `Les 150 000 premiers bahts du revenu imposable ne paient rien. Chaque tranche au-dessus est un peu plus taxée, de 5% jusqu'à 35%.`,
   },
   'tip.irIncome': { en: `Employment income`, nl: `Inkomen uit arbeid`, fr: `Revenu salarial` },
   'tip.irPerson': { en: `Income tax`, nl: `Inkomstenbelasting`, fr: `Impôt` },
@@ -175,14 +175,14 @@ window.TAX_STRINGS = {
   'tip.irWithout': { en: `Household tax if you earned nothing`, nl: `Belasting als jij niets verdiende`, fr: `Impôt du foyer sans vos revenus` },
   'tip.irYours': { en: `Your share`, nl: `Jouw deel`, fr: `Votre part` },
   'tip.vatM': {
-    en: `Fresh food, rent, healthcare and education are exempt, so this is an upper bound. The legal rate is 10%; a royal decree has kept it at 7% since 1999, now until 30 September 2027.`,
-    nl: `Verse voeding, huur, gezondheidszorg en onderwijs zijn vrijgesteld, dus dit is een bovengrens. Het wettelijke tarief is 10%; een koninklijk besluit houdt het sinds 1999 op 7%, nu tot 30 september 2027.`,
-    fr: `Les produits frais, les loyers, la santé et l'enseignement sont exonérés : c'est donc un maximum. Le taux légal est de 10% ; un décret royal le maintient à 7% depuis 1999, désormais jusqu'au 30 septembre 2027.`,
+    en: `Fresh food, rent, healthcare and schooling have no VAT, so the real amount is likely lower than this. By law the rate is 10%, but a royal decree has kept it at 7% since 1999, now until 30 September 2027.`,
+    nl: `Op verse voeding, huur, gezondheidszorg en onderwijs zit geen btw, dus het echte bedrag ligt wellicht lager. Volgens de wet is het tarief 10%, maar een koninklijk besluit houdt het sinds 1999 op 7%, nu tot 30 september 2027.`,
+    fr: `Les produits frais, les loyers, la santé et l'enseignement n'ont pas de TVA : le vrai montant est donc sans doute plus bas. La loi prévoit 10%, mais un décret royal maintient 7% depuis 1999, désormais jusqu'au 30 septembre 2027.`,
   },
   'tip.net': {
-    en: calc => `What lands in your bank account over the year${calc}. Gross − social security − income tax.`,
-    nl: calc => `Wat er over het jaar op je rekening komt${calc}. Bruto − sociale zekerheid − inkomstenbelasting.`,
-    fr: calc => `Ce qui arrive sur votre compte sur l'année${calc}. Brut − sécurité sociale − impôt.`,
+    en: calc => `What reaches your bank account over the year${calc}. That is your gross pay, minus social security, minus income tax.`,
+    nl: calc => `Wat er over het jaar op je rekening komt${calc}. Dat is je brutoloon, min sociale zekerheid, min inkomstenbelasting.`,
+    fr: calc => `Ce qui arrive sur votre compte sur l'année${calc}. C'est votre salaire brut, moins la sécurité sociale, moins l'impôt.`,
   },
 
   // Rules used
@@ -193,57 +193,57 @@ window.TAX_STRINGS = {
   },
   'ref.ss': {
     en: { h: `1 · Social security`, li: [
-      `Employee <span class="num">5%</span> and employer <span class="num">5%</span> of the monthly wage, capped at 17,500 baht: at most <span class="num">875 baht</span> each a month. The State also pays in.`,
-      `Employee contributions are deductible from income tax.`,
+      `You pay <span class="num">5%</span> and your employer pays <span class="num">5%</span> of your monthly pay, counted up to 17,500 baht. That is at most <span class="num">875 baht</span> a month each. The State adds some too.`,
+      `What you pay for social security is not taxed.`,
     ] },
     nl: { h: `1 · Sociale zekerheid`, li: [
-      `Werknemer <span class="num">5%</span> en werkgever <span class="num">5%</span> van het maandloon, begrensd op 17.500 baht: hoogstens <span class="num">875 baht</span> elk per maand. De staat draagt ook bij.`,
-      `De werknemersbijdragen zijn aftrekbaar van de inkomstenbelasting.`,
+      `Jij betaalt <span class="num">5%</span> en je werkgever <span class="num">5%</span> van je maandloon, geteld tot 17.500 baht. Dat is hoogstens <span class="num">875 baht</span> elk per maand. De staat legt er ook iets bij.`,
+      `Wat je voor sociale zekerheid betaalt, wordt niet belast.`,
     ] },
     fr: { h: `1 · Sécurité sociale`, li: [
-      `Salarié <span class="num">5%</span> et employeur <span class="num">5%</span> du salaire mensuel, plafonné à 17 500 bahts : au plus <span class="num">875 bahts</span> chacun par mois. L'État cotise aussi.`,
-      `Les cotisations salariales se déduisent de l'impôt sur le revenu.`,
+      `Vous payez <span class="num">5%</span> et votre employeur <span class="num">5%</span> du salaire mensuel, compté jusqu'à 17 500 bahts. Soit au plus <span class="num">875 bahts</span> chacun par mois. L'État ajoute aussi sa part.`,
+      `Ce que vous payez pour la sécurité sociale n'est pas imposé.`,
     ] },
   },
   'ref.ir': {
     en: br => ({ h: `2 · Personal income tax`, li: [
-      `Brackets on net income:${br}`,
-      `Net income = pay − 50% expense deduction (max 100,000 baht) − allowances − social security.`,
-      `Allowances: <span class="num">60,000</span> personal, <span class="num">60,000</span> spouse with no income, <span class="num">30,000</span> first child, <span class="num">60,000</span> each later child born from 2018.`,
+      `Each slice of taxed income is taxed at its own rate:${br}`,
+      `Taxed income = pay, minus half your pay for work costs (at most 100,000 baht), minus the allowances, minus social security.`,
+      `Amounts never taxed: <span class="num">60,000</span> for you, <span class="num">60,000</span> for a spouse who earns nothing, <span class="num">30,000</span> for the first child, <span class="num">60,000</span> for each next child born from 2018.`,
     ] }),
     nl: br => ({ h: `2 · Personenbelasting`, li: [
-      `Schijven op het netto-inkomen:${br}`,
-      `Netto-inkomen = loon − 50% kostenaftrek (max. 100.000 baht) − vrijstellingen − sociale zekerheid.`,
-      `Vrijstellingen: <span class="num">60.000</span> persoonlijk, <span class="num">60.000</span> partner zonder inkomen, <span class="num">30.000</span> eerste kind, <span class="num">60.000</span> elk volgend kind geboren vanaf 2018.`,
+      `Elke schijf van het belastbare inkomen heeft zijn eigen tarief:${br}`,
+      `Belastbaar inkomen = loon, min de helft van je loon als werkkosten (hoogstens 100.000 baht), min de vrijstellingen, min sociale zekerheid.`,
+      `Nooit belaste bedragen: <span class="num">60.000</span> voor jezelf, <span class="num">60.000</span> voor een partner die niets verdient, <span class="num">30.000</span> voor het eerste kind, <span class="num">60.000</span> voor elk volgend kind geboren vanaf 2018.`,
     ] }),
     fr: br => ({ h: `2 · Impôt sur le revenu`, li: [
-      `Barème sur le revenu net :${br}`,
-      `Revenu net = salaire − déduction de frais de 50% (max. 100 000 bahts) − abattements − sécurité sociale.`,
-      `Abattements : <span class="num">60 000</span> personnel, <span class="num">60 000</span> conjoint sans revenu, <span class="num">30 000</span> premier enfant, <span class="num">60 000</span> chaque enfant suivant né depuis 2018.`,
+      `Chaque tranche du revenu imposable a son propre taux :${br}`,
+      `Revenu imposable = salaire, moins la moitié du salaire pour frais de travail (au plus 100 000 bahts), moins les abattements, moins la sécurité sociale.`,
+      `Montants jamais imposés : <span class="num">60 000</span> pour vous, <span class="num">60 000</span> pour un conjoint qui ne gagne rien, <span class="num">30 000</span> pour le premier enfant, <span class="num">60 000</span> pour chaque enfant suivant né depuis 2018.`,
     ] }),
   },
   'ref.vat': {
     en: { h: `3 · VAT on spending`, li: [
-      `Rate <span class="num">7%</span> (legal rate 10%, reduced until 30 September 2027), applied to all of your net pay as if you spent it.`,
-      `VAT inside a price = price × r / (100 + r): at 7% that's 7 / 107 = <span class="num">6.54%</span> of what you pay.`,
+      `Rate <span class="num">7%</span> (10% by law, lowered until 30 September 2027). We count it on all of your take-home pay, as if you spent it all.`,
+      `The VAT hidden in a price = price × r / (100 + r). At 7% that is 7 / 107 = <span class="num">6.54%</span> of what you pay.`,
     ] },
     nl: { h: `3 · Btw op uitgaven`, li: [
-      `Tarief <span class="num">7%</span> (wettelijk 10%, verlaagd tot 30 september 2027), toegepast op je hele nettoloon alsof je het helemaal uitgeeft.`,
-      `Btw in een prijs = prijs × r / (100 + r): bij 7% is dat 7 / 107 = <span class="num">6,54%</span> van wat je betaalt.`,
+      `Tarief <span class="num">7%</span> (10% volgens de wet, verlaagd tot 30 september 2027). We rekenen het op je hele nettoloon, alsof je alles uitgeeft.`,
+      `De btw die in een prijs zit = prijs × r / (100 + r). Bij 7% is dat 7 / 107 = <span class="num">6,54%</span> van wat je betaalt.`,
     ] },
     fr: { h: `3 · TVA sur les dépenses`, li: [
-      `Taux <span class="num">7%</span> (taux légal 10%, réduit jusqu'au 30 septembre 2027), appliqué à tout votre salaire net comme si vous le dépensiez entièrement.`,
-      `TVA comprise dans un prix = prix × r / (100 + r) : à 7%, cela fait 7 / 107 = <span class="num">6,54%</span> de ce que vous payez.`,
+      `Taux <span class="num">7%</span> (10% selon la loi, réduit jusqu'au 30 septembre 2027). Nous la comptons sur tout votre salaire net, comme si vous le dépensiez entièrement.`,
+      `La TVA cachée dans un prix = prix × r / (100 + r). À 7%, cela fait 7 / 107 = <span class="num">6,54%</span> de ce que vous payez.`,
     ] },
   },
   'ref.minister': {
     en: { h: `4 · Government and Parliament`, li: [
       `Monthly salary + position allowance: Prime Minister <span class="num">125,590</span>, Deputy Prime Minister <span class="num">119,920</span>, minister <span class="num">115,740</span>, MP <span class="num">113,560</span> baht.`,
-      `Taxed as employment income, no social security.`,
+      `Taxed like any salary, with no social security.`,
     ] },
     nl: { h: `4 · Regering en parlement`, li: [
       `Maandloon + ambtstoelage: premier <span class="num">125.590</span>, vicepremier <span class="num">119.920</span>, minister <span class="num">115.740</span>, parlementslid <span class="num">113.560</span> baht.`,
-      `Belast als arbeidsinkomen, geen sociale zekerheid.`,
+      `Belast zoals elk loon, zonder sociale zekerheid.`,
     ] },
     fr: { h: `4 · Gouvernement et Parlement`, li: [
       `Salaire mensuel + indemnité de fonction : Premier ministre <span class="num">125 590</span>, vice-Premier ministre <span class="num">119 920</span>, ministre <span class="num">115 740</span>, député <span class="num">113 560</span> bahts.`,
@@ -252,16 +252,16 @@ window.TAX_STRINGS = {
   },
   'ref.notIncl': {
     en: { h: `What's not included`, li: [
-      `Optional deductions: provident fund, retirement and Thai ESG funds, life and health insurance, mortgage interest, parents' allowance, donations, Easy E-Receipt spending.`,
-      `The Workmen's Compensation Fund (employer, 0.2% to 1%), the state welfare card and the child support grant for poor households. Income tax is the year's final tax, assuming even monthly pay.`,
+      `Things you can choose to take off your taxed income: company savings plans (provident fund), retirement and Thai ESG funds, life and health insurance, home loan interest, support for your parents, donations, and shopping under the Easy E-Receipt scheme.`,
+      `Accident-at-work insurance paid by the employer (Workmen's Compensation Fund, 0.2% to 1%), the state welfare card and the child grant for poor households. Income tax is worked out for the whole year, as if you earned the same every month.`,
     ] },
     nl: { h: `Wat niet is meegerekend`, li: [
-      `Vrijwillige aftrekposten: provident fund, pensioen- en Thai ESG-fondsen, levens- en ziekteverzekering, hypotheekrente, vrijstelling voor ouders, giften, uitgaven via Easy E-Receipt.`,
-      `Het Workmen's Compensation Fund (werkgever, 0,2% tot 1%), de welzijnskaart en de kindertoelage voor arme gezinnen. De inkomstenbelasting is die voor het hele jaar, met een gelijk maandloon.`,
+      `Wat je zelf van je belastbaar inkomen mag aftrekken: spaarplannen via het bedrijf (provident fund), pensioen- en Thai ESG-fondsen, levens- en ziekteverzekering, hypotheekrente, steun aan je ouders, giften, en aankopen via de Easy E-Receipt-regeling.`,
+      `De verzekering voor arbeidsongevallen die de werkgever betaalt (Workmen's Compensation Fund, 0,2% tot 1%), de welzijnskaart van de staat en de kindertoelage voor arme gezinnen. De inkomstenbelasting is berekend voor het hele jaar, alsof je elke maand hetzelfde verdient.`,
     ] },
     fr: { h: `Ce qui n'est pas inclus`, li: [
-      `Déductions facultatives : provident fund, fonds retraite et Thai ESG, assurance vie et santé, intérêts d'emprunt immobilier, abattement pour les parents, dons, dépenses Easy E-Receipt.`,
-      `Le Workmen's Compensation Fund (employeur, 0,2% à 1%), la carte d'aide sociale et l'allocation pour enfant des foyers pauvres. L'impôt est celui de l'année, pour un salaire mensuel régulier.`,
+      `Ce que vous pouvez choisir de retirer de votre revenu imposable : épargne d'entreprise (provident fund), fonds retraite et Thai ESG, assurance vie et santé, intérêts d'emprunt immobilier, aide à vos parents, dons, et achats du programme Easy E-Receipt.`,
+      `L'assurance accidents du travail payée par l'employeur (Workmen's Compensation Fund, 0,2% à 1%), la carte d'aide sociale de l'État et l'allocation pour enfant des foyers pauvres. L'impôt est calculé sur l'année entière, comme si vous gagniez la même somme chaque mois.`,
     ] },
   },
 
@@ -271,9 +271,9 @@ window.TAX_STRINGS = {
     fr: `Ce que paient les héritiers sur les très gros héritages →`,
   },
   disclaimer: {
-    en: `This is an estimate for orientation only. Your payslip and the Revenue Department decide.`,
-    nl: `Dit is enkel een schatting ter oriëntatie. Je loonstrook en het Revenue Department zijn bepalend.`,
-    fr: `Ceci n'est qu'une estimation indicative. Seuls votre fiche de paie et le Revenue Department font foi.`,
+    en: `This is only an estimate to give you an idea. Your payslip and the Revenue Department have the final word.`,
+    nl: `Dit is enkel een schatting om je een idee te geven. Je loonstrook en het Revenue Department hebben het laatste woord.`,
+    fr: `Ceci n'est qu'une estimation pour vous donner une idée. Votre fiche de paie et le Revenue Department ont le dernier mot.`,
   },
 
   'src.pit': { en: `PwC: Thailand personal income tax`, nl: `PwC: Thaise personenbelasting`, fr: `PwC : impôt sur le revenu en Thaïlande` },
@@ -284,4 +284,39 @@ window.TAX_STRINGS = {
   'src.vat': { en: `PwC: Thailand VAT`, nl: `PwC: Thaise btw`, fr: `PwC : TVA en Thaïlande` },
   'src.minWage': { en: `Trading Economics: minimum wage`, nl: `Trading Economics: minimumloon`, fr: `Trading Economics : salaire minimum` },
   'src.pol': { en: `political office pay`, nl: `lonen van politieke ambten`, fr: `les rémunérations politiques` },
+  'gap.noCheck': {
+    en: `This was researched without a web search engine. No result was checked against an official calculator (the Revenue Department's tax calculator).`,
+    nl: `Dit is onderzocht zonder zoekmachine. Geen enkel resultaat is nagekeken met een officiële rekenmodule (de belastingcalculator van het Revenue Department).`,
+    fr: `Ces recherches ont été faites sans moteur de recherche. Aucun résultat n'a été vérifié avec un calculateur officiel (celui du Revenue Department).`,
+  },
+  'gap.polPay': {
+    en: `The pay of the Deputy Prime Minister, ministers and MPs comes from the 2011 royal decree, from memory, so it may be wrong. The Prime Minister's pay comes from Wikipedia, which quotes a 2021 Bangkok Post article. Later pay rises were not checked.`,
+    nl: `Het loon van de vicepremier, ministers en parlementsleden komt uit het koninklijk besluit van 2011, uit het geheugen, dus het kan fout zijn. Het loon van de premier komt van Wikipedia, dat een artikel uit de Bangkok Post van 2021 aanhaalt. Latere loonsverhogingen zijn niet nagekeken.`,
+    fr: `La paie du vice-Premier ministre, des ministres et des députés vient du décret royal de 2011, de mémoire : elle peut être fausse. Celle du Premier ministre vient de Wikipédia, qui cite un article du Bangkok Post de 2021. Les hausses suivantes n'ont pas été vérifiées.`,
+  },
+  'gap.polSso': {
+    en: `We assume politicians pay no social security and that their salary and position allowance are both taxed like normal pay. This is from memory, not confirmed.`,
+    nl: `We gaan ervan uit dat politici geen sociale zekerheid betalen en dat hun loon en ambtstoelage allebei belast worden zoals gewoon loon. Dit is uit het geheugen, niet bevestigd.`,
+    fr: `Nous supposons que les élus ne paient pas de sécurité sociale et que leur salaire et leur indemnité de fonction sont tous deux imposés comme un salaire normal. C'est de mémoire, non confirmé.`,
+  },
+  'gap.ssCap': {
+    en: `Social security only counts pay up to 17,500 baht a month (so 875 baht a month for you and the same for your employer). We worked out this limit from the 875 baht maximum; we did not read it in the decree.`,
+    nl: `De sociale zekerheid telt enkel loon tot 17.500 baht per maand (dus 875 baht per maand voor jou en evenveel voor je werkgever). Die grens hebben we afgeleid uit het maximum van 875 baht; we hebben ze niet in het besluit gelezen.`,
+    fr: `La sécurité sociale ne compte le salaire que jusqu'à 17 500 bahts par mois (donc 875 bahts par mois pour vous et autant pour l'employeur). Nous avons déduit cette limite du maximum de 875 bahts ; nous ne l'avons pas lue dans le décret.`,
+  },
+  'gap.children': {
+    en: `We assume each parent who earns gets the full tax-free amount for the children (fairly sure, not certain). We also assume every child after the first was born from 2018, so each gets 60,000 baht.`,
+    nl: `We gaan ervan uit dat elke ouder die verdient het volledige belastingvrije bedrag voor de kinderen krijgt (vrij zeker, niet helemaal). We gaan er ook van uit dat elk kind na het eerste geboren is vanaf 2018, dus elk goed voor 60.000 baht.`,
+    fr: `Nous supposons que chaque parent qui travaille a droit à toute la part non imposée pour les enfants (assez sûr, pas certain). Nous supposons aussi que chaque enfant après le premier est né depuis 2018, soit 60 000 bahts chacun.`,
+  },
+  'gap.minWage': {
+    en: `The minimum wage line is 400 baht a day times 30 days, the highest rate (Bangkok, according to Trading Economics). Other sources say 372 baht for Bangkok, and it goes from 337 to 400 across provinces. There is no line for the typical (median) or average wage.`,
+    nl: `De lijn van het minimumloon is 400 baht per dag maal 30 dagen, het hoogste bedrag (Bangkok, volgens Trading Economics). Andere bronnen zeggen 372 baht voor Bangkok, en tussen de provincies gaat het van 337 tot 400. Er is geen lijn voor het mediaanloon (de helft verdient meer, de helft minder) of het gemiddelde loon.`,
+    fr: `La ligne du salaire minimum vaut 400 bahts par jour fois 30 jours, le montant le plus haut (Bangkok, selon Trading Economics). D'autres sources donnent 372 bahts pour Bangkok, et il va de 337 à 400 selon la province. Il n'y a pas de ligne pour le salaire médian (la moitié gagne plus, l'autre moitié moins) ni pour le salaire moyen.`,
+  },
+  'gap.notIncl': {
+    en: `Things you could choose to deduct (company savings plan, insurance, home loan interest…) and the rest of "What's not included" are left out. So the tax shown is the most you would pay.`,
+    nl: `Wat je zelf zou kunnen aftrekken (spaarplan via het bedrijf, verzekeringen, hypotheekrente…) en de rest van "Wat niet is meegerekend" zijn weggelaten. De getoonde belasting is dus het meeste dat je zou betalen.`,
+    fr: `Ce que vous pourriez choisir de déduire (épargne d'entreprise, assurances, intérêts d'emprunt…) et le reste de « Ce qui n'est pas inclus » sont laissés de côté. L'impôt affiché est donc le maximum que vous paieriez.`,
+  },
 };

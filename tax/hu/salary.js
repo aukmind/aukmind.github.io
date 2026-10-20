@@ -197,5 +197,6 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
     polNoteLink: 'govPay',
     refKeys: ['er', 'ee', 'ir', 'exempt', 'fam', 'vat', 'minister', 'notIncl'],
     tips, breakdown, trap, top,
+    GAPS: ['noNewRules', 'u25Cap', 'famSplit', 'partner', 'rounding', 'median', 'noSimulator', 'polTax', 'fullYear', 'minPay', 'mnb', 'pmOld', 'stateCap', 'notIncl'],
   };
 };

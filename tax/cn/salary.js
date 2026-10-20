@@ -189,6 +189,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['noCheck', 'shBase', 'inj', 'child', 'rent', 'leaders', 'cmcc', 'wages', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'CNY', nextStep: 1000,
     regions: REGIONS, sizes: SIZES, minRoles: MIN_ROLES, factors: [12, 13, 14, 15], factorDigits: 0, vatStandard: 13,

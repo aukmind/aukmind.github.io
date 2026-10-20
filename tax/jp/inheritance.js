@@ -88,6 +88,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const hasPartner = s => s.rel.startsWith('partner');
 
   return {
+    GAPS: ['noCheck', 'homeLand', 'split', 'gifts', 'family', 'abroad'],
     SOURCES,
     currency: 'JPY',
     nextStep: 1000000,

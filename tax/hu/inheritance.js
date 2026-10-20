@@ -45,6 +45,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
 
   return {
     SOURCES,
+    GAPS: ['valuation', 'usufruct', 'stepOrder', 'movOrder', 'special', 'gifts', 'minors', 'insurance', 'fees', 'date'],
     currency: 'HUF',
     nextStep: 1000000,
     state: { share: 40000000, rel: 'other', home: 25000000, movables: 0 },

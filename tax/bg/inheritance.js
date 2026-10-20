@@ -29,6 +29,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['excess', 'muni', 'valuation', 'gifts'],
     SOURCES,
     currency: 'EUR',
     nextStep: 1000,

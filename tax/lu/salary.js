@@ -317,6 +317,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   const classOf = s => s.household === 'joint' ? 2 : s.children > 0 ? '1a' : 1;
 
   return {
+    GAPS: ['point', 'govPoints', 'mpPoints', 'govSocial', 'bank', 'mutual', 'accident', 'nettoCalc', 'class1a', 'wages', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'EUR',
     communes: false, local: null,

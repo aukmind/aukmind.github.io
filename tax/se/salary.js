@@ -283,7 +283,8 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
-    P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
+    P, SRC, REF_WAGES, POLITICIANS,
+    GAPS: ['creditOrder', 'rounding', 'youth', 'age', 'church', 'vatFood', 'bb', 'wages', 'minYear', 'minFees', 'corpPay', 'notIncl'], ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'SEK', nextStep: 1000,
     regions: [], sizes: AGES, minRoles: MIN_ROLES, factors: [12, 12.11], factorDigits: 2, vatStandard: 25,
     features: { cadre: true, pa: true },

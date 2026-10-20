@@ -31,6 +31,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const chartStates = st => [...new Set([st, 'SP', 'RJ', 'MG', 'AM'])];
 
   return {
+    GAPS: ['noWeb', 'brackets', 'reform', 'exempt', 'rel', 'gifts', 'abroad'],
     SOURCES, currency: 'BRL', nextStep: 5000,
     state: { share: 500000, st: 'SP', bound: 'max' },
     urlFields: { share: ['share', 'num'], state: ['st', 'str', STATES], bound: ['bound', 'str', BOUNDS] },

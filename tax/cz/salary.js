@@ -239,6 +239,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
 
   return {
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
+    GAPS: ['median', 'cnb', 'cez', 'polIns', 'spouseIncome', 'married', 'kidsSplit', 'bonusCap', 'ztpp', 'notIncl'],
     currency: 'CZK', nextStep: 2500,
     regions: [], sizes: [], minRoles: MIN_ROLES, factors: [12], factorDigits: 0, vatStandard: 21,
     features: { under3: true },

@@ -1,5 +1,6 @@
-// Headless checks for the tax pages: node tax/tests/run.js [cc ...] [--only salary|inheritance] [--shots]
+// Headless checks for the tax pages: node tax/tests/run.js [cc ...] [compare] [--only salary|inheritance] [--shots]
 // Serves the repo itself, so no other server is needed. Exit code 1 on any failure.
+// The compare page and the gross/net/cost switch run with a full run, or when `compare` is named.
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -23,7 +24,9 @@ const allCountries = () => {
   return JSON.parse(src.match(/const COUNTRIES = (\[[^\]]*\])/)[1].replace(/'/g, '"'));
 };
 const named = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--only');
-const countries = named.length ? named : allCountries().filter(cc => fs.existsSync(path.join(TAX, cc, 'salary.js')));
+const EXTRAS = named.includes('compare') || (!named.length && !only);
+const picked = named.filter(a => a !== 'compare');
+const countries = picked.length ? picked : named.length ? [] : allCountries().filter(cc => fs.existsSync(path.join(TAX, cc, 'salary.js')));
 
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png' };
 function serve() {
@@ -65,7 +68,7 @@ const fail = (cc, what, msg) => results.push({ cc, what, ok: false, msg });
 const pass = (cc, what) => results.push({ cc, what, ok: true });
 
 // Opens a wrapper URL in a fresh context (saved language leaks otherwise) and returns the framed page.
-async function open(browser, url, { retries = 1 } = {}) {
+async function open(browser, url, { retries = 2 } = {}) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await ctx.newPage();
   const errors = [];
@@ -76,6 +79,8 @@ async function open(browser, url, { retries = 1 } = {}) {
     const frame = await waitFrame(page);
     await frame.waitForSelector('h1', { timeout: 20000 });
     await page.waitForTimeout(600);
+    // A CDN script (Vue, Chart.js) that failed quietly is a load failure too, not a page bug.
+    if (errors.some(e => /(Chart|Vue) is not defined/.test(e))) throw new Error('CDN script missing: ' + errors[0]);
     return { ctx, page, frame, errors };
   } catch (e) {
     await ctx.close();
@@ -197,6 +202,73 @@ async function inheritance(browser, base, cc) {
   }
 }
 
+// The gross/net/cost switch rewrites the amount and keeps the choice in the wrapper's URL.
+async function basisSwitch(browser, base, cc) {
+  const what = 'basis switch';
+  try {
+    const o = await open(browser, `${base}/tax/${cc}/?lang=en&salary=3000`);
+    const val = () => o.frame.$eval('#salary', el => +el.value);
+    const pick = async b => {
+      await o.frame.click(`.seg.basis button:nth-child(${['cost', 'gross', 'net'].indexOf(b) + 1})`);
+      await o.page.waitForTimeout(400);
+      return { v: await val(), url: o.page.url() };
+    };
+    const g0 = await val();
+    const net = await pick('net'), cost = await pick('cost'), back = await pick('gross');
+    const problems = [...o.errors];
+    if (!net.url.includes('basis=net')) problems.push(`net: URL ${net.url}`);
+    if (!(net.v > 0 && net.v < g0)) problems.push(`net: ${g0} became ${net.v}`);
+    if (!cost.url.includes('basis=cost')) problems.push(`cost: URL ${cost.url}`);
+    if (!(cost.v > g0)) problems.push(`cost: ${g0} became ${cost.v}`);
+    // A param the visitor touched stays in the URL, even back at its default.
+    if (!back.url.includes('basis=gross')) problems.push(`gross: URL ${back.url}`);
+    if (Math.abs(back.v - g0) > 1) problems.push(`gross: ${g0} came back as ${back.v}`);
+    problems.length ? fail(cc, what, problems.slice(0, 5).join(' | ')) : pass(cc, what);
+    await o.ctx.close();
+  } catch (e) { fail(cc, what, e.message.split('\n')[0]); }
+}
+
+// The compare page isn't framed: it loads each country's salary module itself, one after the other.
+async function comparePage(browser, base) {
+  const CC = ['be', 'fr', 'gb', 'us', 'jp'];
+  const what = 'compare page';
+  const attempt = async () => {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const page = await ctx.newPage();
+    const errors = [];
+    page.on('pageerror', e => errors.push('pageerror: ' + e.message));
+    page.on('console', m => { if (m.type() === 'error' && !/ERR_NETWORK_CHANGED|ERR_CONNECTION|favicon/.test(m.text())) errors.push('console: ' + m.text()); });
+    try {
+      await page.goto(`${base}/tax/compare/?lang=en&c=${CC.join(',')}`, { waitUntil: 'load', timeout: 30000 });
+      await page.waitForFunction(n => document.querySelector('table.cmp').querySelectorAll('tbody tr').length === n || document.querySelector('.warn'), CC.length, { timeout: 30000 });
+      await page.waitForTimeout(600);
+      return { ctx, page, errors };
+    } catch (e) { await ctx.close(); throw e; }
+  };
+  try {
+    let o;
+    try { o = await attempt(); } catch (e) { o = await attempt(); }
+    const c = await checkContent(o.page.mainFrame());
+    const info = await o.page.evaluate(() => ({
+      rows: document.querySelector('table.cmp').querySelectorAll('tbody tr').length,
+      warn: document.querySelector('.warn')?.innerText,
+      tableNaN: /\bNaN\b|Infinity/.test(document.querySelector('table.cmp').innerText),
+      charts: [...document.querySelectorAll('canvas')].map(cv => ({ w: cv.width, sets: window.Chart?.getChart(cv)?.data.datasets.length || 0 })),
+    }));
+    const problems = [...o.errors, ...c.bad];
+    if (info.warn) problems.push(info.warn);
+    if (info.rows !== CC.length) problems.push(`${info.rows} table rows, expected ${CC.length}`);
+    if (info.tableNaN) problems.push('NaN in table');
+    if (info.charts.length < 2) problems.push(`${info.charts.length} canvases`);
+    // The line charts draw one series per country; the bar and dot charts group them differently.
+    for (const [i, ch] of info.charts.entries()) if (!ch.w) problems.push(`chart ${i + 1}: no width`);
+    if (info.charts.filter(ch => ch.sets >= CC.length).length < 2) problems.push(`fewer than 2 charts with a series per country: ${info.charts.map(ch => ch.sets).join(', ')}`);
+    if (SHOTS) await o.page.screenshot({ path: path.join(SHOTS, 'compare.png'), fullPage: true });
+    problems.length ? fail('compare', what, problems.slice(0, 5).join(' | ')) : pass('compare', what);
+    await o.ctx.close();
+  } catch (e) { fail('compare', what, e.message.split('\n')[0]); }
+}
+
 // file:// has no server: the wrapper must still frame the page without errors.
 async function fileUrl(browser, cc) {
   for (const page of ['', 'inheritance/']) {
@@ -226,9 +298,14 @@ async function fileUrl(browser, cc) {
     }
   };
   await Promise.all(Array.from({ length: Math.min(4, countries.length) }, worker));
+  if (EXTRAS) {
+    await comparePage(browser, base);
+    for (const cc of ['be', 'gb']) await basisSwitch(browser, base, cc);
+    for (const r of results.filter(r => r.what === 'compare page' || r.what === 'basis switch')) console.log(`${r.ok ? 'ok  ' : 'FAIL'} ${r.cc} ${r.what}${r.ok ? '' : ': ' + r.msg}`);
+  }
   await browser.close();
   server.close();
   const bad = results.filter(r => !r.ok).length;
-  console.log(`\n${results.length - bad}/${results.length} checks passed across ${countries.length} countries`);
+  console.log(`\n${results.length - bad}/${results.length} checks passed across ${countries.length} countries${EXTRAS ? ' and the compare page' : ''}`);
   process.exit(bad ? 1 : 0);
 })();

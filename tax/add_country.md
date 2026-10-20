@@ -10,6 +10,7 @@ How the country pages are built and how to add more. 52 countries were built thi
 | `tax/<cc>/inheritance/` | `<cc>/inheritance/index.html` | Same, for the inheritance shell |
 | `tax/index.html` | shell | Salary page UI, chart, tooltips, URL state. Opened directly, it redirects to `tax/be/` (or `?country=`) |
 | `tax/inheritance.html` | shell | Inheritance UI. Draws the inputs the country declares |
+| `tax/compare/` | `compare/index.html` | Compares the salary pages of any set of countries (not framed) |
 
 - `embed.js` (wrappers) reads the country and page from the path, sets the iframe src, and exposes `window.TaxEmbed.update({search, title})` so the framed page keeps the wrapper's address bar in sync.
 - `i18n.js` holds `COUNTRIES`, `FLAGS`, `loadCountry(page)`, `pageLink(cc, page, lang)`, `syncUrl()`, `shareUrl()`, `fx()`, and the `FlagTitle` component (the flag menu in each `h1`).
@@ -17,11 +18,18 @@ How the country pages are built and how to add more. 52 countries were built thi
 - Default country is `be` unless the URL says otherwise. There is no saved choice and no geolocation for the country; the language still uses geolocation.
 - `currencies.js` (`window.TAX_FX`, built by `update_currencies.py`) stores units per euro only. `TaxI18n.fx(v, from, to)` converts any pair through the euro.
 
+## Compare page
+
+- `tax/compare/` (`compare/index.html`, strings in `compare/compare.strings.js`) charts and tabulates the selected countries (`?c=be,fr,...`, all by default). The last entry of the flag menu links there, carrying `lang` and `currency`.
+- It loads each country's `salary.strings.js`, `salary.js` and `communes.js` one after the other and calls the module as-is: `state`, `env`, `compute`, `ROW_DEFS`, `REF_WAGES`, `minSalary`, `nextStep`, `currency`, `parseCommunes`. A module must not read page globals or the DOM beyond the factory arguments, and must not run code at load time other than setting `window.TAX_COUNTRY` / `TAX_STRINGS`.
+- Its amounts are in euros, converted to each country's currency with `TaxI18n.fx`, so every currency needs a rate in `currencies.js`.
+
 ## Money and currencies
 
 - The country sets `currency` (ISO code) on both modules. The `eur`/`eur2` helpers it receives then format that currency; the names stayed for history.
 - Locales: nl pages use `nl-BE`, fr pages `fr-BE`. English uses `fr-BE` for EUR (`100 €`) and `en-GB` for every other currency (`zł 3,000`, `kr 54,100`, `£24,533`). `en-PL`, `en-DK` and the like write `3.000 zł` next to `13.7%`, which reads wrong.
 - Hand-written amounts in strings must match the formatter in each language. The en-GB style is symbol first with comma thousands. Chromium and Node's ICU disagree for some locales: check in the browser.
+- **Basis:** the salary input can be gross, net or employer cost (`?basis=gross|net|cost`, buttons above the amount). The shell finds the gross by bisection on `compute(G)[basis]`, so `net` and `cost` must rise with `G`. Switching rewrites the amount so the scenario stays the same. Minister mode is always gross.
 - `nextStep` is the "next" step in local money, about 100 €: SEK/DKK 1000, PLN 500, CZK 2500, HUF 40000. The shell scales its euro-sized constants (chart window, search ranges, input steps) by `nextStep / 100`.
 - **Display currency:** the `{currency}` menu in the `h1` (and `?currency=`) shows every amount in another currency. The model still runs in the country's currency: `eur`, `eurK` and `sym` convert on the way out, and money inputs convert both ways (`moneyIn`/`moneyOut` in the shells). Pass all money through `eur()`, never format it by hand. A country that overrides `h1` or `inh.h1` must keep both `{flag}` and `{currency}`. Hand-written legal amounts in strings stay in the country's currency.
 - **Signs:** `SIGNS` in `i18n.js` disambiguates shared signs (AU$, CA$, HK$, MX$, NZ$, SG$, CN¥; `$` stays the US dollar). Every formatter and the currency menu use it. Add a currency there when its sign collides with another.
@@ -54,6 +62,7 @@ Give each fork its country, code, currency and `nextStep`, plus what is specific
 - Reuse existing `--k-*` / `--r-*` colour tokens. New ones go in the report (name, light hex, dark hex), not in the shell.
 - If a commune levy applies: a standalone `build_<cc>(tmpdir) -> str` (returns the `communes.js` text) in `<scratchpad>/<cc>/update_communes_<cc>.py`. Downloads go in their own empty folder; parse with `python3 -I`.
 - A shell problem goes to the coordinator by `SendMessage` as soon as it's found, not only in the final report.
+- Fill `GAPS` on both modules from the research notes: every low/medium-confidence figure, every simplification and everything left out.
 - Cross-check a few nets against an official simulator, or a payroll firm when the official one needs a login.
 - No commits. No em-dashes in strings.
 - Final report, short: files, key figures with confidence, what isn't confirmed, modelling choices to revisit, colour tokens needed, shell hooks used or still missing, test results.
@@ -120,6 +129,7 @@ Reference data:
 - `REF_WAGES`: `[{ key: 'min'|'med'|'avg', m, year, color }]`, monthly gross.
 - `P.brackets` is used for the reference table; `refKeys` lists the `ref.*` sections, each `{ h, li: [html] }`, or a function of the brackets table.
 - `SRC`: `{ key: url }`, each with a `'src.<key>'` string.
+- `GAPS`: `['key', ...]`, each with a `'gap.<key>'` string (html allowed): every figure not confirmed from a primary source, every simplification, every case left out, and the date of anything that may be outdated. One caveat per key, short, specific (what, the value used, why unsure). Shown as "Known gaps and caveats" above the footer. Also on the inheritance module.
 
 ## `inheritance.js` contract
 
@@ -170,11 +180,13 @@ Reference data:
 
 The harness is `tests/run.js`. It serves the repo itself, so it needs no other server:
 
-    cd tax/tests && npm install && node run.js [cc ...] [--only salary|inheritance] [--shots]
+    cd tax/tests && npm install && node run.js [cc ...] [compare] [--only salary|inheritance] [--shots]
 
 - `node strings.js [cc ...]` is the static half: every key the shells, `i18n.js` and the country modules can ask for (literal keys, and keys built from `regions`, `sizes`, `minRoles`, `REF_WAGES`, `ROW_DEFS`, `SRC`, `refKeys`, `POLITICIANS`, `SOURCES`, `fields`) must exist with en, nl and fr. Shell keys tied to a feature (`under3`, `pa`, communes, `local`) are only required when the country turns it on. It runs in a second, so run it yourself; `npm test` runs it before the browser checks.
 - Generic labels belong in `common.strings.js`; a country file only overrides them. `polAllow` was missing for every country that didn't define its own.
 
+- `strings.js` also checks the compare page: its literal keys and the ones it builds from its `v-for` lists, `MARKERS` and `COLS`, against `common.strings.js` and `compare/compare.strings.js`.
+- A full run (or `node run.js compare`) also opens `tax/compare/?c=be,fr,gb,us,jp` (5 rows, no NaN, both charts drawn) and switches gross/net/cost on `be` and `gb` (URL gets `basis=`, the amount changes and comes back).
 - With no country it runs every country in `COUNTRIES` that has a `salary.js`. `--shots` writes full-page screenshots to `tests/shots/` (git-ignored).
 - **Run it through a Haiku agent** (`model: haiku`), once, and have it report the summary line and every FAIL line. Don't re-run a passing suite.
 - Each page opens in a fresh browser context (the saved language leaks otherwise) and fails on any `pageerror` or console error. Per country:
@@ -184,4 +196,4 @@ The harness is `tests/run.js`. It serves the repo itself, so it needs no other s
   - the old `tax/index.html?country=<cc>` link redirects.
   - inheritance in en/nl/fr, clicking every option button.
   - both pages under `file://`.
-- Not covered by the harness, check by hand once per country: the flag menu, the share button, and a few nets against an official simulator.
+- Not covered by the harness, check by hand once per country: the flag menu (including the compare link), the share button, and a few nets against an official simulator.

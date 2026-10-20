@@ -344,6 +344,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
     polSrc: p => t('src.pol.' + (p.role || p.key)),
     polNoteLink: 'bming',
     refKeys: ['er', 'ee', 'midi', 'ir', 'kids', 'soli', 'vat', 'minister', 'notIncl'],
+    GAPS: ['b11', 'govPay', 'polInsurance', 'nagel', 'palla', 'kfw', 'payroll', 'zusatz', 'kindergeld', 'singleParent', 'pvKids', 'evenPay', 'church', 'minijob', 'notIncl'],
     tips, breakdown, trap, top,
   };
 };

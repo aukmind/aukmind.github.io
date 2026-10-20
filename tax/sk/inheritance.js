@@ -20,6 +20,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['law', 'notary', 'sale', 'work', 'abroad'],
     SOURCES, currency: 'EUR', nextStep: 100,
     state: { share: 100000, rel: 'child', how: 'inherit' },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS], how: ['how', 'str', HOW] },

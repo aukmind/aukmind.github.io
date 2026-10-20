@@ -202,6 +202,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['noCheck', 'rat', 'third', 'simples', 'simp13', 'consumption', 'pol', 'polCost', 'median', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'BRL', nextStep: 500,
     regions: [], sizes: SIZES, minRoles: MIN_ROLES, factors: [12, 13, 13.33], factorDigits: 2, vatStandard: 28,

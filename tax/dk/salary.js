@@ -300,7 +300,9 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
-    P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
+    P, SRC, REF_WAGES, POLITICIANS,
+    GAPS: ['polAm', 'mpOld', 'minNew', 'nbSplit', 'orsted', 'wages', 'childAge', 'singleParent', 'senior', 'erFunds', 'noCheck', 'notIncl'],
+    ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'DKK', nextStep: 1000,
     regions: [], sizes: [], minRoles: MIN_ROLES, factors: [12, 12.12], factorDigits: 2, vatStandard: 25,
     features: { pa: true },

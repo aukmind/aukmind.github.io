@@ -280,7 +280,8 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
 
   const FACTORS = [12, 12.96, 13.96];
   return {
-    P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
+    P, SRC, REF_WAGES,
+    GAPS: ['kgbSource', 'kidsUnder12', 'toeslagenTest', 'aofWko', 'whkAverage', 'awfLow', 'minWageYear', 'meanWage', 'politicianZvw', 'mpPay', 'politicianExtras', 'dnbPay', 'notIncl'], POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     regions: [], sizes: SIZES, minRoles: MIN_ROLES, factors: FACTORS, factorDigits: 2, vatStandard: 21,
     features: { pa: true },
     communes: false,

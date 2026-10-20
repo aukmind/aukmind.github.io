@@ -317,6 +317,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['noCheck', 'basicReform', 'resTax', 'insRates', 'bonusSplit', 'minWage', 'census', 'topup', 'termEnd', 'dietNhi', 'dietAllow', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'JPY', nextStep: 15000,
     regions: [], sizes: AGES, minRoles: MIN_ROLES, factors: [12, 14, 16], factorDigits: 0, vatStandard: 10,

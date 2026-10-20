@@ -91,6 +91,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   };
 
   return {
+    GAPS: ['probateFees', 'nunavut', 'finalReturn', 'oneHeir', 'notCounted'],
     SOURCES, currency: 'CAD', nextStep: 1000,
     state: { share: 1000000, rel: 'child', prov: 'ON', gains: 200000, rrsp: 300000 },
     urlFields: {

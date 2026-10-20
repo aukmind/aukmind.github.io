@@ -95,6 +95,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const COLORS = { partner: 'partner', child: 'child', sibling: 'sibling', nephew: 'nephew', other: 'other' };
 
   return {
+    GAPS: ['stateEx', 'illinois', 'oneHeir', 'spouse', 'notCounted'],
     SOURCES, currency: 'USD', nextStep: 1000,
     state: { share: 8000000, rel: 'child', st: 'none', transfer: false, gifts: 0 },
     urlFields: {

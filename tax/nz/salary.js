@@ -215,6 +215,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['noCheck', 'accMax', 'esct', 'kiwiSaver', 'iwtc', 'wff', 'polPay', 'polSuper', 'wages', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'NZD', nextStep: 200,
     regions: [], sizes: [], minRoles: MIN_ROLES, factors: [12], factorDigits: 0, vatStandard: 15,

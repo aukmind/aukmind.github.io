@@ -24,6 +24,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
 
   const LINES = ['child', 'cvc', 'sibling', 'uncle', 'cousin', 'other'];
   return {
+    GAPS: ['giftFee', 'foreign', 'cvcGift', 'notModelled'],
     SOURCES,
     currency: 'EUR', nextStep: 100,
     state: { share: 300000, rel: 'child' },

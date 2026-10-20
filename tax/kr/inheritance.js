@@ -83,6 +83,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const withKids = s => s.rel === 'spouseKids' || s.rel === 'kids';
 
   return {
+    GAPS: ['noWeb', 'reform', 'giftCredit', 'limit', 'byWill', 'skip', 'home', 'split', 'notModelled'],
     SOURCES,
     currency: 'KRW', nextStep: 10000000,
     state: { share: 3000000000, rel: 'spouseKids', kids: 2, split: 'legal', fin: 0, home: 0, gifts: 0 },

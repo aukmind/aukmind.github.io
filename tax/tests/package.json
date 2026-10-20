@@ -4,7 +4,8 @@
   "scripts": {
     "test": "node strings.js && node run.js",
     "strings": "node strings.js",
-    "browser": "node run.js"
+    "browser": "node run.js",
+    "compare": "node run.js compare"
   },
   "devDependencies": {
     "playwright": "1.58.0"

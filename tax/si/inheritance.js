@@ -56,6 +56,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const plain = { share: 0, movables: 0, farm: false };
 
   return {
+    GAPS: ['furs', 'farm', 'gifts', 'value'],
     SOURCES,
     currency: 'EUR', nextStep: 100,
     state: { share: 150000, rel: 'sibling', movables: 20000, farm: false },

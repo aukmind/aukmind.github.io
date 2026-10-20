@@ -35,6 +35,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
 
   return {
     SOURCES,
+    GAPS: ['perGiver', 'wholeTaxed', 'report', 'siblings', 'inheritOthers', 'resident'],
     currency: 'CZK', nextStep: 2500,
     state: { share: 3000000, rel: 'child', how: 'inherit', otherIncome: 600000 },
     urlFields: {

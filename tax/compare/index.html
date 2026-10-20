@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compare Buying Power</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+<script src="../currencies.js"></script>
+<script src="../i18n.js"></script>
+<script src="../common.strings.js"></script>
+<script src="compare.strings.js"></script>
+<style>
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --sunk:#e9edf3; --ink:#152033; --muted:#5d6879; --line:#d8dee8;
+  --accent:#2446b8; --accent-soft:#e3e9fb; --tip-bg:#152033; --tip-ink:#eef2f8; --tip-muted:#aab5c6; --tip-link:#9db4ff;
+  --c-full:#c8403a; --c-work:#2f55d4; --c-emp:#178a66; --c-power:#8a5cd6; --w-min:#d98200; --w-med:#0e97ad; --w-avg:#a8572b; --pol:#6d5a8c; --corp:#2b7a78;
+  --k-er:#4f5fd8; --k-ee:#2f9bd0; --k-vat:#b03a7a; --k-net:#2d9a67;
+  --k-fed:#d9482f; --k-reg:#f07a4a; --k-com:#f2aa55; --k-bbsz:#b99a1c;
+  --k-vm:#8a7fe0; --k-csg:#b99a1c; --k-ir:#d9482f; --k-pa:#e98ab8; --k-sav:#c9a227;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --display:"Fraunces",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f141c; --surface:#171e2a; --sunk:#1f2836; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2b3546;
+    --accent:#8aa6ff; --accent-soft:#233154; --tip-bg:#e7ecf4; --tip-ink:#152033; --tip-muted:#4d5869; --tip-link:#2446b8;
+    --c-full:#f0726b; --c-work:#7f9cff; --c-emp:#4cc79c; --c-power:#b79bf0; --w-min:#f5b041; --w-med:#4fc6d8; --w-avg:#e0925f; --pol:#b6a3d6; --corp:#6cc5bf;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f141c; --surface:#171e2a; --sunk:#1f2836; --ink:#e7ecf4; --muted:#9aa6b8; --line:#2b3546;
+  --accent:#8aa6ff; --accent-soft:#233154; --tip-bg:#e7ecf4; --tip-ink:#152033; --tip-muted:#4d5869; --tip-link:#2446b8;
+  --c-full:#f0726b; --c-work:#7f9cff; --c-emp:#4cc79c; --c-power:#b79bf0; --w-min:#f5b041; --w-med:#4fc6d8; --w-avg:#e0925f; --pol:#b6a3d6; --corp:#6cc5bf;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;margin:0}
+[v-cloak]{display:none}
+.wrap{max-width:1360px;margin:0 auto;padding-inline:20px;padding-block:28px 60px;display:flex;flex-direction:column;gap:22px}
+header h1{font-family:var(--display);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
+.flag-pick{position:relative;display:inline-block}
+.flag{display:inline-flex;align-items:center;gap:.1em;border:0;background:color-mix(in srgb,var(--sunk) 70%,transparent);color:inherit;font:inherit;line-height:1;padding:.04em .14em .04em .1em;border-radius:10px;cursor:pointer;vertical-align:baseline}
+.flag:hover,.flag[aria-expanded="true"]{background:var(--sunk)}
+.flag .chev{width:.34em;height:.22em;fill:none;stroke:var(--muted);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.flag[aria-expanded="true"] .chev{transform:rotate(180deg)}
+@media (prefers-reduced-motion:reduce){.flag .chev{transition:none}}
+.flag-menu{position:absolute;z-index:40;top:calc(100% + 6px);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;gap:2px;padding:5px;min-width:170px;background:var(--surface);border:1px solid var(--line);border-radius:9px;box-shadow:0 10px 30px rgba(10,20,40,.18)}
+.flag-menu a{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;color:var(--ink);text-decoration:none;font:500 14.5px var(--sans);white-space:nowrap}
+.flag-menu a span{font-size:20px}
+.flag-menu a:hover{background:var(--accent-soft)}
+.flag-menu a.on{font-weight:600;background:var(--sunk)}
+.flag-menu{max-height:min(60vh,440px);overflow-y:auto}
+.flag-filter{position:sticky;top:-5px;z-index:1;margin:-5px -5px 3px;padding:9px 11px;border:0;border-bottom:1px solid var(--line);border-radius:9px 9px 0 0;background:var(--surface);color:var(--ink);font:500 14.5px var(--sans);outline:none}
+.flag-filter:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.share-box{position:absolute;bottom:0;right:0;display:flex;flex-direction:row-reverse;align-items:center;gap:10px}
+.share-box .share-url{position:absolute;top:calc(100% + 6px);right:0;width:min(420px,calc(100vw - 32px));z-index:30;box-shadow:0 8px 24px rgba(10,20,40,.15)}
+@media (max-width:700px){.share-box{position:static;flex-direction:row;justify-content:flex-start;margin-bottom:12px}}
+.share{border:1px solid var(--line);background:var(--sunk);color:var(--ink);font:600 13px var(--sans);padding:7px 12px;border-radius:7px;cursor:pointer}
+.share:hover{border-color:var(--accent)}
+.share-url{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font:12px var(--mono)}
+.lang{display:flex;background:var(--sunk);border-radius:7px;padding:2px;gap:2px}
+.lang button{border:0;background:transparent;color:var(--muted);font:600 12px var(--sans);padding:5px 8px;border-radius:5px;cursor:pointer;text-transform:uppercase}
+.lang button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.panel h2{font-size:17px;margin:0 0 4px;font-weight:600}
+.lead2{margin:0 0 12px;color:var(--muted);font-size:13.5px}
+.eyebrow{font:600 12px var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{position:relative;padding-bottom:4px}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.ctl{display:flex;flex-direction:column;gap:5px}
+.ctl .lbl{font:600 12.5px var(--sans);color:var(--muted)}
+.seg{display:inline-flex;background:var(--sunk);border-radius:8px;padding:2px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--muted);font:500 13.5px var(--sans);padding:6px 10px;border-radius:6px;cursor:pointer}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.btn{border:1px solid var(--line);background:var(--sunk);color:var(--ink);font:600 13px var(--sans);padding:6px 11px;border-radius:7px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+input.text,input.num{border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 14px var(--sans);padding:7px 10px;border-radius:7px}
+input.num{width:9em;font-family:var(--mono)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:500 13.5px var(--sans);padding:5px 9px 5px 7px;border-radius:999px;cursor:pointer}
+.chip.on{color:var(--ink);border-color:var(--dot);background:color-mix(in srgb,var(--dot) 12%,var(--surface))}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.chip.on i{background:var(--dot)}
+.chip.hl{box-shadow:0 0 0 2px var(--dot)}
+.chip .f{font-size:16px;line-height:1}
+.chart-box{position:relative;height:min(62vh,520px);margin-top:10px}
+.mk{display:inline-flex;align-items:center;gap:6px}
+.hint{color:var(--muted);font-size:12.5px}
+.tbl-wrap{overflow-x:auto;margin-top:10px}
+table.cmp{border-collapse:collapse;width:100%;font-size:14px}
+table.cmp th{font:600 12.5px var(--sans);color:var(--muted);text-align:right;padding:7px 9px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;user-select:none}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left}
+table.cmp th.sorted{color:var(--ink)}
+table.cmp td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:right;font-family:var(--mono);white-space:nowrap}
+table.cmp td:first-child{font-family:var(--sans)}
+table.cmp td small{display:block;color:var(--muted);font-size:11.5px}
+table.cmp a{color:var(--ink);text-decoration:none}
+table.cmp a:hover{color:var(--accent)}
+table.cmp tr.hl td{background:var(--accent-soft)}
+.tall{height:auto;min-height:240px}
+.chart-row{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:14px;margin-top:10px}
+.chart-row .chart-box{margin-top:0}
+.legend-side{max-height:min(62vh,520px);overflow-y:auto;display:flex;flex-direction:column;gap:1px;align-content:flex-start}
+.lg-marks{display:flex;flex-direction:column;gap:1px;padding-bottom:4px;margin-bottom:4px;border-bottom:1px solid var(--line);color:var(--muted);font-size:13px}
+.lg-marks>.mk{padding:3px 6px;white-space:nowrap;font:500 13px var(--sans)}
+.lg-marks>.mk>span:first-child{width:14px;text-align:center;flex:none}
+.lg-marks .gov{width:16px;height:16px;margin:0 -1px;font-size:9px}
+@media (max-width:760px){.lg-marks{flex-basis:100%}}
+.lg{display:flex;align-items:center;gap:6px;border:0;background:none;color:var(--ink);font:500 13px var(--sans);padding:3px 6px;border-radius:5px;cursor:pointer;text-align:left;white-space:nowrap}
+.lg:hover,.lg.hl{background:var(--sunk)}
+.lg.off{color:var(--muted);text-decoration:line-through}
+.lg i{width:14px;height:3px;border-radius:2px;flex:none}
+@media (max-width:760px){.chart-row{grid-template-columns:1fr}.legend-side{max-height:180px;flex-direction:row;flex-wrap:wrap}}
+.ttip{position:absolute;z-index:20;pointer-events:none;background:var(--tip-bg);color:var(--tip-ink);border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.35;min-width:190px;max-width:300px;box-shadow:0 8px 24px rgba(10,20,40,.2)}
+.ttip .tt{color:var(--tip-muted);margin-bottom:4px;white-space:nowrap}
+/* One grid for all rows, so names, nets and values line up in columns. */
+.ttip .rows{display:grid;grid-template-columns:9px minmax(0,1fr) auto;column-gap:7px;row-gap:1px;align-items:center}
+.ttip .rows.has-net{grid-template-columns:9px minmax(0,1fr) auto auto}
+.ttip .r{display:contents;white-space:nowrap}
+.ttip .r span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ttip .r b{text-align:right;padding-left:8px;font:500 12px var(--mono);white-space:nowrap}
+.ttip .r.hl > *{font-weight:600}
+.ttip i{width:9px;height:9px;border-radius:50%;flex:none}
+.ttip .more{color:var(--tip-muted);margin-top:3px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:8px 0 0;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.ttip .tnet{font-style:normal;color:var(--tip-muted);font-family:var(--mono);font-size:11.5px;text-align:right;padding-left:8px;white-space:nowrap}
+.ttip .more-net{display:block;color:var(--muted);font-size:11.5px;font-weight:400}
+@media (min-width:760px){.settings{position:sticky;top:0;z-index:30;box-shadow:0 6px 18px rgba(10,20,40,.08)}}
+.warn{color:var(--c-full);font-size:13px}
+footer{color:var(--muted);font-size:12.5px}
+[title]{cursor:help}
+header h1{display:inline}
+.tip-i{position:relative;display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:5px;padding:0;border:1px solid currentColor;border-radius:50%;background:none;color:var(--muted);font:italic 600 10.5px/1 Georgia,serif;cursor:help;vertical-align:middle;flex:none;text-transform:none;letter-spacing:0}
+.tip-i::after{content:"";position:absolute;inset:-7px}
+.tip-i:hover,.tip-i:focus-visible{color:var(--accent)}
+header .tip-i{width:18px;height:18px;font-size:12px;vertical-align:.35em}
+table.cmp td[data-tip]{cursor:help}
+table.cmp td[data-tip] b{text-decoration:underline dotted;text-underline-offset:3px;text-decoration-color:var(--muted)}
+table.cmp th[data-tip] span{text-decoration:underline dotted;text-underline-offset:3px;text-decoration-color:var(--muted)}
+.tip-pop{position:fixed;z-index:60;max-width:min(300px,calc(100vw - 16px));background:var(--tip-bg);color:var(--tip-ink);border-radius:8px;padding:8px 10px;font:400 12.5px/1.4 var(--sans);box-shadow:0 8px 24px rgba(10,20,40,.2);pointer-events:none;text-align:left;white-space:normal}
+.lbl-row{display:flex;align-items:center}
+.gov{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--pol);background:var(--surface);font-size:10px;line-height:1;flex:none}
+.lg-head{display:flex;align-items:center;padding:2px 6px;color:var(--muted);font:600 12.5px var(--sans)}
+button[title],a[title]{cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">{{ t('eyebrow') }}</div>
+    <flag-title :text="t('h1')" country="" page="compare" :lang="lang" :t="t" :money="money"></flag-title><tip-i :tip="t('info.currency')"></tip-i>
+    <p>{{ t('lead') }}</p>
+    <div class="share-box">
+      <button class="share" type="button" @click="shareLink">{{ t('share') }}</button>
+      <div class="lang" role="group" :aria-label="t('langAria')"><button v-for="l in LANGS" :key="l" type="button" :class="{on:lang===l}" :lang="l" @click="setLang(l)">{{ l }}</button></div>
+      <span class="hint" v-if="shareCopied">{{ t('copied') }}</span>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="row" style="justify-content:space-between">
+      <h2>{{ t('countries') }} <span class="hint">{{ t('nSelected', sel.length, ALL.length) }}</span></h2>
+      <div class="row" style="gap:8px">
+        <input class="text" type="search" v-model="filter" :placeholder="t('countryFilter')" :aria-label="t('countryFilter')">
+        <button class="btn" type="button" @click="selectAll">{{ t('selectAll') }}</button>
+        <button class="btn" type="button" @click="clearAll">{{ t('clearAll') }}</button>
+      </div>
+    </div>
+    <div class="chips">
+      <button v-for="c in shownCountries" :key="c.cc" type="button" class="chip" :class="{on: c.on, hl: c.on && hl === c.cc}" :style="{'--dot': color(c.cc)}" @click="toggle(c.cc)" @mouseenter="c.on && (hl = c.cc)" @mouseleave="hl = null"><i></i><span class="f">{{ FLAGS[c.cc] }}</span>{{ c.name }}</button>
+    </div>
+    <p class="hint" v-if="loadingN < sel.length" style="margin:10px 0 0">{{ t('loading', loadingN, sel.length) }}</p>
+    <p class="hint" v-else-if="sel.length > 1" style="margin:10px 0 0">{{ t('hoverHint') }}</p>
+    <p class="warn" v-if="failed.length">{{ t('loadFailed', failed.map(nameOf).join(', ')) }}</p>
+  </section>
+
+  <section class="panel settings">
+    <div class="row">
+      <div class="ctl"><span class="lbl lbl-row">{{ t('per') }}<tip-i :tip="t('info.per')"></tip-i></span>
+        <div class="seg"><button v-for="p in ['month', 'year']" :key="p" :class="{on: s.per === p}" @click="setPer(p)">{{ t('unit.' + p) }}</button></div>
+      </div>
+      <div class="ctl"><span class="lbl lbl-row"><label for="amt">{{ t('amount') }} ({{ sym() }} / {{ t('unit.' + s.per) }})</label><tip-i :tip="t('info.amount')"></tip-i></span>
+        <input id="amt" class="num" type="number" min="0" v-model.number="s.amount">
+      </div>
+      <div class="ctl"><span class="lbl lbl-row">{{ t('household') }}<tip-i :tip="t('info.household')"></tip-i></span>
+        <div class="seg"><button :class="{on: s.household === 'single'}" @click="s.household = 'single'">{{ t('single') }}</button><button :class="{on: s.household === 'joint'}" @click="s.household = 'joint'">{{ t('couple') }}</button></div>
+      </div>
+      <div class="ctl"><span class="lbl lbl-row"><label for="kids">{{ t('kids') }}</label><tip-i :tip="t('info.kids')"></tip-i></span>
+        <input id="kids" class="num" style="width:5em" type="number" min="0" max="6" v-model.number="s.kids">
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <span class="lbl hint lbl-row">{{ t('markers') }}<tip-i :tip="t('markerNote')"></tip-i></span>
+      <label class="mk" v-for="m in MARKERS" :key="m.k"><input type="checkbox" :checked="s.marks.includes(m.k)" @change="toggleMark(m.k)"> <span :class="{gov: m.style === 'gov'}">{{ m.sym }}</span> {{ t('marker.' + m.k) }}<tip-i :tip="t(m.tip)"></tip-i></label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>{{ t('chartTitle', metricLabel(s.metric), t('unit.' + s.per)) }}<tip-i :tip="t('info.chart1')"></tip-i></h2>
+    <p class="lead2">{{ t('metricTip.' + s.metric) }}</p>
+    <div class="row">
+      <div class="ctl"><span class="lbl">{{ t('show') }}</span>
+        <div class="seg"><button v-for="m in ['power', 'avg', 'next']" :key="m" :class="{on: s.metric === m}" @click="s.metric = m" :data-tip="t('metricTip.' + m)">{{ metricLabel(m) }}</button></div>
+      </div>
+      <div class="ctl" v-if="s.metric !== 'power'"><span class="lbl lbl-row">{{ t('scope') }}<tip-i :tip="t('info.scope')"></tip-i></span>
+        <div class="seg"><button v-for="k in ['full', 'work', 'employee']" :key="k" :class="{on: s.scope === k}" @click="s.scope = k" :data-tip="t('scopeTip.' + k)">{{ t('scope.' + k) }}</button></div>
+      </div>
+    </div>
+    <p class="hint" style="margin:6px 0 4px" v-if="s.marks.length">{{ t('markerNote') }} <span v-if="offChart.length">{{ t('offChart', offChart.join(', ')) }}</span></p>
+    <div class="chart-row">
+      <div class="chart-box" @mousemove="lineHover(1, $event)" @mouseleave="lineLeave(1)"><canvas ref="c1"></canvas>
+        <div class="ttip" v-if="tip.ch === 1" :style="tip.style"><div class="tt">{{ tip.title }}</div><div class="rows" :class="{'has-net': tip.rows.some(r => r.net)}"><div class="r" v-for="r in tip.rows" :key="r.key" :class="{hl: r.hl}"><i :style="{background: r.color}"></i><span>{{ r.name }}</span><em class="tnet" v-if="tip.rows.some(r => r.net)">{{ r.net ? t('netShort', r.net) : '' }}</em><b>{{ r.v }}</b></div></div><div class="more" v-if="tip.more">{{ t('andMore', tip.more) }}</div></div>
+      </div>
+      <div class="legend-side">
+        <div class="lg-head" v-if="legendList.length">{{ t('legend') }}<tip-i :tip="t('info.legend')"></tip-i></div>
+        <div class="lg-marks" v-if="s.marks.length"><span v-for="m in MARKERS.filter(m => s.marks.includes(m.k))" :key="m.k" class="mk"><span :class="{gov: m.style === 'gov'}">{{ m.sym }}</span>{{ t('marker.' + m.k) }}</span></div>
+        <button v-for="cc in legendList" :key="cc" type="button" class="lg" :class="{off: hidden.includes(cc), hl: hl === cc}" @mouseenter="hl = cc" @mouseleave="hl = null" @click="toggleHidden(cc)"><i :style="{background: color(cc)}"></i>{{ FLAGS[cc] }} {{ nameOf(cc) }}</button>
+      </div>
+    </div>
+    <p class="hint" v-if="!sel.length">{{ t('pickSome') }}</p>
+    <p class="hint" v-else-if="legendList.length > 1">{{ t('legendHint') }}</p>
+  </section>
+
+  <section class="panel">
+    <h2>{{ t('netGrossTitle', t('unit.' + s.per)) }}<tip-i :tip="t('info.chart2')"></tip-i></h2>
+    <p class="lead2">{{ t('netGrossLead') }}</p>
+    <div class="ctl"><span class="lbl lbl-row">{{ t('yAxis') }}<tip-i :tip="t('info.y2')"></tip-i></span>
+      <div class="seg"><button :class="{on: s.y2 === 'cost'}" @click="s.y2 = 'cost'" :data-tip="t('basisTip.cost')">{{ t('axisCost') }}</button><button :class="{on: s.y2 === 'G'}" @click="s.y2 = 'G'" :data-tip="t('basisTip.gross')">{{ t('axisGross') }}</button></div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-box" @mousemove="lineHover(2, $event)" @mouseleave="lineLeave(2)"><canvas ref="c2"></canvas>
+        <div class="ttip" v-if="tip.ch === 2" :style="tip.style"><div class="tt">{{ tip.title }}</div><div class="rows"><div class="r" v-for="r in tip.rows" :key="r.key" :class="{hl: r.hl}"><i :style="{background: r.color}"></i><span>{{ r.name }}<small v-if="r.more" class="more-net">{{ r.more }}</small></span><b>{{ r.v }}</b></div></div><div class="more" v-if="tip.more">{{ t('andMore', tip.more) }}</div></div>
+      </div>
+      <div class="legend-side">
+        <div class="lg-head" v-if="legendList.length">{{ t('legend') }}<tip-i :tip="t('info.legend')"></tip-i></div>
+        <div class="lg-marks" v-if="s.marks.length"><span v-for="m in MARKERS.filter(m => s.marks.includes(m.k))" :key="m.k" class="mk"><span :class="{gov: m.style === 'gov'}">{{ m.sym }}</span>{{ t('marker.' + m.k) }}</span></div>
+        <button v-for="cc in legendList" :key="cc" type="button" class="lg" :class="{off: hidden.includes(cc), hl: hl === cc}" @mouseenter="hl = cc" @mouseleave="hl = null" @click="toggleHidden(cc)"><i :style="{background: color(cc)}"></i>{{ FLAGS[cc] }} {{ nameOf(cc) }}</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>{{ t('tableTitle') }}</h2>
+    <p class="lead2">{{ t('tableLead') }}</p>
+    <div class="tbl-wrap"><table class="cmp">
+      <thead><tr>
+        <th v-for="col in COLS" :key="col.k" :class="{sorted: s.sort === col.k}" tabindex="0" @click="sortBy(col.k)" @keydown.enter="sortBy(col.k)" :data-tip="col.tip ? t(col.tip) : null"><span>{{ t(col.label) }}</span>{{ s.sort === col.k ? (s.desc ? ' ↓' : ' ↑') : '' }}</th>
+      </tr></thead>
+      <tbody>
+        <tr v-for="r in table" :key="r.cc" :class="{hl: hl === r.cc}" @mouseenter="hl = r.cc" @mouseleave="hl = null">
+          <td><a :href="countryHref(r.cc)" :title="t('openCountry', r.name)"><span :style="{color: color(r.cc)}">●</span> {{ FLAGS[r.cc] }} {{ r.name }}</a></td>
+          <td>{{ eur(r.cost) }}</td>
+          <td>{{ eur(r.G) }}<small v-if="r.cur !== money.cur()">{{ fmtLocal(r.Gl, r.cur) }}</small></td>
+          <td>{{ eur(r.net) }}</td>
+          <td>{{ pct(r.avg) }}</td>
+          <td>{{ pct(r.next) }}</td>
+          <td>{{ pct(r.power) }}</td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p class="hint">{{ t('sortHint') }}</p>
+  </section>
+
+  <section class="panel" v-if="ministers.length">
+    <h2>{{ t('minTitle') }}</h2>
+    <p class="lead2">{{ t('minLead') }}</p>
+    <div class="tbl-wrap"><table class="cmp">
+      <thead><tr>
+        <th v-for="col in MCOLS" :key="col.k" :class="{sorted: s.msort === col.k}" tabindex="0" @click="msortBy(col.k)" @keydown.enter="msortBy(col.k)" :data-tip="col.tip ? t(col.tip) : null"><span>{{ t(col.label) }}</span>{{ s.msort === col.k ? (s.mdesc ? ' ↓' : ' ↑') : '' }}</th>
+      </tr></thead>
+      <tbody>
+        <tr v-for="r in ministers" :key="r.cc" :class="{hl: hl === r.cc}" @mouseenter="hl = r.cc" @mouseleave="hl = null">
+          <td><a :href="countryHref(r.cc)" :title="t('openCountry', r.name)"><span :style="{color: color(r.cc)}">●</span> {{ FLAGS[r.cc] }} {{ r.name }}</a><small>{{ r.role }}</small></td>
+          <td>{{ eur(r.medG) }}<small v-if="r.usedAvg">{{ t('minAvgUsed') }}<tip-i :tip="t('info.avgUsed')"></tip-i></small></td>
+          <td>{{ eur(r.minG) }}</td>
+          <td><b>{{ times(r.grossX) }}</b></td>
+          <td>{{ eur(r.medSpend) }}</td>
+          <td>{{ eur(r.minSpend) }}</td>
+          <td tabindex="0" :data-tip="t('cellSpendX', times(r.spendX))"><b>{{ times(r.spendX) }}</b></td>
+          <td tabindex="0" :data-tip="t('cellTaxGap', eur(r.needG), signed(r.needX))"><b>{{ signed(r.taxGap) }}</b></td>
+        </tr>
+      </tbody>
+    </table></div>
+    <p class="hint">{{ t('minNote') }}</p>
+  </section>
+
+  <section class="panel" v-if="split.length">
+    <h2>{{ t('splitTitle', eur(money.fromShown(s.amount)), t('basis.gross').toLowerCase() + ' / ' + t('unit.' + s.per)) }}<tip-i :tip="t('info.split')"></tip-i></h2>
+    <p class="lead2">{{ t('splitLead') }}</p>
+    <div class="legend"><span v-for="b in BUCKETS" :key="b.k"><i :style="{background: cssVar(b.color)}"></i>{{ bucketLabel(b.k) }}<tip-i :tip="t(b.tip)"></tip-i></span></div>
+    <div class="chart-box tall" :style="{height: (split.length * 22 + 70) + 'px'}" @mouseleave="hl = null"><canvas ref="c3"></canvas></div>
+    <p class="hint" v-if="split.some(r => Math.abs(r.b.sav) > r.cost * 0.005)">{{ t('savNote') }}</p>
+  </section>
+
+  <footer>{{ t('caveat') }} {{ t('disclaimer') }}</footer>
+</div>
+<div class="tip-pop" id="tip-pop" role="tooltip" v-show="pop.on" :style="pop.style">{{ pop.text }}</div>
+</div>
+
+<script>
+const { lang, LANGS, t, eur, eurK, sym, setCurrency, money, num, pct, setLang, ready } = TaxI18n.create(TAX_STRINGS);
+// Amounts on this page are kept in euros and converted only for display.
+setCurrency('EUR');
+const ALL = TaxI18n.COUNTRIES, FLAGS = TaxI18n.FLAGS;
+const COMMON = window.TAX_COMMON;
+const DEFAULT_SEL = ['be', 'fr', 'es', 'ch'];
+const MARKERS = [{ k: 'min', sym: '●', style: 'circle', tip: 'markerTip.min' }, { k: 'med', sym: '■', style: 'rect', tip: 'markerTip.med' }, { k: 'avg', sym: '▲', style: 'triangle', tip: 'markerTip.avg' }, { k: 'minister', sym: '🏛️', style: 'gov', tip: 'markerTip.minister' }];
+const MK_ROWS = { next: ['mkEmp.next', 'mkMin.next'], avg: ['mkEmp.avg', 'mkMin.avg'], power: ['mkEmp.power', 'mkMin.power'] };
+// Wage markers start on; the minister is opt-in.
+const DEF_MARKS = ['min', 'med', 'avg'];
+const MIN_KEYS = ['minister', 'min', 'cabinet', 'sec', 'minOut', 'tech', 'dsec'];
+// A full minister where the country has one; otherwise the role its page opens with.
+const ministerRole = C => MIN_KEYS.find(k => (C.minRoles || []).includes(k)) || C.state.minRole;
+const MCOLS = [{ k: 'name', label: 'thCountry' }, { k: 'medG', label: 'thMedGross', tip: 'tipMedGross' }, { k: 'minG', label: 'thMinGross', tip: 'tipMinGross' }, { k: 'grossX', label: 'thGrossX', tip: 'tipGrossX' },
+  { k: 'medSpend', label: 'thMedSpend', tip: 'tipMedSpend' }, { k: 'minSpend', label: 'thMinSpend', tip: 'tipMinSpend' },
+  { k: 'spendX', label: 'thSpendX', tip: 'tipSpendX' }, { k: 'taxGap', label: 'thTaxGap', tip: 'tipTaxGap' }];
+const COLS = [{ k: 'name', label: 'thCountry' }, { k: 'cost', label: 'thCost', tip: 'basisTip.cost' }, { k: 'G', label: 'thGross', tip: 'info.colGross' }, { k: 'net', label: 'thNet', tip: 'info.colNet' },
+  { k: 'avg', label: 'thAvg', tip: 'info.colAvg' }, { k: 'next', label: 'thNext', tip: 'info.colNext' }, { k: 'power', label: 'thPower', tip: 'metricTip.power' }];
+const BUCKETS = [{ k: 'net', color: '--k-net', tip: 'bucketTip.net' }, { k: 'sav', color: '--k-sav', tip: 'bucketTip.sav' }, { k: 'vat', color: '--k-vat', tip: 'bucketTip.vat' },
+  { k: 'ir', color: '--k-ir', tip: 'bucketTip.ir' }, { k: 'ee', color: '--k-ee', tip: 'bucketTip.ee' }, { k: 'er', color: '--k-er', tip: 'bucketTip.er' }];
+const bucketLabel = k => ({ net: t('bucket.net'), sav: t('bucket.sav'), vat: t('bucket.vat'), ir: t('bucket.ir'), ee: t('bucket.ee'), er: t('bucket.er') })[k];
+// Employee-side lines that are social contributions; the rest of the employee side is income tax or a benefit.
+const CONTRIB = new Set(['ee', 'csg', 'bbsz', 'dep', 'pen', 'am', 'bvg', 'bpvg', 'vv', 'pf', 'nfz', 'mio1', 'mio2', 'cas', 'cass', 'ii', 'p2', 'sp', 'hlt', 'ei', 'iloe', 'acc', 'hc', 'ml']);
+const NOT_CONTRIB = { ca: ['sp'], sa: ['dep'] };
+const fold = x => x.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const dark = () => document.documentElement.dataset.theme === 'dark' || (document.documentElement.dataset.theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+// Spread hues by the golden angle so neighbours in the list never share a colour.
+const color = (cc, a = 1) => `hsl(${(ALL.indexOf(cc) * 137.508) % 360} 62% ${dark() ? 64 : 44}% / ${a})`;
+// Two significant digits: 12 000 € shows as 14 000 $ rather than 13 968 $.
+const nice = v => { if (!(v > 0)) return v; const p = 10 ** (Math.floor(Math.log10(v)) - 1); return Math.round(v / p) * p; };
+const nameOf = cc => { const e = COMMON['country.' + cc]; return e[lang.value] || e.en; };
+
+const loadScript = src => new Promise((ok, fail) => {
+  const el = document.createElement('script');
+  el.src = src; el.onload = ok; el.onerror = () => fail(new Error(src));
+  document.head.appendChild(el);
+});
+
+// Country modules write to shared globals, so they load one at a time.
+const loaded = {};
+async function loadCountry(cc) {
+  if (loaded[cc]) return loaded[cc];
+  window.TAX_STRINGS = undefined; window.TAX_COUNTRY = undefined; window.COMMUNES = undefined;
+  await loadScript(`../${cc}/salary.strings.js`);
+  const dict = { ...COMMON, ...window.TAX_STRINGS };
+  await loadScript(`../${cc}/salary.js`);
+  const factory = window.TAX_COUNTRY;
+  const tc = (key, ...args) => { const e = dict[key]; if (!e) return key; const v = e[lang.value] ?? e.en; return typeof v === 'function' ? v(...args) : v; };
+  const id = x => x;
+  const C = factory({ t: tc, eur: v => String(Math.round(v)), eur2: String, num, pct, int: String, vr: String, esc: id, link: id, sources: () => '' });
+  let communes = null;
+  if (C.communes !== false) {
+    try { await loadScript(`../${cc}/communes.js`); communes = C.parseCommunes(window.COMMUNES || []); } catch (e) { communes = null; }
+  }
+  return (loaded[cc] = { cc, C, t: tc, communes, cur: C.currency || 'EUR', step: C.nextStep || 100 });
+}
+
+// The country page's own starting point, with this page's household on top.
+function stateFor(L, o) {
+  const C = L.C;
+  const s = { period: 'year', basis: 'gross', regime: 'employee', household: o.household, partnerGross: 0, children: o.kids, vat: true,
+    show: { full: true, work: true, employee: true, power: true }, lines: 'both', ...C.state };
+  s.household = o.household; s.children = o.kids;
+  if (C.features && C.features.under3 && s.under3 > s.children) s.under3 = s.children;
+  const c = L.communes && L.communes.find(x => x.id === s.commune);
+  if (c) { s.local = c.rate; s.region = c.region; }
+  if (typeof C.vatStandard === 'function') s.vatRate = C.vatStandard(s.region);
+  else if (C.vatStandard != null) s.vatRate = C.vatStandard;
+  return s;
+}
+
+const sumSet = (r, set) => set.reduce((tot, k) => tot + (r.parts[k] || 0), 0);
+const powerOf = r => r.cost > 0 ? (r.net - (r.parts.vat || 0)) / r.cost : 0;
+function measure(L, s, env, G, scope) {
+  const C = L.C, r = C.compute(G, s, env);
+  const b = C.compute(G + L.step * 12, s, env);
+  const def = C.ROW_DEFS.find(d => d.key === scope) || C.ROW_DEFS[0];
+  const base = r[def.base], dBase = b[def.base] - base;
+  return {
+    r, avg: base > 0 ? sumSet(r, def.set) / base : 0,
+    next: dBase > 0 ? (sumSet(b, def.set) - sumSet(r, def.set)) / dBase : 0,
+    power: powerOf(r),
+  };
+}
+// Where the employer cost goes, from the country's own lines; what no row counts is compulsory savings.
+function bucketsOf(L, r) {
+  const rows = Object.fromEntries(L.C.ROW_DEFS.map(d => [d.key, new Set(d.set)]));
+  const emp = rows.employee || new Set(), taxed = new Set([...(rows.full || []), ...(rows.work || [])]);
+  const vat = r.parts.vat || 0;
+  const b = { net: r.net - vat, sav: 0, vat, ir: 0, ee: 0, er: 0 };
+  for (const k of L.C.COMP_KEYS) {
+    if (k === 'vat') continue;
+    const v = r.parts[k] || 0;
+    if (emp.has(k)) b[CONTRIB.has(k) && !(NOT_CONTRIB[L.cc] || []).includes(k) ? 'ee' : 'ir'] += v;
+    else if (taxed.has(k)) b.er += v;
+    else b.sav += v;
+  }
+  b.sav += r.cost - Object.values(b).reduce((a, v) => a + v, 0);
+  return b;
+}
+// Gross that gives `amount` net or cost, by bisection (the same as the country page).
+function grossFor(L, s, env, amount, basis) {
+  if (basis === 'gross' || amount <= 0) return amount;
+  const f = G => L.C.compute(G, s, env)[basis];
+  let hi = amount * 2;
+  for (let i = 0; i < 40 && f(hi) < amount; i++) hi *= 2;
+  let lo = 0;
+  for (let i = 0; i < 50; i++) { const mid = (lo + hi) / 2; if (f(mid) < amount) lo = mid; else hi = mid; }
+  return hi;
+}
+
+const app = Vue.createApp({
+  setup() {
+    const { reactive, ref, computed, watch, watchEffect, onMounted, nextTick } = Vue;
+    const q = new URLSearchParams(location.search);
+    const pick = (k, allowed, d) => allowed.includes(q.get(k)) ? q.get(k) : d;
+    const numQ = (k, d) => Number.isFinite(+q.get(k)) && q.get(k) !== null && q.get(k) !== '' ? +q.get(k) : d;
+    // Typed amounts are in the display currency; the defaults are euro amounts converted.
+    const defAmount = per => nice(money.toShown(3800 * (per === 'year' ? 12 : 1)));
+    const per0 = pick('per', ['month', 'year'], 'month');
+    const s = reactive({
+      metric: pick('metric', ['power', 'avg', 'next'], 'power'),
+      scope: pick('scope', ['full', 'work', 'employee'], 'full'),
+      per: per0,
+      household: pick('household', ['single', 'joint'], 'single'),
+      kids: Math.min(6, Math.max(0, numQ('kids', 0))),
+      marks: q.has('marks') ? q.get('marks').split(',').filter(k => MARKERS.some(m => m.k === k)) : DEF_MARKS,
+      y2: pick('y2', ['G', 'cost'], 'cost'),
+      amount: numQ('amount', defAmount(per0)),
+      sort: pick('sort', COLS.map(c => c.k), 'power'),
+      desc: q.get('asc') !== '1',
+      msort: pick('msort', MCOLS.map(c => c.k), 'spendX'),
+      mdesc: q.get('masc') !== '1',
+    });
+    const sel = ref(!q.has('c') ? [...DEFAULT_SEL] : q.get('c') === 'all' ? [...ALL] : q.get('c').split(',').filter(c => ALL.includes(c)));
+    const filter = ref('');
+    const hl = ref(null);
+    // Countries switched off in the line charts' legend; they stay selected everywhere else.
+    const hidden = ref([]);
+    const toggleHidden = cc => { hidden.value = hidden.value.includes(cc) ? hidden.value.filter(x => x !== cc) : [...hidden.value, cc]; };
+    const shownCountries = computed(() => {
+      const f = fold(filter.value.trim());
+      return ALL.map(cc => ({ cc, name: COMMON['country.' + cc][lang.value] || COMMON['country.' + cc].en, on: sel.value.includes(cc) }))
+        .filter(c => !f || fold(c.name).includes(f) || c.cc === f)
+        .sort((a, b) => a.name.localeCompare(b.name, lang.value));
+    });
+    const toggle = cc => { sel.value = sel.value.includes(cc) ? sel.value.filter(x => x !== cc) : [...sel.value, cc]; };
+    const selectAll = () => { sel.value = [...ALL]; };
+    const clearAll = () => { sel.value = []; };
+    const toggleMark = k => { s.marks = s.marks.includes(k) ? s.marks.filter(x => x !== k) : MARKERS.map(m => m.k).filter(x => x === k || s.marks.includes(x)); };
+    function setPer(p) {
+      if (p === s.per) return;
+      const f = p === 'year' ? 12 : 1 / 12;
+      s.amount = Math.round(s.amount * f * 100) / 100; s.per = p;
+    }
+    watch(money.shown, (now, old) => {
+      const f = TaxI18n.fx(1, old || 'EUR', now || 'EUR');
+      if (f) s.amount = nice(s.amount * f);
+    });
+    const rangeStep = computed(() => nice(money.toShown(s.per === 'month' ? 500 : 5000)));
+
+    // URL: only what differs from the defaults, so a shared link stays short.
+    watchEffect(() => {
+      const DEF = { metric: 'power', scope: 'full', per: 'month', household: 'single', kids: 0, y2: 'cost', amount: defAmount(s.per), sort: 'power', msort: 'spendX' };
+      const out = new URLSearchParams();
+      const cur = new URLSearchParams(location.search);
+      for (const k of ['lang', 'currency']) if (cur.get(k)) out.set(k, cur.get(k));
+      const same = (a, b) => a.length === b.length && a.every(x => b.includes(x));
+      if (!same(sel.value, DEFAULT_SEL)) out.set('c', sel.value.length === ALL.length ? 'all' : ALL.filter(c => sel.value.includes(c)).join(','));
+      for (const [k, d] of Object.entries(DEF)) if (s[k] !== d) out.set(k, s[k]);
+      if (!same(s.marks, DEF_MARKS)) out.set('marks', s.marks.join(','));
+      if (!s.desc) out.set('asc', '1');
+      if (!s.mdesc) out.set('masc', '1');
+      document.title = t('title');
+      try { history.replaceState(null, '', location.pathname + (out.toString() ? '?' + out : '') + location.hash); } catch (e) {}
+    });
+
+    // Load the selected countries one after the other; the charts redraw as they arrive.
+    const ready = reactive({});
+    const failed = ref([]);
+    const loadingN = computed(() => sel.value.filter(cc => ready[cc] || failed.value.includes(cc)).length);
+    let queue = Promise.resolve();
+    watch(sel, list => {
+      for (const cc of list) if (!ready[cc]) queue = queue.then(() => loadCountry(cc).then(L => { ready[cc] = Vue.markRaw(L); }, () => { if (!failed.value.includes(cc)) failed.value = [...failed.value, cc]; }));
+    }, { immediate: true });
+
+    const active = computed(() => sel.value.filter(cc => ready[cc]).map(cc => {
+      const L = ready[cc], st = stateFor(L, s);
+      return { L, s: st, env: L.C.env(st) };
+    }));
+
+    // Display amounts per month or year, in the chosen currency; the models take local yearly gross.
+    const perF = computed(() => s.per === 'month' ? 12 : 1);
+    const toLocal = (x, cur) => TaxI18n.fx(money.fromShown(x) * perF.value, 'EUR', cur);
+    const toShown = (v, cur) => money.toShown(TaxI18n.fx(v, cur, 'EUR')) / perF.value;
+    const eurOf = (v, cur) => TaxI18n.fx(v, cur, 'EUR') / perF.value;
+    const fmtLocal = (v, cur) => { try { return new Intl.NumberFormat(lang.value === 'nl' ? 'nl-BE' : lang.value === 'en' ? 'en-GB' : 'fr-BE', { style: 'currency', currency: cur, currencyDisplay: 'narrowSymbol', maximumFractionDigits: 0 }).formatToParts(v).map(p => p.type === 'currency' ? TaxI18n.SIGNS[cur] || p.value : p.value).join(''); } catch (e) { return ''; } };
+    const metricLabel = m => t('metric.' + m);
+
+    const N = 140;
+    const series1 = computed(() => active.value.map(({ L, s: st, env }) => {
+      const pts = [];
+      for (let i = 1; i <= N; i++) {
+        const x = xMax1.value * i / N, G = toLocal(x, L.cur);
+        if (G == null) break;
+        const m = measure(L, st, env, G, s.scope);
+        pts.push({ x, y: m[s.metric] * 100 });
+      }
+      return { cc: L.cc, pts };
+    }));
+    const markerPts = computed(() => {
+      const out = [];
+      for (const { L, s: st, env } of active.value) {
+        for (const mk of MARKERS.filter(m => s.marks.includes(m.k))) {
+          let G = null;
+          if (mk.k === 'minister') G = L.C.minSalary ? L.C.minSalary(ministerRole(L.C)) : null;
+          else { const r = (L.C.REF_WAGES || []).find(w => w.key === mk.k); if (r) G = r.m * st.factor; }
+          if (!(G > 0)) continue;
+          const x = toShown(G, L.cur);
+          const m = measure(L, st, env, G, s.scope);
+          const p = { cc: L.cc, mk, x, y: m[s.metric] * 100, net: toShown(m.r.net, L.cur), y2: toShown(s.y2 === 'G' ? G : m.r.cost, L.cur) };
+          // The curve is the ordinary employee; the minister's own rules are kept for the tooltip.
+          if (mk.k === 'minister') {
+            const sm = { ...st, regime: 'minister', period: 'year', salary: G, minRole: ministerRole(L.C) };
+            const mm = measure(L, sm, L.C.env(sm), G, s.scope);
+            Object.assign(p, { G: toShown(G, L.cur), cost: toShown(m.r.cost, L.cur), min: { y: mm[s.metric] * 100, net: toShown(mm.r.net, L.cur), cost: toShown(mm.r.cost, L.cur) } });
+          }
+          out.push(p);
+        }
+      }
+      return out;
+    });
+    const legendList = computed(() => sel.value.filter(cc => ready[cc]).sort((a, b) => nameOf(a).localeCompare(nameOf(b), lang.value)));
+    // "Gross up to" is the least range shown; the axes stretch so every enabled marker fits.
+    // The charts run to the reference salary, further only if an enabled marker sits beyond it.
+    const reach = v => Math.max(s.amount, Math.ceil(v * 1.05 / rangeStep.value) * rangeStep.value);
+    const xMax1 = computed(() => reach(Math.max(0, ...markerPts.value.map(p => p.x))));
+    const xMax2 = computed(() => reach(Math.max(0, ...markerPts.value.map(p => p.net))));
+    const offChart = computed(() => markerPts.value.filter(p => p.x > xMax1.value).map(p => `${FLAGS[p.cc]} ${p.mk.sym} ${eurK(money.fromShown(p.x))}`));
+    // Sampled along net, the x axis (0 to "Gross up to"), so every curve spans the full width.
+    const series2 = computed(() => active.value.map(({ L, s: st, env }) => {
+      const pts = [], net = G => L.C.compute(G, st, env).net;
+      let ratio = 1.4;
+      for (let i = 1; i <= N; i++) {
+        const x = xMax2.value * i / N, A = toLocal(x, L.cur);
+        if (A == null) break;
+        // Bracket around the previous point's gross/net ratio, widened until it holds the target.
+        let lo = A * ratio * 0.97, hi = A * ratio * 1.03;
+        for (let k = 0; k < 40 && net(lo) > A; k++) lo /= 1.5;
+        for (let k = 0; k < 40 && net(hi) < A; k++) hi *= 1.5;
+        for (let k = 0; k < 40 && hi - lo > A * 2e-5; k++) { const mid = (lo + hi) / 2; if (net(mid) < A) lo = mid; else hi = mid; }
+        ratio = hi / A;
+        const r = L.C.compute(hi, st, env);
+        pts.push({ x, y: toShown(s.y2 === 'G' ? hi : r.cost, L.cur) });
+      }
+      return { cc: L.cc, pts };
+    }));
+
+    const rowsAt = computed(() => active.value.map(({ L, s: st, env }) => {
+      const A = toLocal(s.amount, L.cur);
+      const Gl = A;
+      return { L, Gl, m: measure(L, st, env, Gl, s.scope) };
+    }));
+    const table = computed(() => {
+      const rows = rowsAt.value.map(({ L, Gl, m }) => ({ cc: L.cc, name: nameOf(L.cc), cur: L.cur, Gl: Gl / perF.value, G: eurOf(Gl, L.cur), net: eurOf(m.r.net, L.cur), cost: eurOf(m.r.cost, L.cur), avg: m.avg, next: m.next, power: m.power }));
+      const k = s.sort, dir = s.desc ? -1 : 1;
+      return rows.sort((a, b) => (k === 'name' ? a.name.localeCompare(b.name, lang.value) : a[k] - b[k]) * dir);
+    });
+    const split = computed(() => rowsAt.value.filter(x => x.m.r.cost > 0).map(({ L, m }) => {
+      const b = bucketsOf(L, m.r);
+      return { cc: L.cc, cur: L.cur, cost: m.r.cost, b };
+    }).sort((a, b) => b.b.net / b.cost - a.b.net / a.cost));
+    // Minister against the median worker, both under their own rules: the gap before tax and what's left of it after.
+    const ministers = computed(() => {
+      const spend = r => r.net - (r.parts.vat || 0);
+      const rows = active.value.map(({ L, s: st, env }) => {
+        const C = L.C, role = ministerRole(C);
+        const Gm = C.minSalary ? C.minSalary(role) : 0;
+        const ref = (C.REF_WAGES || []).find(w => w.key === 'med') || (C.REF_WAGES || []).find(w => w.key === 'avg');
+        if (!(Gm > 0) || !ref) return null;
+        const Gmed = ref.m * st.factor;
+        const rMed = C.compute(Gmed, st, env);
+        const sm = { ...st, regime: 'minister', period: 'year', salary: Gm, minRole: role };
+        const rMin = C.compute(Gm, sm, C.env(sm));
+        // An ordinary employee on the minister's gross.
+        const rEmp = C.compute(Gm, st, env);
+        const medSpend = spend(rMed), minSpend = spend(rMin);
+        if (!(medSpend > 0)) return null;
+        const grossX = Gm / Gmed, spendX = minSpend / medSpend;
+        return { cc: L.cc, name: nameOf(L.cc), role: L.t('minRole.' + role), usedAvg: ref.key === 'avg',
+          medG: eurOf(Gmed, L.cur), minG: eurOf(Gm, L.cur), medSpend: eurOf(medSpend, L.cur), minSpend: eurOf(minSpend, L.cur),
+          grossX, spendX,
+          taxGap: Gm - rMin.net > 0 ? (Gm - rEmp.net) / (Gm - rMin.net) - 1 : 0,
+          // The gross an ordinary employee needs to take home what the minister does.
+          ...(G2 => ({ needG: eurOf(G2, L.cur), needX: G2 / Gm - 1 }))(grossFor(L, st, env, rMin.net, 'net')) };
+      }).filter(Boolean);
+      const k = s.msort, dir = s.mdesc ? -1 : 1;
+      return rows.sort((a, b) => (k === 'name' ? a.name.localeCompare(b.name, lang.value) : a[k] - b[k]) * dir);
+    });
+    const msortBy = k => { if (s.msort === k) s.mdesc = !s.mdesc; else { s.msort = k; s.mdesc = k !== 'name'; } };
+    const times = x => `${num(x, x < 10 ? 1 : 0)}×`;
+    const signed = x => { const r = Math.round(x * 100) / 100 || 0; return (r > 0 ? '+' : '') + pct(r, 0); };
+    const sortBy = k => { if (s.sort === k) s.desc = !s.desc; else { s.sort = k; s.desc = k !== 'name'; } };
+    const countryHref = cc => {
+      const p = new URLSearchParams({ lang: lang.value });
+      if (money.shown.value) p.set('currency', money.shown.value);
+      return `../${cc}/?${p}`;
+    };
+
+    const shareCopied = ref(false);
+    async function shareLink() {
+      try { await navigator.clipboard.writeText(location.href); shareCopied.value = true; } catch (e) {}
+      setTimeout(() => { shareCopied.value = false; }, 1800);
+    }
+
+    // Charts
+    const c1 = ref(null), c2 = ref(null), c3 = ref(null);
+    let ch1 = null, ch2 = null, ch3 = null;
+    const axisFmt = v => eurK(money.fromShown(v));
+    const label = cc => `${FLAGS[cc]} ${nameOf(cc)}`;
+    const dim = cc => hl.value && hl.value !== cc;
+    // Hovering a line, bar or dot brings that country forward.
+    const onHover = rowCc => (e, els, chart) => {
+      const el = els[0];
+      const cc = el ? rowCc(chart, el) : null;
+      if (cc !== hl.value) hl.value = cc;
+    };
+    // Line charts: one tooltip for every country at the hovered x, read off each curve.
+    const tip = reactive({ ch: 0, title: '', rows: [], more: 0, style: {} });
+    const interp = (pts, x) => {
+      for (let i = 1; i < pts.length; i++) {
+        const a = pts[i - 1], b = pts[i];
+        if ((a.x <= x && x <= b.x) || (b.x <= x && x <= a.x)) return b.x === a.x ? a.y : a.y + (b.y - a.y) * (x - a.x) / (b.x - a.x);
+      }
+      return null;
+    };
+    const TIP_MAX = 14;
+    function lineHover(n, e) {
+      const ch = n === 1 ? ch1 : ch2;
+      if (!ch) return;
+      const rect = ch.canvas.getBoundingClientRect(), px = e.clientX - rect.left, py = e.clientY - rect.top, a = ch.chartArea;
+      if (px < a.left || px > a.right || py < a.top || py > a.bottom) return lineLeave(n);
+      const X = ch.scales.x, Y = ch.scales.y, xv = X.getValueForPixel(px);
+      const fmtY = n === 1 ? v => num(v, 1) + '%' : v => eur(money.fromShown(v));
+      const place = { top: Math.max(0, a.top) + 'px', ...(px > (a.left + a.right) / 2 ? { right: (rect.width - px + 14) + 'px' } : { left: (px + 14) + 'px' }) };
+      // A marker under the pointer gets its own tooltip.
+      const mk = ch.data.datasets.find(ds => ds.type === 'scatter' && Math.hypot(X.getPixelForValue(ds.data[0].x) - px, Y.getPixelForValue(ds.data[0].y) - py) < 9);
+      if (mk && mk.pt.min) {
+        const p = mk.pt, c = color(mk.cc), money2 = v => eur(money.fromShown(v));
+        const rows = n === 1
+          ? [{ key: 'x', name: t('axisGross'), v: money2(p.x), color: c },
+            { key: 'e', name: t(MK_ROWS[s.metric][0]), v: fmtY(p.y), color: c },
+            { key: 'm', name: t(MK_ROWS[s.metric][1]), v: fmtY(p.min.y), color: c, hl: true }]
+          : [{ key: 'g', name: t('axisGross'), v: money2(p.G), color: c },
+            ...(s.y2 === 'cost' ? [{ key: 'ec', name: t('mkEmp.cost'), v: money2(p.cost), color: c }, { key: 'mc', name: t('mkMin.cost'), v: money2(p.min.cost), color: c }] : []),
+            { key: 'en', name: t('mkEmp.net'), v: money2(p.net), color: c },
+            { key: 'mn', name: t('mkMin.net'), v: money2(p.min.net), color: c, hl: true }];
+        Object.assign(tip, { ch: n, title: mk.label, more: 0, style: place, rows });
+        hl.value = mk.cc; ch.$guide = null; ch.draw();
+        return;
+      }
+      if (mk) {
+        const p = mk.data[0];
+        Object.assign(tip, { ch: n, title: mk.label, more: 0, style: place, rows: [
+          { key: 'x', name: n === 1 ? t('axisGross') : t('axisNet'), v: eur(money.fromShown(p.x)), color: color(mk.cc) },
+          { key: 'y', name: n === 1 ? metricLabel(s.metric) : t(s.y2 === 'G' ? 'axisGross' : 'axisCost'), v: fmtY(p.y), color: color(mk.cc), hl: true, more: n === 2 ? moreNet(p.y, p.x) : '' }] });
+        hl.value = mk.cc; ch.$guide = null; ch.draw();
+        return;
+      }
+      const rows = [];
+      for (const ds of ch.data.datasets) {
+        if (ds.type === 'scatter') continue;
+        const y = interp(ds.data, xv);
+        if (y != null) rows.push({ cc: ds.cc, y, d: Math.abs(Y.getPixelForValue(y) - py) });
+      }
+      if (!rows.length) return lineLeave(n);
+      const nearest = rows.reduce((m, r) => r.d < m.d ? r : m), near = nearest.cc;
+      // Only a line right under the pointer gets highlighted.
+      const hit = nearest.d <= 7 ? near : null;
+      rows.sort((p, q) => q.y - p.y);
+      // Too many to list: a window of neighbours around the nearest curve.
+      const at = rows.findIndex(r => r.cc === near), from = Math.max(0, Math.min(rows.length - TIP_MAX, at - (TIP_MAX >> 1)));
+      const shown = rows.slice(from, from + TIP_MAX);
+      const per = t('unit.' + s.per);
+      Object.assign(tip, { ch: n, style: place, more: rows.length - shown.length,
+        title: `${n === 1 ? t('axisGross') : t('axisNet')} ${eur(money.fromShown(xv))} / ${per}`,
+        rows: shown.map(r => ({ key: r.cc, name: label(r.cc), v: fmtY(r.y), net: n === 1 ? netAt(r.cc, xv) : '', color: color(r.cc), hl: r.cc === hit, more: n === 2 ? moreNet(r.y, xv) : '' })) });
+      ch.$guide = px;
+      if (hl.value !== hit) hl.value = hit; else ch.draw();
+    }
+    // How much more the gross or the employer cost is than what lands in hand.
+    const moreNet = (y, x) => x > 0 ? t(s.y2 === 'G' ? 'moreGross' : 'moreCost', pct(y / x - 1, 0)) : '';
+    // Net pay at a gross on the first chart, in the display currency and period.
+    function netAt(cc, x) {
+      const a = active.value.find(e => e.L.cc === cc), G = a && toLocal(x, a.L.cur);
+      return G > 0 ? eur(money.fromShown(toShown(a.L.C.compute(G, a.s, a.env).net, a.L.cur))) : '';
+    }
+    function lineLeave(n) {
+      const ch = n === 1 ? ch1 : ch2;
+      if (tip.ch === n) tip.ch = 0;
+      if (ch) { ch.$guide = null; ch.draw(); }
+      hl.value = null;
+    }
+    const guide = { id: 'guide', afterDatasetsDraw(chart) {
+      const { ctx, chartArea: a } = chart;
+      // The reference salary, labelled at the top.
+      if (chart.$ref != null) {
+        const x = chart.scales.x.getPixelForValue(chart.$ref);
+        if (x >= a.left && x <= a.right) {
+          ctx.save(); ctx.strokeStyle = cssVar('--accent'); ctx.fillStyle = cssVar('--accent'); ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(x, a.top); ctx.lineTo(x, a.bottom); ctx.stroke();
+          ctx.font = '600 11.5px ' + cssVar('--sans'); ctx.textBaseline = 'top';
+          const label = chart.$refLabel || '', w = ctx.measureText(label).width;
+          ctx.textAlign = x + 6 + w > a.right ? 'right' : 'left';
+          ctx.fillText(label, ctx.textAlign === 'right' ? x - 6 : x + 6, a.top + 4); ctx.restore();
+        }
+      }
+      if (chart.$guide == null) return;
+      ctx.save(); ctx.strokeStyle = cssVar('--muted'); ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(chart.$guide, a.top); ctx.lineTo(chart.$guide, a.bottom); ctx.stroke(); ctx.restore();
+    } };
+    function base(type, yPct, extra = {}) {
+      const muted = cssVar('--muted'), line = cssVar('--line');
+      return {
+        type, data: { datasets: [] }, plugins: [guide],
+        options: {
+          animation: false, maintainAspectRatio: false, parsing: false, normalized: true,
+          events: [],
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          scales: {
+            x: { type: 'linear', min: 0, ticks: { color: muted, callback: axisFmt, maxTicksLimit: 9 }, grid: { color: line }, title: { display: true, text: '', color: muted } },
+            y: { ticks: { color: muted, callback: v => yPct ? v + '%' : axisFmt(v) }, grid: { color: line }, title: { display: true, text: '', color: muted } },
+          },
+          ...extra,
+        },
+      };
+    }
+    const lineDs = sr => ({ cc: sr.cc, label: label(sr.cc), data: sr.pts, pointRadius: 0, pointHoverRadius: 3, tension: 0 });
+    // The politician icon of the country pages: 🏛️ on a disc ringed in the country's colour, drawn at device resolution.
+    const govCache = {};
+    function govIcon(cc, faded = false) {
+      const key = `${cc}:${faded ? 1 : 0}:${dark() ? 1 : 0}:${devicePixelRatio}`;
+      if (govCache[key]) return govCache[key];
+      const S = 20, r = devicePixelRatio || 1, c = document.createElement('canvas');
+      c.width = c.height = Math.round(S * r);
+      const g = c.getContext('2d');
+      g.scale(r, r);
+      if (faded) g.globalAlpha = 0.2;
+      g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 1, 0, 2 * Math.PI);
+      g.fillStyle = cssVar('--surface'); g.fill();
+      g.lineWidth = 2; g.strokeStyle = color(cc); g.stroke();
+      g.font = '11px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText('🏛️', S / 2, S / 2 + 1);
+      // Chart.js draws an image at its width/height, so a 20 px image backed by a denser bitmap stays sharp.
+      const img = new Image(S, S);
+      img.onload = () => schedule();
+      img.src = c.toDataURL();
+      return (govCache[key] = img);
+    }
+    function restyle(ch) {
+      if (!ch) return;
+      for (const ds of ch.data.datasets) {
+        if (!ds.cc) continue;
+        const c = color(ds.cc, dim(ds.cc) ? 0.12 : 1);
+        ds.backgroundColor = c;
+        ds.borderColor = ds.type === 'scatter' ? (dim(ds.cc) ? 'transparent' : cssVar('--surface')) : c;
+        ds.borderWidth = ds.type === 'scatter' ? 1.2 : hl.value === ds.cc ? 3 : 1.6;
+        ds.order = hl.value === ds.cc ? -1 : 0;
+        if (ds.gov) ds.pointStyle = govIcon(ds.cc, dim(ds.cc));
+      }
+    }
+    // Rows of the bar and dot charts dim through scriptable colours.
+    const rowColor = (rows, base) => ctx => { const r = rows()[ctx.dataIndex]; return r && dim(r.cc) ? base + '30' : base; };
+    function draw() {
+      if (!c1.value || !window.Chart) return;
+      const per = t('unit.' + s.per);
+      const vis = x => !hidden.value.includes(x.cc);
+      const mkDs = (p, x, y) => ({ type: 'scatter', cc: p.cc, pt: p, label: `${label(p.cc)} · ${p.mk.sym} ${t('marker.' + p.mk.k)}`, data: [{ x, y }], gov: p.mk.style === 'gov', pointStyle: p.mk.style === 'gov' ? govIcon(p.cc) : p.mk.style, pointRadius: p.mk.style === 'gov' ? 10 : 6 });
+      const d1 = series1.value.filter(vis).map(lineDs);
+      for (const p of markerPts.value.filter(vis)) d1.push(mkDs(p, p.x, p.y));
+      const allY = series1.value.flatMap(sr => sr.pts.map(p => p.y));
+      const lo = Math.max(-60, Math.floor(Math.min(0, ...allY) / 20) * 20), hi = Math.min(s.metric === 'next' ? 100 : 150, Math.ceil(Math.max(s.metric === 'power' ? 100 : 60, ...allY) / 10) * 10);
+      if (!ch1) ch1 = new Chart(c1.value, base('line', true));
+      ch1.data.datasets = d1;
+      restyle(ch1);
+      Object.assign(ch1.options.scales.x, { max: xMax1.value });
+      ch1.options.scales.x.title.text = `${t('axisGross')} / ${per}`;
+      ch1.options.scales.y.title.text = metricLabel(s.metric);
+      Object.assign(ch1.options.scales.y, { min: lo, max: hi });
+      ch1.$ref = s.amount; ch1.$refLabel = t('refLine', eur(money.fromShown(s.amount)));
+      ch1.update();
+      if (!ch2) ch2 = new Chart(c2.value, base('line', false));
+      ch2.data.datasets = series2.value.filter(vis).map(lineDs);
+      for (const p of markerPts.value.filter(vis)) if (p.net <= xMax2.value) ch2.data.datasets.push(mkDs(p, p.net, p.y2));
+      restyle(ch2);
+      ch2.options.scales.x.max = xMax2.value;
+      ch2.options.scales.x.title.text = `${t('axisNet')} / ${per}`;
+      ch2.options.scales.y.title.text = `${t(s.y2 === 'G' ? 'axisGross' : 'axisCost')} / ${per}`;
+      ch2.update();
+      drawSplit();
+    }
+    function drawSplit() {
+      if (!c3.value) { if (ch3) { ch3.destroy(); ch3 = null; } return; }
+      if (ch3 && ch3.canvas !== c3.value) { ch3.destroy(); ch3 = null; }
+      const rows = split.value, muted = cssVar('--muted'), line = cssVar('--line');
+      const labels = rows.map(r => label(r.cc));
+      const datasets = BUCKETS.map(b => ({
+        label: bucketLabel(b.k), k: b.k, data: rows.map(r => r.b[b.k] / r.cost * 100),
+        backgroundColor: rowColor(() => split.value, cssVar(b.color)), borderWidth: 0, barPercentage: 0.8, categoryPercentage: 1,
+      }));
+      if (!ch3) ch3 = new Chart(c3.value, {
+        type: 'bar', data: { labels, datasets },
+        options: {
+          indexAxis: 'y', animation: false, maintainAspectRatio: false,
+          interaction: { mode: 'nearest', axis: 'y', intersect: false },
+          onHover: onHover((chart, el) => split.value[el.index]?.cc),
+          plugins: { legend: { display: false }, tooltip: { callbacks: {
+            label: i => { const r = split.value[i.dataIndex]; return r ? ` ${i.dataset.label}: ${num(i.parsed.x, 1)}% · ${eur(TaxI18n.fx(r.b[i.dataset.k], r.cur, 'EUR') / perF.value)}` : ''; },
+          } } },
+          scales: {
+            x: { stacked: true, ticks: { color: muted, callback: v => v + '%' }, grid: { color: line }, title: { display: true, text: t('splitAxis'), color: muted } },
+            y: { stacked: true, ticks: { color: cssVar('--ink'), autoSkip: false, font: { size: 12 } }, grid: { display: false } },
+          },
+        },
+      });
+      ch3.data.labels = labels; ch3.data.datasets = datasets;
+      const neg = Math.min(0, ...rows.map(r => Object.values(r.b).filter(v => v < 0).reduce((a, v) => a + v, 0) / r.cost * 100));
+      const pos = Math.max(100, ...rows.map(r => Object.values(r.b).filter(v => v > 0).reduce((a, v) => a + v, 0) / r.cost * 100));
+      Object.assign(ch3.options.scales.x, { min: Math.floor(neg / 10) * 10, max: Math.ceil(pos / 10 - 1e-9) * 10 });
+      ch3.options.scales.x.title.text = t('splitAxis');
+      ch3.update();
+    }
+    // Explanations: one popover for every [data-tip], on hover, keyboard focus or tap.
+    const pop = reactive({ on: false, text: '', style: {} });
+    let popEl = null;
+    function placeTip() {
+      const p = document.getElementById('tip-pop');
+      if (!popEl || !p) return;
+      const r = popEl.getBoundingClientRect(), w = p.offsetWidth, h = p.offsetHeight, vw = document.documentElement.clientWidth;
+      let top = r.bottom + 6;
+      if (top + h > innerHeight - 8 && r.top - h - 6 > 8) top = r.top - h - 6;
+      pop.style = { left: Math.max(8, Math.min(r.left + r.width / 2 - w / 2, vw - w - 8)) + 'px', top: top + 'px' };
+    }
+    function showTip(el) {
+      if (popEl && popEl !== el) popEl.removeAttribute('aria-describedby');
+      popEl = el;
+      if (!el.classList.contains('tip-i')) el.setAttribute('aria-describedby', 'tip-pop');
+      Object.assign(pop, { on: true, text: el.dataset.tip, style: { left: '0px', top: '0px', visibility: 'hidden' } });
+      nextTick(placeTip);
+    }
+    function hideTip() {
+      if (popEl) popEl.removeAttribute('aria-describedby');
+      popEl = null; pop.on = false;
+    }
+    const tipOf = e => e.target.closest && e.target.closest('[data-tip]');
+    onMounted(() => {
+      document.addEventListener('pointerover', e => { if (e.pointerType === 'touch') return; const el = tipOf(e); if (el && el !== popEl) showTip(el); });
+      document.addEventListener('pointerout', e => {
+        if (e.pointerType === 'touch') return;
+        const el = tipOf(e);
+        if (el && el === popEl && !el.contains(e.relatedTarget) && !el.matches(':focus-visible')) hideTip();
+      });
+      document.addEventListener('pointerdown', e => {
+        const el = tipOf(e);
+        if (e.pointerType === 'mouse') { if (!el) hideTip(); return; }
+        if (el && el !== popEl) showTip(el); else hideTip();
+      });
+      document.addEventListener('focusin', e => { const el = tipOf(e); if (el && el.matches(':focus-visible')) showTip(el); });
+      document.addEventListener('focusout', e => { if (e.target === popEl) hideTip(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') hideTip(); });
+      // The popover is fixed, so it follows its target through page and table scrolls.
+      const follow = () => { if (pop.on) requestAnimationFrame(placeTip); };
+      addEventListener('scroll', follow, true);
+      addEventListener('resize', follow);
+    });
+
+    let pending = 0;
+    const schedule = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(draw); };
+    onMounted(() => { schedule(); });
+    watch([series1, markerPts, series2, split, hidden, lang, money.shown], schedule);
+    watch(hl, () => { restyle(ch1); restyle(ch2); for (const ch of [ch1, ch2, ch3]) if (ch) ch.update('none'); });
+
+    return { tip, lineHover, lineLeave, hidden, toggleHidden, legendList, s, sel, filter, hl, shownCountries, toggle, selectAll, clearAll, toggleMark, setPer, ready, failed, loadingN, table, split, ministers, msortBy, times, signed, num, MCOLS, offChart, pop, sortBy, countryHref,
+      metricLabel, fmtLocal, c1, c2, c3, shareCopied, shareLink, color, cssVar, nameOf, bucketLabel, money, eur, sym, pct, t, lang, LANGS, setLang, ALL, FLAGS, MARKERS, COLS, BUCKETS };
+  },
+});
+app.component('flag-title', TaxI18n.FlagTitle);
+app.component('tip-i', { props: ['tip'], template: `<button type="button" class="tip-i" :data-tip="tip" :aria-label="tip">i</button>` });
+ready.then(() => app.mount('#app'));
+</script>
+</body>
+</html>

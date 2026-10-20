@@ -22,6 +22,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['brightLine', 'trading', 'estateIncome', 'abroad'],
     SOURCES, currency: 'NZD', nextStep: 200,
     state: { share: 200000, rel: 'child' },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS] },

@@ -378,6 +378,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['noCheck', 'payrollTax', 'nunavut', 'qcEmpDed', 'ccbYear', 'minWage', 'avgWage', 'mpPension', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'CAD', nextStep: 150,
     regions: [], sizes: ['small', 'large'], minRoles: MIN_ROLES, factors: [12], factorDigits: 0,

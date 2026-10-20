@@ -48,6 +48,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
 
   return {
     SOURCES, currency: 'CHF', nextStep: 100,
+    GAPS: ['capital', 'grid', 'solothurn', 'cohab', 'gifts'],
     state: { share: 300000, rel: 'sibling', canton: 'ZH' },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS], canton: ['canton', 'str', CANTONS] },
     moreLabel: 'more',

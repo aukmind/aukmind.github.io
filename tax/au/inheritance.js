@@ -30,6 +30,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['noWeb', 'taxable', 'untaxed', 'dependant', 'estate', 'pension', 'cgt', 'abroad'],
     SOURCES, currency: 'AUD', nextStep: 150000,
     state: { share: 500000, sup: 300000, rel: 'child', dependant: false, estate: false },
     urlFields: { share: ['share', 'num'], super: ['sup', 'num'], rel: ['rel', 'str', RELS], dep: ['dependant', 'bool'], estate: ['estate', 'bool'] },

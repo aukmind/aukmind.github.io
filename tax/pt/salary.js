@@ -324,6 +324,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['rateCut', 'mexRate', 'madeira', 'azores', 'fgct', 'dependants', 'familyExp', 'abono', 'municipal', 'wages', 'repAllowance', 'mpAllowance', 'publicPay', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     regions: REGIONS, sizes: SIZES, minRoles: MIN_ROLES, factors: [14, 12], factorDigits: 0, vatStandard: r => ({ mad: 22, acor: 16 })[r] ?? 23,
     features: { under3: true, pa: true },

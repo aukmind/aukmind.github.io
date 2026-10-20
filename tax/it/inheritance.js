@@ -48,6 +48,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
 
   return {
     SOURCES,
+    GAPS: ['law', 'gifts', 'ipocat', 'cadastral', 'exempt', 'abroad', 'giftTax'],
     state: { share: 300000, rel: 'child', disabled: false, realEstate: 0, primaCasa: false, exempt: 0, gifts: 0 },
     urlFields: {
       share: ['share', 'num'], rel: ['rel', 'str', RELS], dis: ['disabled', 'bool'],

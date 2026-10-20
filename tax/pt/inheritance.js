@@ -33,6 +33,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const plain = { share: 0, property: 0, gift: false };
 
   return {
+    GAPS: ['deFacto', 'estate', 'vpt', 'abroad', 'smallGifts', 'insurance'],
     SOURCES,
     state: { share: 200000, rel: 'child', property: 0, gift: false },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS], property: ['property', 'num'], gift: ['gift', 'bool'] },

@@ -310,5 +310,6 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
     polNoteLink: 'bbezg',
     refKeys: ['er', 'ee', 'sz', 'ir', 'kids', 'vat', 'minister', 'notIncl'],
     tips, breakdown, trap, top,
+    GAPS: ['noCheck', 'assessment', 'dz', 'fixed', 'kmb', 'kidsAge', 'household', 'sz', 'gering', 'refWages', 'polPay', 'polSv', 'notIncl'],
   };
 };

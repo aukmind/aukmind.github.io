@@ -61,6 +61,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   return {
     currency: 'EUR',
     SOURCES,
+    GAPS: ['lifeInsOther', 'giftCredit', 'minorDed', 'cohabitant', 'household', 'business', 'abroad', 'estate'],
     state: { share: 200000, rel: 'child', gifts: 0, insurance: 0 },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS], gifts: ['gifts', 'num'], ins: ['insurance', 'num'] },
     moreLabel: 'more',

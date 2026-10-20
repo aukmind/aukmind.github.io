@@ -218,8 +218,19 @@
       },
     },
     methods: {
-      flag: c => FLAGS[c],
-      link(c) { return pageLink(c, this.page, this.lang, this.money && this.money.shown.value); },
+      flag: c => FLAGS[c] || '🌐',
+      shownQ() {
+        const q = new URLSearchParams({ lang: this.lang });
+        const c = this.money && this.money.shown.value;
+        if (c) q.set('currency', c);
+        return q;
+      },
+      // The compare page lives in tax/compare/: its country links go one level up, to the salary page.
+      link(c) {
+        if (this.page === 'compare') return { href: `../${wrapPath(c, 'index')}?${this.shownQ()}`, target: '_top' };
+        return pageLink(c, this.page, this.lang, this.money && this.money.shown.value);
+      },
+      compareHref() { return `compare/?${this.shownQ()}`; },
       leave(e) { if (!e.currentTarget.contains(e.relatedTarget)) this.open = ''; },
       toggle(m) {
         this.open = this.open === m ? '' : m;
@@ -236,7 +247,7 @@
       curName(c) { try { return new Intl.DisplayNames([this.lang], { type: 'currency' }).of(c); } catch (e) { return c; } },
       pickCur(c) { this.money.setShown(c); this.open = ''; },
     },
-    template: `<h1><template v-for="(p, i) in parts" :key="i"><span v-if="p === '{flag}'" class="flag-pick" @focusout="leave" @keydown.esc="open = ''"><button type="button" class="flag" :aria-expanded="open === 'flag'" aria-haspopup="true" :aria-label="t('countryAria')" @click="toggle('flag')">{{ flag(country) }}<svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><span class="flag-menu" v-if="open === 'flag'"><input ref="filter" v-model="q" class="flag-filter" type="search" autocomplete="off" spellcheck="false" :placeholder="t('countryFilter')" :aria-label="t('countryFilter')" @keydown.enter.prevent="goFirst"><a v-for="x in countries" :key="x.c" :href="link(x.c).href" :target="link(x.c).target" :class="{on: x.c === country}"><span>{{ flag(x.c) }}</span>{{ x.name }}</a><span class="flag-none" v-if="!countries.length">{{ t('countryNone') }}</span></span></span><span v-else-if="p === '{currency}' && money" class="flag-pick" @focusout="leave" @keydown.esc="open = ''"><button type="button" class="flag cur-pick" :aria-expanded="open === 'cur'" aria-haspopup="true" :aria-label="t('currencyAria')" @click="toggle('cur')">{{ money.cur() }}<svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><span class="flag-menu" v-if="open === 'cur'"><input ref="curFilter" v-model="cq" class="flag-filter" type="search" autocomplete="off" spellcheck="false" :placeholder="t('currencyFilter')" :aria-label="t('currencyFilter')" @keydown.enter.prevent="currencyList[0] && pickCur(currencyList[0].c)"><a v-for="x in currencyList" :key="x.c" href="#" role="button" :class="{on: x.c === money.cur()}" @click.prevent="pickCur(x.c)"><span class="cur-code">{{ x.c }}</span><span class="cur-sign">{{ x.sign !== x.c ? x.sign : '' }}</span>{{ x.name }}</a><span class="flag-none" v-if="!currencyList.length">{{ t('currencyNone') }}</span></span></span><template v-else-if="p !== '{currency}'">{{ p }}</template></template></h1>`,
+    template: `<h1><template v-for="(p, i) in parts" :key="i"><span v-if="p === '{flag}'" class="flag-pick" @focusout="leave" @keydown.esc="open = ''"><button type="button" class="flag" :aria-expanded="open === 'flag'" aria-haspopup="true" :aria-label="t('countryAria')" @click="toggle('flag')">{{ flag(country) }}<svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><span class="flag-menu" v-if="open === 'flag'"><input ref="filter" v-model="q" class="flag-filter" type="search" autocomplete="off" spellcheck="false" :placeholder="t('countryFilter')" :aria-label="t('countryFilter')" @keydown.enter.prevent="goFirst"><a v-for="x in countries" :key="x.c" :href="link(x.c).href" :target="link(x.c).target" :class="{on: x.c === country}"><span>{{ flag(x.c) }}</span>{{ x.name }}</a><span class="flag-none" v-if="!countries.length">{{ t('countryNone') }}</span><a v-if="page !== 'compare'" class="flag-compare" style="border-top:1px solid var(--line);margin-top:3px;padding-top:9px" :href="compareHref()" target="_top"><span>⚖</span>{{ t('compareLink') }}</a></span></span><span v-else-if="p === '{currency}' && money" class="flag-pick" @focusout="leave" @keydown.esc="open = ''"><button type="button" class="flag cur-pick" :aria-expanded="open === 'cur'" aria-haspopup="true" :aria-label="t('currencyAria')" @click="toggle('cur')">{{ money.cur() }}<svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg></button><span class="flag-menu" v-if="open === 'cur'"><input ref="curFilter" v-model="cq" class="flag-filter" type="search" autocomplete="off" spellcheck="false" :placeholder="t('currencyFilter')" :aria-label="t('currencyFilter')" @keydown.enter.prevent="currencyList[0] && pickCur(currencyList[0].c)"><a v-for="x in currencyList" :key="x.c" href="#" role="button" :class="{on: x.c === money.cur()}" @click.prevent="pickCur(x.c)"><span class="cur-code">{{ x.c }}</span><span class="cur-sign">{{ x.sign !== x.c ? x.sign : '' }}</span>{{ x.name }}</a><span class="flag-none" v-if="!currencyList.length">{{ t('currencyNone') }}</span></span></span><template v-else-if="p !== '{currency}'">{{ p }}</template></template></h1>`,
   };
 
   // Any pair goes through the euro: currencies.js only stores units per euro.
@@ -245,5 +256,5 @@
     if (!(from in r) || !(to in r)) return null;
     return v / r[from] * r[to];
   };
-  window.TaxI18n = { create, fx, FLAGS, loadCountry, syncUrl, shareUrl, pageLink, FlagTitle, COUNTRIES };
+  window.TaxI18n = { create, fx, FLAGS, SIGNS, loadCountry, syncUrl, shareUrl, pageLink, FlagTitle, COUNTRIES };
 })();

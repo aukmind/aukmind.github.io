@@ -36,6 +36,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const frac = s => pos(s.share) > 0 ? Math.min(1, pos(s.property) / pos(s.share)) : 1;
 
   return {
+    GAPS: ['late', 'refValues', 'waiver', 'fees'],
     SOURCES,
     currency: 'RON', nextStep: 5000,
     state: { share: 500000, property: 400000, rel: 'child', how: 'inherit', late: false, held: true },

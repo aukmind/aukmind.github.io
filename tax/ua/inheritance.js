@@ -29,6 +29,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['abroadKin', 'levy', 'vulnAssets', 'notary', 'wartime'],
     SOURCES,
     currency: 'UAH',
     nextStep: 100000,

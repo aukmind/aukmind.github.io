@@ -67,6 +67,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['feeTable', 'partner', 'ntm', 'notModelled'],
     SOURCES,
     currency: 'EUR', nextStep: 100,
     state: { share: 150000, property: 100000, rel: 'child', how: 'law', lived: false, otherIncome: 20000 },

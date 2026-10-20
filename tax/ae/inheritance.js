@@ -24,6 +24,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['dldFees', 'shares', 'emirate'],
     SOURCES, currency: 'AED', nextStep: 500,
     state: { share: 1000000, rel: 'child', law: 'civil', property: false },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS], law: ['law', 'str', LAWS], property: ['property', 'bool'] },

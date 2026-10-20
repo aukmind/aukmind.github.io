@@ -96,6 +96,46 @@ function check(cc) {
   return problems;
 }
 
+// The compare page: literal keys, plus keys built from its v-for lists, MARKERS and COLS.
+// A 'prefix.' + x it can't trace back to a list is reported, so a new one isn't silently skipped.
+const PREFIX_ALIAS = { 'metric.': 'metricTip.' };
+function checkCompare() {
+  const page = 'compare/index.html';
+  const src = read(page);
+  const own = load(['compare/compare.strings.js'], 'TAX_STRINGS');
+  const dict = { ...load(['common.strings.js'], 'TAX_COMMON'), ...own };
+  const want = new Map();
+  const need = (k, from) => { if (!want.has(k)) want.set(k, from); };
+  for (const k of literalKeys(src)) need(k, page);
+  for (const k of literalKeys(read('i18n.js'))) need(k, 'i18n.js');
+
+  const lists = {};
+  const add = (prefix, vals) => { lists[prefix] = [...new Set([...(lists[prefix] || []), ...vals])]; };
+  for (const line of src.split('\n')) {
+    for (const [, v, arr] of line.matchAll(/v-for="(\w+) in \[([^\]]*)\]"/g)) {
+      const vals = [...arr.matchAll(/'(\w+)'/g)].map(m => m[1]);
+      for (const m of line.matchAll(new RegExp(`\\bt\\(\\s*'([\\w.]+\\.)'\\s*\\+\\s*${v}\\b`, 'g'))) add(m[1], vals);
+    }
+  }
+  const constArr = name => (src.match(new RegExp(`const ${name} = \\[([\\s\\S]*?)\\];`)) || [])[1] || '';
+  add('marker.', [...constArr('MARKERS').matchAll(/\bk: '(\w+)'/g)].map(m => m[1]));
+  for (const [, k] of constArr('COLS').matchAll(/\blabel: '(\w+)'/g)) need(k, 'COLS');
+  for (const [a, b] of Object.entries(PREFIX_ALIAS)) if (lists[b]) add(a, lists[b]);
+
+  const problems = [];
+  // L.t(...) is a country's own translator: those keys are checked with that country.
+  for (const [, prefix] of src.matchAll(/(?<![.\w])t\(\s*['"`]([\w.]+\.)['"`]\s*\+/g)) {
+    if (!lists[prefix]) { problems.push(`can't tell which keys '${prefix}' + … builds`); lists[prefix] = []; }
+  }
+  for (const [prefix, vals] of Object.entries(lists)) for (const v of vals) need(prefix + v, `${prefix} list`);
+  for (const [k, from] of want) if (!(k in dict)) problems.push(`missing '${k}' (used by ${from})`);
+  for (const [k, e] of Object.entries(own)) {
+    const gaps = LANGS.filter(l => e == null || e[l] == null || e[l] === '');
+    if (gaps.length) problems.push(`'${k}' has no ${gaps.join('/')}`);
+  }
+  return problems;
+}
+
 const common = load(['common.strings.js'], 'TAX_COMMON');
 const commonGaps = Object.entries(common).filter(([, e]) => LANGS.some(l => e[l] == null || e[l] === '')).map(([k]) => `common: '${k}' lacks a language`);
 
@@ -109,6 +149,13 @@ for (const cc of countries) {
   try { problems = check(cc); } catch (e) { problems = [`crashed: ${e.message}`]; }
   bad += problems.length;
   console.log(`${cc}: ${problems.length ? problems.length + ' missing' : 'ok'}`);
+  for (const p of problems) console.log('  ' + p);
+}
+if (fs.existsSync(path.join(TAX, 'compare/index.html'))) {
+  let problems;
+  try { problems = checkCompare(); } catch (e) { problems = [`crashed: ${e.message}`]; }
+  bad += problems.length;
+  console.log(`compare: ${problems.length ? problems.length + ' missing' : 'ok'}`);
   for (const p of problems) console.log('  ' + p);
 }
 process.exit(bad ? 1 : 0);

@@ -319,6 +319,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
     polSrc: p => t('src.pol.' + (p.role || p.key)),
     polNoteLink: 'reg',
     refKeys: ['er', 'ee', 'nfz', 'ir', 'child', 'zr', 'vat', 'minister', 'notIncl'],
+    GAPS: ['zr', 'accident', 'labourFund', 'married', 'annual', 'check', 'wages', 'mpInsurance', 'mpAllow', 'seniority', 'nbp', 'orlen', 'notIncl'],
     tips, breakdown, trap, top,
   };
 };

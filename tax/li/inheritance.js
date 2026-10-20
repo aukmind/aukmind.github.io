@@ -21,6 +21,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   }
 
   return {
+    GAPS: ['wealthTax', 'sollertrag', 'payouts', 'heirship'],
     SOURCES, currency: 'CHF', nextStep: 100,
     state: { share: 500000, rel: 'child' },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS] },

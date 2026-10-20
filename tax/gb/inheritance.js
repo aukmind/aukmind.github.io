@@ -47,6 +47,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
 
   return {
     SOURCES,
+    GAPS: ['oneHeir', 'transfer', 'gifts', 'pensions', 'reliefs'],
     currency: 'GBP',
     state: { share: 600000, rel: 'child', home: 300000, transfer: false, gifts: 0, pension: 0, after2027: false },
     urlFields: {

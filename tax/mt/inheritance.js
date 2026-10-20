@@ -39,6 +39,7 @@ window.TAX_INHERIT = ({ t, eur, pct }) => {
   const plain = { share: 0, kind: 'other', heirs: 1, propco: false };
 
   return {
+    GAPS: ['heirsSplit', 'homeConditions', 'value', 'usufruct'],
     SOURCES, currency: 'EUR',
     state: { ...plain, share: 300000, rel: 'child', kind: 'other' },
     urlFields: { share: ['share', 'num'], rel: ['rel', 'str', RELS], kind: ['kind', 'str', KINDS], heirs: ['heirs', 'num'], propco: ['propco', 'bool'] },

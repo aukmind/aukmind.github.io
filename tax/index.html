@@ -59,6 +59,7 @@ header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
 .flag-filter:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
 .gaps-intro{margin:0 0 8px;color:var(--muted);font-size:13.5px}
 .gaps-list{margin:0;padding-left:20px;font-size:13.5px;line-height:1.55;display:grid;gap:5px}
+.seg.basis{margin-bottom:8px}
 .flag-none{padding:7px 10px;color:var(--muted);font:14px var(--sans)}
 .flag-menu a span.cur-code{font:600 13px var(--mono);min-width:3.2em}
 .flag-menu a span.cur-sign{font:500 14px var(--mono);color:var(--muted);min-width:1.8em;margin-left:-4px}
@@ -270,6 +271,7 @@ header{position:relative}
 .share-box .share-url{position:absolute;top:calc(100% + 6px);right:0;width:min(420px,calc(100vw - 32px));z-index:30;box-shadow:0 8px 24px rgba(10,20,40,.15)}
 @media (max-width:700px){.share-box{position:static;flex-direction:row;justify-content:flex-start;margin-bottom:12px}}
 .share{border:1px solid var(--line);background:var(--sunk);color:var(--ink);font:600 13px var(--sans);padding:7px 12px;border-radius:7px;cursor:pointer}
+.share{text-decoration:none;display:inline-flex;align-items:center}
 .share:hover{border-color:var(--accent)}
 .share-url{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font:12px var(--mono)}
 .lang{display:flex;background:var(--sunk);border-radius:7px;padding:2px;gap:2px}
@@ -286,6 +288,7 @@ header{position:relative}
     <p>{{ t('lead') }}</p>
     <div class="share-box">
       <button class="share" type="button" @click="shareLink">{{ t('share') }}</button>
+      <a class="share" :href="compareHref" target="_top">⚖ {{ t('compareLink') }}</a>
       <div class="lang" role="group" :aria-label="t('langAria')"><button v-for="l in LANGS" :key="l" type="button" :class="{on:lang===l}" :lang="l" @click="setLang(l)">{{ l }}</button></div>
       <span class="hint" v-if="shareState.copied">{{ t('copied') }}</span>
       <input v-if="shareState.failed" class="share-url" type="text" readonly :value="shareState.url" @focus="$event.target.select()" :aria-label="t('shareAria')">
@@ -304,7 +307,10 @@ header{position:relative}
         </template>
       </div>
       <div class="field">
-        <label for="salary">{{ t('grossSalary') }}</label>
+        <div class="seg full basis" v-if="!minister">
+          <button v-for="b in ['cost', 'gross', 'net']" :key="b" :class="{on: s.basis === b}" @click="setBasis(b)" v-tip.panel="'basis-' + b">{{ t('basis.' + b) }}</button>
+        </div>
+        <label for="salary">{{ t(basis === 'gross' ? 'grossSalary' : 'basisLabel.' + basis) }}</label>
         <div class="row">
           <div class="money"><input id="salary" type="number" min="0" :step="money.shown.value ? 'any' : NEXT_STEP" :value="moneyIn(s.salary)" @input="s.salary = moneyOut($event.target.value)" :placeholder="t('salaryPh')"><span>{{ sym() }}</span></div>
           <div class="seg" v-if="!minister">
@@ -317,6 +323,7 @@ header{position:relative}
           <button v-for="f in C.factors" :key="f" :class="{on:s.factor===f}" @click="s.factor=f" v-tip.panel="'factor'+f">{{ num(f, C.factorDigits) }}</button>
         </div>
         <div class="hint" v-if="minister">{{ t('minSalaryHint') }}</div>
+        <div class="hint" v-else-if="s.salary && basis !== 'gross'">{{ t('basisGross', eur(s.period === 'month' ? annualGross / s.factor : annualGross), t(s.period === 'month' ? 'unit.month' : 'unit.year')) }}</div>
         <div class="hint" v-else-if="s.salary">{{ s.period==='month' ? t('yearlyGross', eur(annualGross)) : t('monthlyGross', eur(annualGross / s.factor)) }}</div>
         <label class="switch" v-if="C.features.cadre && !minister"><input type="checkbox" v-model="s.cadre"> <span v-tip.panel="'cadre'">{{ t('cadre') }}</span></label>
       </div>
@@ -394,8 +401,8 @@ header{position:relative}
       <div class="field">
         <label class="switch"><input type="checkbox" id="vatOn" v-model="s.vat"> {{ t('includeVat') }}</label>
         <template v-if="s.vat">
-          <label for="vatRate">{{ t('vatRateLabel') }} <span style="font-family:var(--mono)">{{ num(s.vatRate, 1) }}%</span> <span class="hint" v-if="s.vatRate!==vatStd">{{ t('vatStandard') }}</span></label>
-          <input id="vatRate" type="range" min="0" max="30" step="0.5" v-model.number="s.vatRate">
+          <label for="vatRate">{{ t('vatRateLabel') }} <span style="font-family:var(--mono)">{{ vr(s.vatRate) }}%</span> <span class="hint" v-if="s.vatRate!==vatStd">{{ t('vatStandard') }}</span></label>
+          <input id="vatRate" type="range" min="0" max="30" :step="Math.round(vatStd * 100) % 50 ? 0.01 : 0.5" v-model.number="s.vatRate">
         </template>
       </div>
 
@@ -526,6 +533,12 @@ header{position:relative}
     <span>{{ t('inheritLink') }}</span>
   </a>
 
+  <details class="ref-acc gaps" v-if="C.GAPS && C.GAPS.length">
+    <summary class="eyebrow">{{ t('gapsTitle', C.GAPS.length) }}</summary>
+    <p class="gaps-intro">{{ t('gapsIntro') }}</p>
+    <ul class="gaps-list"><li v-for="k in C.GAPS" :key="k" v-html="t('gap.' + k)"></li></ul>
+  </details>
+
   <details class="ref-acc">
     <summary class="eyebrow">{{ t('refEyebrow') }}</summary>
     <div class="ref">
@@ -536,12 +549,6 @@ header{position:relative}
         </ul>
       </section>
     </div>
-  </details>
-
-  <details class="ref-acc gaps" v-if="C.GAPS && C.GAPS.length">
-    <summary class="eyebrow">{{ t('gapsTitle', C.GAPS.length) }}</summary>
-    <p class="gaps-intro">{{ t('gapsIntro') }}</p>
-    <ul class="gaps-list"><li v-for="k in C.GAPS" :key="k" v-html="t('gap.' + k)"></li></ul>
   </details>
 
   <footer>
@@ -563,8 +570,8 @@ const moneyIn = v => v === '' || v == null || !money.shown.value ? v : Math.roun
 const moneyOut = v => v === '' ? '' : money.shown.value ? Math.round(money.fromShown(+v) * 1e4) / 1e4 : +v;
 
 const eur2 = v => eur(v, 2);
-// VAT rates move in half-percent steps.
-const vr = v => num(v, v % 1 ? 1 : 0);
+// VAT rates show as many decimals as they have (8.99% in California, 21% in Belgium).
+const vr = v => num(v, Math.round(v * 100) % 10 ? 2 : Math.round(v * 100) % 100 ? 1 : 0);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const link = k => `<a href="${C.SRC[k]}" target="_blank" rel="noopener">${esc(t('src.' + k))}</a>`;
 const sources = (...ks) => `<div class="src">${t('sources')}: ${ks.map(link).join(' · ')}</div>`;
@@ -670,12 +677,12 @@ const app = Vue.createApp({
     const { reactive, computed, watch, watchEffect, onMounted, ref, nextTick } = Vue;
     watchEffect(() => { document.title = `${t('title')} ${TaxI18n.FLAGS[country]}`; TaxI18n.syncUrl(); });
     const s = reactive({
-      period: 'month', regime: 'employee', household: 'single', partnerGross: 0, children: 0, vat: true,
+      period: 'month', basis: 'gross', regime: 'employee', household: 'single', partnerGross: 0, children: 0, vat: true,
       show: { full: true, work: true, employee: true, power: true }, lines: 'both',
       ...C.state,
     });
     bindUrlState(s, {
-      salary: ['salary', 'num'], per: ['period', 'str', ['month', 'year']],
+      salary: ['salary', 'num'], per: ['period', 'str', ['month', 'year']], basis: ['basis', 'str', ['gross', 'net', 'cost']],
       household: ['household', 'str', ['single', 'joint']], partner: ['partnerGross', 'num'], kids: ['children', 'num'],
       vat: ['vat', 'bool'], vatrate: ['vatRate', 'num'], regime: ['regime', 'str', ['employee', 'minister']],
       ...C.urlFields,
@@ -775,10 +782,41 @@ const app = Vue.createApp({
     if (C.features.under3) watch(() => s.children, n => { if (s.under3 > n) s.under3 = n; });
 
     const env = computed(() => C.env(s));
+    // The typed amount can be gross, net or the employer's cost; the model always works from gross.
+    const grossFor = (amount, basis) => {
+      if (basis === 'gross' || amount <= 0) return amount;
+      const f = G => compute(G, s, env.value)[basis];
+      let hi = amount * 2;
+      for (let i = 0; i < 40 && f(hi) < amount; i++) hi *= 2;
+      let lo = 0;
+      for (let i = 0; i < 50; i++) { const mid = (lo + hi) / 2; if (f(mid) < amount) lo = mid; else hi = mid; }
+      return hi;
+    };
+    const basis = computed(() => s.regime === 'minister' ? 'gross' : s.basis);
     const annualGross = computed(() => {
       const v = Number(s.salary) || 0;
-      return s.period === 'month' ? v * s.factor : v;
+      return grossFor(s.period === 'month' ? v * s.factor : v, basis.value);
     });
+    // This country next to the compare page's defaults, at this page's salary.
+    const compareHref = computed(() => {
+      const q = new URLSearchParams({ lang: lang.value });
+      if (money.shown.value) q.set('currency', money.shown.value);
+      q.set('c', [...new Set([country, 'be', 'fr', 'es', 'ch'])].join(','));
+      const G = annualGross.value;
+      // The compare page reads amounts in its display currency: the one shown here, or euros.
+      const A = G > 0 && s.regime !== 'minister' ? TaxI18n.fx(G / 12, money.local(), money.shown.value || 'EUR') : null;
+      if (A) q.set('amount', Math.round(A));
+      return `compare/?${q}`;
+    });
+    function setBasis(b) {
+      if (b === s.basis) return;
+      const G = annualGross.value;
+      if (G > 0) {
+        const A = b === 'gross' ? G : compute(G, s, env.value)[b];
+        s.salary = Math.round((s.period === 'month' ? A / s.factor : A) * 100) / 100;
+      }
+      s.basis = b;
+    }
     const vatShare = computed(() => s.vatRate / (100 + s.vatRate));
     const rowDefs = computed(() => ROW_DEFS.filter(d => s.vat || !d.set.includes('vat')));
     const cur = computed(() => annualGross.value > 0 ? compute(annualGross.value, s, env.value) : null);
@@ -871,6 +909,10 @@ const app = Vue.createApp({
     const tipBuilders = {
       ...countryTips,
       ...Object.fromEntries(POLITICIANS.map((p, i) => [`pol-${i}`, () => polTip(p)])),
+      ...Object.fromEntries(['gross', 'net', 'cost'].map(b => [`basis-${b}`, () => {
+        const r = cur.value, per = v => eur(s.period === 'month' ? v / s.factor : v);
+        return `<h4>${t('basis.' + b)}</h4><p>${t('basisTip.' + b)}</p>${r ? `<table><tr><td>${t('basis.cost')}</td><td>${per(r.cost)}</td></tr><tr class="t"><td>${t('basis.gross')}</td><td>${per(r.G)}</td></tr><tr><td>${t('basis.net')}</td><td>${per(r.net)}</td></tr></table>` : ''}`;
+      }])),
       'chip-full': () => t('chip.full'),
       'chip-work': () => t('chip.work'),
       'chip-power': () => t('chip.power', s.vat),
@@ -1307,11 +1349,11 @@ const app = Vue.createApp({
 
 
     return { shareState, shareLink, C, country, TaxI18n,
-      money, moneyIn, moneyOut, s, setPeriod, communes, commune, communeLabel, communesError, localRange, hasCommunes, hasRegions, vatStd, partsHint,
+      money, moneyIn, moneyOut, basis, setBasis, compareHref, s, setPeriod, communes, commune, communeLabel, communesError, localRange, hasCommunes, hasRegions, vatStd, partsHint,
       combo, comboList, filtered, shown, openCombo, moveHi, pickCommune,
       annualGross, vatShare, trapText, topText, rowDefs, rows, cur, barSegs, splitRows, raiseHtml, breakdown,
       heads, POLITICIANS, polName, minister, toggleMinister, setMinRole, tipHtml, tipPos, tipEl, keepTip, hideTipSoon, allSources, refSections, refLegend, polLegend, showPolitician, link,
-      eur, sym, num, int, pct, NEXT_STEP, t, lang, LANGS, setLang, zoomBy, resetZoom,
+      eur, sym, num, int, pct, vr, NEXT_STEP, t, lang, LANGS, setLang, zoomBy, resetZoom,
     };
   },
 });

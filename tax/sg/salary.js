@@ -260,6 +260,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['noCheck', 'polPay', 'polBonus', 'polCpf', 'phase', 'rebate', 'workfare', 'partner', 'wages', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'SGD', nextStep: 150,
     regions: REGIONS, sizes: AGES, minRoles: MIN_ROLES, factors: [12, 13, 14], factorDigits: 0, vatStandard: 9,

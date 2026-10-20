@@ -32,55 +32,55 @@ window.TAX_STRINGS = {
   'minRole.asec': { en: `Asst. undersecretary`, nl: `Adj. ondersecretaris`, fr: `Sous-secr. adjoint` },
   'minRole.usec': { en: `Undersecretary`, nl: `Ondersecretaris`, fr: `Sous-secrétaire` },
   ministerHint: {
-    en: `Ministers' pay isn't published. These are the published or reported totals for the next offices down, all held by Emiratis.`,
-    nl: `Het loon van ministers wordt niet gepubliceerd. Dit zijn de gepubliceerde of gemelde totalen voor de ambten net daaronder, allemaal bekleed door Emirati's.`,
-    fr: `La rémunération des ministres n'est pas publiée. Voici les montants publiés ou rapportés pour les fonctions juste en dessous, toutes occupées par des Émiriens.`,
+    en: `We don't know what ministers earn: it isn't published. So we show the jobs just below them, all held by Emiratis.`,
+    nl: `We weten niet wat ministers verdienen: dat wordt niet bekendgemaakt. Daarom tonen we de functies net daaronder, allemaal bekleed door Emirati's.`,
+    fr: `On ne sait pas ce que gagnent les ministres : ce n'est pas publié. On montre donc les postes juste en dessous, tous occupés par des Émiriens.`,
   },
   minSalaryHint: {
-    en: `Yearly total pay with allowances. Published or reported amount by default.`,
-    nl: `Jaarlijks totaalloon met toelagen. Standaard het gepubliceerde of gemelde bedrag.`,
-    fr: `Rémunération annuelle totale avec indemnités. Montant publié ou rapporté par défaut.`,
+    en: `Total pay for the year, extras for housing and transport included. By default, the published or reported amount.`,
+    nl: `Totaal loon per jaar, inclusief extra's voor wonen en vervoer. Standaard het bekendgemaakte of gemelde bedrag.`,
+    fr: `Rémunération totale de l'année, primes de logement et de transport comprises. Par défaut, le montant publié ou rapporté.`,
   },
   'tip.ministerRules': {
-    en: `The UAE doesn't publish what federal ministers earn; the Speaker of the Federal National Council is said to be paid like one. A federal undersecretary earns AED 131,250 a month and an assistant undersecretary AED 107,000 under the 2012 federal salary scale (Cabinet Resolution 23 of 2012), allowances included. FNC members were reported at AED 50,000 a month in 2015, with AED 2,000 deducted for their pension. No income tax applies; civil servants pay the federal pension contribution (11% under the 2023 law). Not confirmed: whether the 2012 scale has been raised since, and the current FNC amount.`,
-    nl: `De Emiraten publiceren niet wat federale ministers verdienen; de voorzitter van de Federale Nationale Raad zou evenveel krijgen als een minister. Een federale ondersecretaris verdient AED 131.250 per maand en een adjunct-ondersecretaris AED 107.000 volgens de federale loonschaal van 2012 (kabinetsbesluit 23 van 2012), toelagen inbegrepen. Leden van de FNC kregen volgens berichten AED 50.000 per maand in 2015, met AED 2.000 inhouding voor hun pensioen. Er is geen inkomstenbelasting; ambtenaren betalen de federale pensioenbijdrage (11% onder de wet van 2023). Niet bevestigd: of de schaal van 2012 sindsdien is verhoogd, en het huidige bedrag voor de FNC.`,
-    fr: `Les Émirats ne publient pas la rémunération des ministres fédéraux ; le président du Conseil national fédéral serait payé comme un ministre. Un sous-secrétaire fédéral gagne 131 250 AED par mois et un sous-secrétaire adjoint 107 000 AED selon la grille fédérale de 2012 (résolution du Cabinet 23 de 2012), indemnités comprises. Les membres du CNF touchaient selon la presse 50 000 AED par mois en 2015, dont 2 000 AED retenus pour leur retraite. Aucun impôt sur le revenu ; les fonctionnaires cotisent à la retraite fédérale (11% sous la loi de 2023). Non confirmé : une éventuelle hausse de la grille de 2012 et le montant actuel du CNF.`,
+    en: `The UAE doesn't say what federal ministers earn. The Speaker of the Federal National Council (FNC, the federal assembly) is said to earn the same as a minister. Below ministers, the 2012 federal pay table (Cabinet Resolution 23 of 2012) gives a federal undersecretary AED 131,250 a month and an assistant undersecretary AED 107,000, extras included. In 2015 the press reported that FNC members got AED 50,000 a month, with AED 2,000 kept back for their pension. Nobody pays income tax. Civil servants pay 11% of their pay into the federal pension (2023 law). We could not check if the 2012 table went up since, or what FNC members get today.`,
+    nl: `De Emiraten zeggen niet wat federale ministers verdienen. De voorzitter van de Federale Nationale Raad (FNC, het federale parlement) zou evenveel krijgen als een minister. Onder de ministers geeft de federale loontabel van 2012 (kabinetsbesluit 23 van 2012) een federale ondersecretaris AED 131.250 per maand en een adjunct-ondersecretaris AED 107.000, extra's inbegrepen. In 2015 meldde de pers dat FNC-leden AED 50.000 per maand kregen, waarvan AED 2.000 werd ingehouden voor hun pensioen. Niemand betaalt inkomstenbelasting. Ambtenaren betalen 11% van hun loon aan het federale pensioen (wet van 2023). We konden niet nagaan of de tabel van 2012 sindsdien hoger ligt, of wat FNC-leden vandaag krijgen.`,
+    fr: `Les Émirats ne disent pas ce que gagnent les ministres fédéraux. Le président du Conseil national fédéral (CNF, l'assemblée fédérale) serait payé comme un ministre. Juste en dessous, la grille fédérale de 2012 (résolution du Cabinet 23 de 2012) donne 131 250 AED par mois à un sous-secrétaire fédéral et 107 000 AED à un sous-secrétaire adjoint, primes comprises. En 2015, la presse indiquait que les membres du CNF touchaient 50 000 AED par mois, dont 2 000 AED retenus pour leur retraite. Personne ne paie d'impôt sur le revenu. Les fonctionnaires versent 11% de leur paie à la retraite fédérale (loi de 2023). Nous n'avons pas pu vérifier si la grille de 2012 a augmenté depuis, ni ce que touchent les membres du CNF aujourd'hui.`,
   },
   'bd.minGross': { en: `Total pay with allowances`, nl: `Totaalloon met toelagen`, fr: `Rémunération totale avec indemnités` },
   'bd.minEr': { en: `State pension contribution`, nl: `Pensioenbijdrage van de staat`, fr: `Cotisation retraite de l'État` },
   'bd.minEe': { en: `Your pension contribution`, nl: `Jouw pensioenbijdrage`, fr: `Votre cotisation retraite` },
   'bd.stateCost': { en: `Total paid by the State`, nl: `Totaal betaald door de staat`, fr: `Total payé par l'État` },
   'tip.minGross': {
-    en: `Basic salary plus housing, transport and the other allowances of the federal scale, or the reported FNC amount.`,
-    nl: `Basisloon plus huisvesting, vervoer en de andere toelagen van de federale schaal, of het gemelde bedrag voor de FNC.`,
-    fr: `Salaire de base plus logement, transport et autres indemnités de la grille fédérale, ou le montant rapporté pour le CNF.`,
+    en: `Base pay plus the extras for housing, transport and so on from the federal pay table. For FNC members, the amount the press reported.`,
+    nl: `Basisloon plus de extra's voor wonen, vervoer enzovoort uit de federale loontabel. Voor FNC-leden het bedrag dat de pers meldde.`,
+    fr: `Salaire de base plus les primes de logement, de transport, etc. de la grille fédérale. Pour les membres du CNF, le montant rapporté par la presse.`,
   },
   'tip.stateCost': {
-    en: `Pay + the employer pension contribution the federal government pays. The work and full rates are measured against it.`,
-    nl: `Loon + de werkgeversbijdrage voor het pensioen die de federale overheid betaalt. De belasting op arbeid en de totale belasting worden hieraan afgemeten.`,
-    fr: `Rémunération + cotisation retraite employeur versée par l'État fédéral. La taxation du travail et la taxation totale sont calculées sur ce montant.`,
+    en: `Their pay plus what the federal government puts into their pension on top, as their employer. The work and full rates are worked out from this total.`,
+    nl: `Hun loon plus wat de federale overheid als werkgever bovenop in hun pensioen stort. De belasting op werk en de totale belasting worden op dit totaal berekend.`,
+    fr: `Leur paie plus ce que l'État fédéral, en tant qu'employeur, verse en plus pour leur retraite. Les taux sur le travail et totaux sont calculés sur ce total.`,
   },
   'tip.minEr': {
-    en: `15% of pay up to AED 100,000 a month, paid by the federal government as employer to GPSSA.`,
-    nl: `15% van het loon tot AED 100.000 per maand, betaald door de federale overheid als werkgever aan GPSSA.`,
-    fr: `15% de la rémunération jusqu'à 100 000 AED par mois, versés par l'État fédéral employeur à la GPSSA.`,
+    en: `The federal government, as employer, adds 15% of the pay to the pension fund (GPSSA). Pay above AED 100,000 a month doesn't count.`,
+    nl: `De federale overheid stort als werkgever 15% van het loon in het pensioenfonds (GPSSA). Loon boven AED 100.000 per maand telt niet mee.`,
+    fr: `L'État fédéral, en tant qu'employeur, verse 15% de la paie à la caisse de retraite (GPSSA). La part au-delà de 100 000 AED par mois ne compte pas.`,
   },
   'tip.minErFnc': {
-    en: `What the State adds to FNC members' pensions isn't published, so nothing is counted here.`,
-    nl: `Wat de staat bijdraagt aan het pensioen van FNC-leden wordt niet gepubliceerd, dus hier telt niets mee.`,
-    fr: `Ce que l'État ajoute à la retraite des membres du CNF n'est pas publié : rien n'est compté ici.`,
+    en: `We don't know what the State adds to FNC members' pensions: it isn't published. So we count nothing here.`,
+    nl: `We weten niet wat de staat bijlegt voor het pensioen van FNC-leden: dat wordt niet bekendgemaakt. Daarom tellen we hier niets.`,
+    fr: `On ne sait pas ce que l'État ajoute à la retraite des membres du CNF : ce n'est pas publié. On ne compte donc rien ici.`,
   },
   'tip.minEe': {
-    en: `11% of pay up to AED 100,000 a month to GPSSA, as for any Emirati in the federal government hired since October 2023.`,
-    nl: `11% van het loon tot AED 100.000 per maand aan GPSSA, zoals voor elke Emirati die sinds oktober 2023 bij de federale overheid werkt.`,
-    fr: `11% de la rémunération jusqu'à 100 000 AED par mois à la GPSSA, comme pour tout Émirien recruté par l'État fédéral depuis octobre 2023.`,
+    en: `11% of the pay goes to the pension fund (GPSSA), like for any Emirati who joined the federal government since October 2023. Pay above AED 100,000 a month doesn't count.`,
+    nl: `11% van het loon gaat naar het pensioenfonds (GPSSA), zoals bij elke Emirati die sinds oktober 2023 bij de federale overheid werkt. Loon boven AED 100.000 per maand telt niet mee.`,
+    fr: `11% de la paie part à la caisse de retraite (GPSSA), comme pour tout Émirien entré dans l'administration fédérale depuis octobre 2023. La part au-delà de 100 000 AED par mois ne compte pas.`,
   },
   'tip.minEeFnc': {
-    en: `AED 2,000 a month deducted for the pension (reported in 2015).`,
-    nl: `AED 2.000 per maand ingehouden voor het pensioen (gemeld in 2015).`,
-    fr: `2 000 AED retenus chaque mois pour la retraite (rapporté en 2015).`,
+    en: `AED 2,000 a month kept back from the pay for the pension (press report from 2015).`,
+    nl: `AED 2.000 per maand ingehouden op het loon voor het pensioen (persbericht uit 2015).`,
+    fr: `2 000 AED retenus chaque mois sur la paie pour la retraite (article de presse de 2015).`,
   },
-  'tip.minIloe': { en: `Not counted for public office holders.`, nl: `Niet meegeteld voor ambtsdragers.`, fr: `Non compté pour les titulaires de fonctions publiques.` },
+  'tip.minIloe': { en: `We don't count it for people in public office.`, nl: `Telt niet mee voor wie een openbaar ambt bekleedt.`, fr: `Pas compté pour les personnes qui occupent une fonction publique.` },
 
   // Politicians on the chart
   'stat.fnc': { en: `FNC member`, nl: `Lid van de FNC`, fr: `Membre du CNF` },
@@ -92,19 +92,19 @@ window.TAX_STRINGS = {
   'polTitle.gov': { en: `Other public offices, gross pay`, nl: `Andere openbare ambten, brutoloon`, fr: `Autres fonctions publiques, rémunération brute` },
   'polTitle.corp': { en: `Heads of state-owned companies, gross pay`, nl: `Topmensen van staatsbedrijven, brutoloon`, fr: `Dirigeants d'entreprises publiques, rémunération brute` },
   'polNote.fnc': {
-    en: `Reported AED 50,000 a month in 2015, AED 2,000 of it to the pension, no income tax. The head sits at the employee salary with the same net, with your settings; the dot is their actual pay.`,
-    nl: `Gemeld AED 50.000 per maand in 2015, waarvan AED 2.000 naar het pensioen, geen inkomstenbelasting. Het hoofdje staat bij het werknemersloon met hetzelfde netto, met jouw instellingen; het bolletje is hun echte loon.`,
-    fr: `50 000 AED par mois rapportés en 2015, dont 2 000 AED pour la retraite, sans impôt. La tête est au salaire d'un salarié au même net, avec vos réglages ; le point est leur vraie rémunération.`,
+    en: `AED 50,000 a month in 2015 according to the press, of which AED 2,000 goes to the pension. No income tax. The face sits at the salary an ordinary employee would need to take home the same, with your settings. The dot is what they really earn.`,
+    nl: `AED 50.000 per maand in 2015 volgens de pers, waarvan AED 2.000 naar het pensioen gaat. Geen inkomstenbelasting. Het hoofdje staat bij het loon dat een gewone werknemer nodig heeft om hetzelfde over te houden, met jouw instellingen. Het bolletje is wat ze echt verdienen.`,
+    fr: `50 000 AED par mois en 2015 selon la presse, dont 2 000 AED pour la retraite. Pas d'impôt sur le revenu. La tête est placée au salaire dont un salarié ordinaire aurait besoin pour toucher le même net, avec vos réglages. Le point est ce qu'ils gagnent vraiment.`,
   },
   'polNote.civil': {
-    en: `Federal scale with allowances, 11% pension contribution, no income tax. The head sits at the employee salary with the same net, with your settings; the dot is their actual pay.`,
-    nl: `Federale schaal met toelagen, 11% pensioenbijdrage, geen inkomstenbelasting. Het hoofdje staat bij het werknemersloon met hetzelfde netto, met jouw instellingen; het bolletje is hun echte loon.`,
-    fr: `Grille fédérale avec indemnités, cotisation retraite de 11%, sans impôt. La tête est au salaire d'un salarié au même net, avec vos réglages ; le point est leur vraie rémunération.`,
+    en: `Pay from the federal pay table, extras included. 11% goes to the pension, no income tax. The face sits at the salary an ordinary employee would need to take home the same, with your settings. The dot is what they really earn.`,
+    nl: `Loon uit de federale loontabel, extra's inbegrepen. 11% gaat naar het pensioen, geen inkomstenbelasting. Het hoofdje staat bij het loon dat een gewone werknemer nodig heeft om hetzelfde over te houden, met jouw instellingen. Het bolletje is wat ze echt verdienen.`,
+    fr: `Paie de la grille fédérale, primes comprises. 11% partent à la retraite, pas d'impôt sur le revenu. La tête est placée au salaire dont un salarié ordinaire aurait besoin pour toucher le même net, avec vos réglages. Le point est ce qu'ils gagnent vraiment.`,
   },
   polNote: {
-    en: links => `Hover a name for details, click to zoom to them. Yearly pay, shown on the chart as yearly ÷ 12. They are placed where an employee would net the same. Ministers' pay isn't published; see ${links}.`,
-    nl: links => `Beweeg over een naam voor details, klik om ernaar te zoomen. Jaarloon, op de grafiek als jaarbedrag ÷ 12. Ze staan waar een werknemer hetzelfde netto zou verdienen. Het loon van ministers wordt niet gepubliceerd; zie ${links}.`,
-    fr: links => `Survolez un nom pour les détails, cliquez pour zoomer. Rémunération annuelle, placée sur le graphique en montant annuel ÷ 12. Ils sont placés là où un salarié toucherait le même net. La rémunération des ministres n'est pas publiée ; voir ${links}.`,
+    en: links => `Hover a name for details, click it to zoom in. Their yearly pay is shown per month (÷ 12). Each one sits where an ordinary employee would take home the same. Ministers' pay isn't published; see ${links}.`,
+    nl: links => `Beweeg over een naam voor details, klik om in te zoomen. Hun jaarloon staat per maand op de grafiek (÷ 12). Elk staat waar een gewone werknemer hetzelfde zou overhouden. Het loon van ministers wordt niet bekendgemaakt; zie ${links}.`,
+    fr: links => `Survolez un nom pour les détails, cliquez pour zoomer. Leur paie annuelle est montrée par mois (÷ 12). Chacun est placé là où un salarié ordinaire toucherait le même net. La paie des ministres n'est pas publiée ; voir ${links}.`,
   },
   'src.pol.fnc': { en: `Khaleej Times: FNC members' pay (2015)`, nl: `Khaleej Times: loon FNC-leden (2015)`, fr: `Khaleej Times : rémunération du CNF (2015)` },
   'src.pol.asec': { en: `FAHR: federal salary scale 2012`, nl: `FAHR: federale loonschaal 2012`, fr: `FAHR : grille salariale fédérale 2012` },
@@ -118,9 +118,9 @@ window.TAX_STRINGS = {
     fr: () => `Que se passe-t-il aux bas salaires ?`,
   },
   trapBody: {
-    en: a => `Nothing builds up: there is no income tax and no means-tested benefit to lose, so the rate is flat. Expats pay only the unemployment insurance (AED 5 a month). Emiratis pay their pension contribution from the first dirham, on at least AED 3,000 a month under the 2023 law. There is no general minimum wage; Emiratis in the private sector must earn at least ${a} a month to count towards Emiratisation targets.`,
-    nl: a => `Er bouwt zich niets op: er is geen inkomstenbelasting en geen inkomensafhankelijke uitkering die wegvalt, dus het tarief is vlak. Expats betalen enkel de werkloosheidsverzekering (AED 5 per maand). Emirati's betalen hun pensioenbijdrage vanaf de eerste dirham, op minstens AED 3.000 per maand onder de wet van 2023. Er is geen algemeen minimumloon; Emirati's in de privésector moeten minstens ${a} per maand verdienen om mee te tellen voor de Emiratisatie-quota.`,
-    fr: a => `Rien ne s'accumule : il n'y a ni impôt sur le revenu ni prestation sous condition de ressources à perdre, le taux est donc plat. Les expatriés ne paient que l'assurance chômage (5 AED par mois). Les Émiriens cotisent à la retraite dès le premier dirham, sur au moins 3 000 AED par mois sous la loi de 2023. Il n'y a pas de salaire minimum général ; un Émirien du secteur privé doit gagner au moins ${a} par mois pour compter dans les quotas d'émiratisation.`,
+    en: a => `Nothing special. There is no income tax, and no low-income benefit that you lose when you earn more, so the rate stays flat. Expats only pay the unemployment insurance (AED 5 a month). Emiratis pay into their pension from the first dirham, counted on at least AED 3,000 a month under the 2023 law. There is no minimum wage for everyone. A company that hires an Emirati must pay at least ${a} a month for that job to count towards its quota of Emirati staff.`,
+    nl: a => `Niets bijzonders. Er is geen inkomstenbelasting en geen uitkering voor lage inkomens die je verliest als je meer verdient, dus het tarief blijft vlak. Expats betalen enkel de werkloosheidsverzekering (AED 5 per maand). Emirati's betalen pensioenbijdrage vanaf de eerste dirham, berekend op minstens AED 3.000 per maand onder de wet van 2023. Er is geen minimumloon voor iedereen. Een bedrijf dat een Emirati aanneemt, moet minstens ${a} per maand betalen om die job te laten meetellen voor zijn quotum aan Emirati-personeel.`,
+    fr: a => `Rien de particulier. Il n'y a pas d'impôt sur le revenu, ni d'aide aux bas revenus qu'on perdrait en gagnant plus : le taux reste donc plat. Les expatriés ne paient que l'assurance chômage (5 AED par mois). Les Émiriens cotisent à la retraite dès le premier dirham, calculée sur au moins 3 000 AED par mois sous la loi de 2023. Il n'y a pas de salaire minimum pour tous. Une entreprise qui embauche un Émirien doit le payer au moins ${a} par mois pour que ce poste compte dans son quota de salariés émiriens.`,
   },
   topTitle: {
     en: (top, end, kind) => kind === 'cliff' ? `Why the jump at ${top}?` : `Why does it drop above ${end}?`,
@@ -129,14 +129,14 @@ window.TAX_STRINGS = {
   },
   topBody: {
     en: (top, end, kind, gov) => (kind === 'cliff'
-      ? `Below AED 20,000 a month the government pays 2.5 points of the 15% employer pension contribution for private-sector Emiratis. At ${top} that help stops on the whole salary, so your employer's cost jumps by about ${gov} a year for one extra dirham. `
-      : '') + `Contributions stop at the ceiling of ${end}: above it, every extra dirham is free of charges except VAT.`,
+      ? `For Emiratis in the private sector earning under AED 20,000 a month, the government pays 2.5 of the 15 points your employer owes for your pension. At ${top} that help stops for the whole salary. So one extra dirham makes your job cost your employer about ${gov} more a year. `
+      : '') + `Pension contributions stop at ${end}. Above that, each extra dirham is yours, except for VAT when you spend it.`,
     nl: (top, end, kind, gov) => (kind === 'cliff'
-      ? `Onder AED 20.000 per maand betaalt de overheid 2,5 punt van de werkgeversbijdrage van 15% voor Emirati's in de privésector. Bij ${top} valt die steun weg op het hele loon, dus de kost voor je werkgever springt met ongeveer ${gov} per jaar voor één extra dirham. `
-      : '') + `De bijdragen stoppen aan het plafond van ${end}: daarboven is elke extra dirham vrij van heffingen, behalve btw.`,
+      ? `Voor Emirati's in de privésector die minder dan AED 20.000 per maand verdienen, betaalt de overheid 2,5 van de 15 punten die je werkgever voor je pensioen verschuldigd is. Bij ${top} stopt die hulp voor het hele loon. Eén extra dirham maakt je job dan ongeveer ${gov} per jaar duurder voor je werkgever. `
+      : '') + `De pensioenbijdragen stoppen bij ${end}. Daarboven is elke extra dirham voor jou, behalve de btw als je hem uitgeeft.`,
     fr: (top, end, kind, gov) => (kind === 'cliff'
-      ? `Sous 20 000 AED par mois, l'État paie 2,5 points des 15% de cotisation retraite employeur pour les Émiriens du privé. À ${top}, cette aide disparaît sur tout le salaire : le coût employeur bondit d'environ ${gov} par an pour un dirham de plus. `
-      : '') + `Les cotisations s'arrêtent au plafond de ${end} : au-delà, chaque dirham supplémentaire est libre de tout prélèvement, hors TVA.`,
+      ? `Pour les Émiriens du privé qui gagnent moins de 20 000 AED par mois, l'État paie 2,5 des 15 points que votre employeur doit pour votre retraite. À ${top}, cette aide s'arrête sur tout le salaire. Un dirham de plus fait donc coûter votre emploi environ ${gov} de plus par an à votre employeur. `
+      : '') + `Les cotisations retraite s'arrêtent à ${end}. Au-delà, chaque dirham en plus est pour vous, sauf la TVA quand vous le dépensez.`,
   },
 
   // Components
@@ -147,159 +147,159 @@ window.TAX_STRINGS = {
 
   // Tooltips
   'tip.f12': {
-    en: `12 monthly salaries. Bonuses are paid free of tax like any pay.`,
-    nl: `12 maandlonen. Bonussen worden net als elk loon belastingvrij uitbetaald.`,
-    fr: `12 salaires mensuels. Les primes sont versées sans impôt comme tout salaire.`,
+    en: `12 monthly salaries. Bonuses are tax-free, like all pay.`,
+    nl: `12 maandlonen. Bonussen zijn belastingvrij, zoals al het loon.`,
+    fr: `12 salaires mensuels. Les primes sont sans impôt, comme toute la paie.`,
   },
   'tip.jointH': { en: `Couples`, nl: `Koppels`, fr: `Couples` },
   'tip.joint': {
-    en: `With no income tax, there is nothing to split or share: each partner's charges depend only on their own pay and status.`,
-    nl: `Zonder inkomstenbelasting valt er niets te verdelen: de heffingen van elke partner hangen enkel af van het eigen loon en statuut.`,
-    fr: `Sans impôt sur le revenu, il n'y a rien à partager : les prélèvements de chacun ne dépendent que de son salaire et de son statut.`,
+    en: `There is no income tax, so being a couple changes nothing. What each partner pays depends only on their own pay and on whether they are an Emirati or an expat.`,
+    nl: `Er is geen inkomstenbelasting, dus samenwonen verandert niets. Wat elke partner betaalt, hangt enkel af van het eigen loon en of die Emirati of expat is.`,
+    fr: `Il n'y a pas d'impôt sur le revenu, donc être en couple ne change rien. Ce que paie chacun dépend seulement de sa propre paie et du fait d'être émirien ou expatrié.`,
   },
   'tip.reg': {
-    en: `Only Emiratis pay into the federal pension fund (GPSSA). Those first employed from 31 October 2023 fall under Federal Decree-Law 57 of 2023 (11% + 15%); those insured before stay under the 1999 law (5% + 15%, with a lower ceiling). Expats have no pension scheme: they get an end-of-service gratuity instead. Citizens of other Gulf states pay into their home scheme. Abu Dhabi has its own fund.`,
-    nl: `Enkel Emirati's dragen bij aan het federale pensioenfonds (GPSSA). Wie voor het eerst werkt vanaf 31 oktober 2023 valt onder federaal decreet-wet 57 van 2023 (11% + 15%); wie eerder verzekerd was, blijft onder de wet van 1999 (5% + 15%, met een lager plafond). Expats hebben geen pensioenstelsel: ze krijgen een eindeloonvergoeding. Burgers van andere Golfstaten betalen aan hun eigen stelsel. Abu Dhabi heeft een eigen fonds.`,
-    fr: `Seuls les Émiriens cotisent à la caisse de retraite fédérale (GPSSA). Ceux embauchés pour la première fois depuis le 31 octobre 2023 relèvent du décret-loi fédéral 57 de 2023 (11% + 15%) ; ceux assurés avant restent sous la loi de 1999 (5% + 15%, plafond plus bas). Les expatriés n'ont pas de régime de retraite : ils reçoivent une indemnité de fin de service. Les citoyens des autres pays du Golfe cotisent à leur propre régime. Abou Dhabi a sa propre caisse.`,
+    en: `Only Emiratis pay into the federal pension fund (GPSSA). If your first job started on or after 31 October 2023, Federal Decree-Law 57 of 2023 applies: you pay 11% and your employer 15%. If you were insured before, the 1999 law still applies: you pay 5%, your employer 15%, and less of your pay counts. Expats have no pension: instead they get a lump sum when they leave the job (end-of-service gratuity). People from other Gulf countries pay into their own country's scheme. Abu Dhabi has its own fund.`,
+    nl: `Enkel Emirati's betalen aan het federale pensioenfonds (GPSSA). Begon je eerste job op of na 31 oktober 2023, dan geldt federaal decreet-wet 57 van 2023: jij betaalt 11% en je werkgever 15%. Was je al eerder verzekerd, dan blijft de wet van 1999 gelden: jij betaalt 5%, je werkgever 15%, en een kleiner deel van je loon telt mee. Expats hebben geen pensioen: ze krijgen een eenmalig bedrag als ze vertrekken (eindeloonvergoeding). Mensen uit andere Golfstaten betalen aan het stelsel van hun eigen land. Abu Dhabi heeft een eigen fonds.`,
+    fr: `Seuls les Émiriens cotisent à la caisse de retraite fédérale (GPSSA). Si votre premier emploi a commencé le 31 octobre 2023 ou après, c'est le décret-loi fédéral 57 de 2023 : vous payez 11% et votre employeur 15%. Si vous étiez assuré avant, la loi de 1999 s'applique toujours : vous payez 5%, votre employeur 15%, et une plus petite part de votre salaire compte. Les expatriés n'ont pas de retraite : ils reçoivent une somme en quittant leur emploi (indemnité de fin de service). Les ressortissants des autres pays du Golfe cotisent au régime de leur pays. Abou Dhabi a sa propre caisse.`,
   },
   'tip.size': {
-    en: `For Emiratis only. In the private sector the government pays 2.5 points of the 15% employer share while the contribution salary is below AED 20,000 a month (always, under the 1999 law). Government employers pay the full 15%, and the 2023 law's ceiling is AED 100,000 instead of 70,000.`,
-    nl: `Enkel voor Emirati's. In de privésector betaalt de overheid 2,5 punt van het werkgeversdeel van 15% zolang het bijdrageloon onder AED 20.000 per maand ligt (altijd, onder de wet van 1999). Overheidswerkgevers betalen de volle 15%, en het plafond van de wet van 2023 is AED 100.000 in plaats van 70.000.`,
-    fr: `Pour les Émiriens seulement. Dans le privé, l'État paie 2,5 points des 15% employeur tant que le salaire de cotisation reste sous 20 000 AED par mois (toujours, sous la loi de 1999). Les employeurs publics paient les 15% complets, et le plafond de la loi de 2023 y est de 100 000 AED au lieu de 70 000.`,
+    en: `Only matters for Emiratis. In the private sector, the government pays 2.5 of the employer's 15 points while the pay counted for the pension stays under AED 20,000 a month (under the 1999 law, at any pay). A government employer pays the full 15% itself. Under the 2023 law it also counts pay up to AED 100,000 a month instead of 70,000.`,
+    nl: `Telt enkel voor Emirati's. In de privésector betaalt de overheid 2,5 van de 15 punten van de werkgever, zolang het loon dat meetelt voor het pensioen onder AED 20.000 per maand blijft (onder de wet van 1999 bij elk loon). Een overheidswerkgever betaalt de volle 15% zelf. Onder de wet van 2023 telt dan ook loon tot AED 100.000 per maand mee in plaats van 70.000.`,
+    fr: `Ne compte que pour les Émiriens. Dans le privé, l'État paie 2,5 des 15 points de l'employeur tant que le salaire pris en compte pour la retraite reste sous 20 000 AED par mois (sous la loi de 1999, quel que soit le salaire). Un employeur public paie lui-même les 15%. Sous la loi de 2023, il compte aussi le salaire jusqu'à 100 000 AED par mois au lieu de 70 000.`,
   },
-  'tip.costShort': { en: `Gross salary + employer pension contribution (Emiratis only).`, nl: `Brutoloon + werkgeversbijdrage pensioen (enkel Emirati's).`, fr: `Salaire brut + cotisation retraite employeur (Émiriens seulement).` },
+  'tip.costShort': { en: `Your gross salary plus what your employer pays for your pension on top (Emiratis only).`, nl: `Je brutoloon plus wat je werkgever bovenop betaalt voor je pensioen (enkel Emirati's).`, fr: `Votre salaire brut plus ce que votre employeur paie en plus pour votre retraite (Émiriens seulement).` },
   'tip.er': {
-    en: `Paid by your employer to GPSSA on top of your gross salary, on the contract salary with its allowances, between a floor and a ceiling.`,
-    nl: `Betaald door je werkgever aan GPSSA bovenop je brutoloon, op het contractloon met toelagen, tussen een bodem en een plafond.`,
-    fr: `Versée par votre employeur à la GPSSA en plus de votre salaire brut, sur le salaire du contrat avec ses indemnités, entre un plancher et un plafond.`,
+    en: `Your employer pays this to the pension fund (GPSSA) on top of your gross salary. It is worked out on the salary in your contract, extras included, with a minimum and a maximum amount that counts.`,
+    nl: `Je werkgever betaalt dit aan het pensioenfonds (GPSSA), bovenop je brutoloon. Het wordt berekend op het loon in je contract, extra's inbegrepen, met een minimum en een maximum dat meetelt.`,
+    fr: `Votre employeur verse cette somme à la caisse de retraite (GPSSA), en plus de votre salaire brut. Elle est calculée sur le salaire de votre contrat, primes comprises, avec un montant minimum et maximum pris en compte.`,
   },
   'tip.noErExpat': {
-    en: `Expats: no employer contribution. The employer owes an end-of-service gratuity instead (21 days of basic salary per year for the first five years, 30 after), which is deferred pay, not a tax.`,
-    nl: `Expats: geen werkgeversbijdrage. De werkgever is wel een eindeloonvergoeding verschuldigd (21 dagen basisloon per jaar de eerste vijf jaar, daarna 30), uitgesteld loon en geen belasting.`,
-    fr: `Expatriés : pas de cotisation employeur. L'employeur doit une indemnité de fin de service (21 jours de salaire de base par an les cinq premières années, 30 ensuite), un salaire différé et non un impôt.`,
+    en: `Expats: your employer pays nothing for a pension. Instead it owes you a lump sum when you leave: 21 days of base pay for each of the first five years, 30 days for each year after. That's pay you get later, not a tax.`,
+    nl: `Expats: je werkgever betaalt niets voor een pensioen. Wel krijg je een eenmalig bedrag als je vertrekt: 21 dagen basisloon per jaar voor de eerste vijf jaar, 30 dagen per jaar daarna. Dat is loon dat je later krijgt, geen belasting.`,
+    fr: `Expatriés : votre employeur ne paie rien pour une retraite. Il vous doit en revanche une somme à votre départ : 21 jours de salaire de base par année pour les cinq premières, 30 jours par année ensuite. C'est du salaire versé plus tard, pas un impôt.`,
   },
   'tip.noEeExpat': {
-    en: `Expats: no pension contribution, and no income tax either.`,
-    nl: `Expats: geen pensioenbijdrage, en ook geen inkomstenbelasting.`,
-    fr: `Expatriés : pas de cotisation retraite, ni d'impôt sur le revenu.`,
+    en: `Expats: nothing goes to a pension, and there is no income tax either.`,
+    nl: `Expats: er gaat niets naar een pensioen, en er is ook geen inkomstenbelasting.`,
+    fr: `Expatriés : rien ne part pour une retraite, et il n'y a pas non plus d'impôt sur le revenu.`,
   },
-  'tip.cas': { en: `Contribution salary for the year`, nl: `Bijdrageloon voor het jaar`, fr: `Salaire de cotisation sur l'année` },
+  'tip.cas': { en: `Pay that counts for the pension, per year`, nl: `Loon dat meetelt voor het pensioen, per jaar`, fr: `Salaire pris en compte pour la retraite, par an` },
   'tip.govPays': { en: r => `+ ${r} paid by the government`, nl: r => `+ ${r} betaald door de overheid`, fr: r => `+ ${r} payés par l'État` },
   'tip.govShare': {
-    en: `For private-sector Emiratis the government pays part of the employer's pension share. It goes to your pension but costs your employer nothing, so it isn't counted in the cost of your job.`,
-    nl: `Voor Emirati's in de privésector betaalt de overheid een deel van het werkgeversaandeel voor het pensioen. Het gaat naar je pensioen maar kost je werkgever niets, dus het telt niet mee in de kost van je job.`,
-    fr: `Pour les Émiriens du privé, l'État paie une partie de la cotisation retraite employeur. Elle alimente votre retraite sans rien coûter à l'employeur : elle n'est pas comptée dans le coût de votre emploi.`,
+    en: `For Emiratis in the private sector, the government pays part of what the employer owes for your pension. It still goes into your pension, but your employer doesn't pay it, so we leave it out of what your job costs.`,
+    nl: `Voor Emirati's in de privésector betaalt de overheid een deel van wat de werkgever voor je pensioen verschuldigd is. Het gaat wel naar je pensioen, maar je werkgever betaalt het niet, dus we laten het weg uit wat je job kost.`,
+    fr: `Pour les Émiriens du privé, l'État paie une partie de ce que l'employeur doit pour votre retraite. Cela va bien à votre retraite, mais votre employeur ne le paie pas : on ne le compte donc pas dans le coût de votre emploi.`,
   },
   'tip.ee': {
-    en: `Withheld from your pay for GPSSA, Emiratis only: 11% under the 2023 law, 5% under the 1999 law, on the contract salary between the floor and the ceiling.`,
-    nl: `Ingehouden op je loon voor GPSSA, enkel Emirati's: 11% onder de wet van 2023, 5% onder de wet van 1999, op het contractloon tussen bodem en plafond.`,
-    fr: `Retenue sur votre paie pour la GPSSA, Émiriens seulement : 11% sous la loi de 2023, 5% sous celle de 1999, sur le salaire du contrat entre plancher et plafond.`,
+    en: `Taken from your pay for your pension (GPSSA), Emiratis only. 11% under the 2023 law, 5% under the 1999 law. It is worked out on the salary in your contract, with a minimum and a maximum amount that counts.`,
+    nl: `Ingehouden op je loon voor je pensioen (GPSSA), enkel voor Emirati's. 11% onder de wet van 2023, 5% onder de wet van 1999. Het wordt berekend op het loon in je contract, met een minimum en een maximum dat meetelt.`,
+    fr: `Retenu sur votre paie pour votre retraite (GPSSA), Émiriens seulement. 11% sous la loi de 2023, 5% sous celle de 1999. Calculé sur le salaire de votre contrat, avec un montant minimum et maximum pris en compte.`,
   },
   'tip.iloe': {
-    en: `Compulsory Involuntary Loss of Employment insurance, paid by the employee: AED 5 a month on a basic salary up to AED 16,000, AED 10 above. It pays 60% of basic salary for up to three months after a dismissal. Here your whole gross is taken as basic.`,
-    nl: `Verplichte verzekering tegen onvrijwillig jobverlies (ILOE), betaald door de werknemer: AED 5 per maand bij een basisloon tot AED 16.000, AED 10 daarboven. Ze betaalt 60% van het basisloon tot drie maanden na een ontslag. Hier telt je hele brutoloon als basisloon.`,
-    fr: `Assurance obligatoire contre la perte involontaire d'emploi (ILOE), payée par le salarié : 5 AED par mois jusqu'à 16 000 AED de salaire de base, 10 AED au-delà. Elle verse 60% du salaire de base jusqu'à trois mois après un licenciement. Ici, tout le brut est pris comme salaire de base.`,
+    en: `Compulsory insurance in case you lose your job (Involuntary Loss of Employment, ILOE), paid by you: AED 5 a month if your base pay is up to AED 16,000, AED 10 if higher. If you are fired, it pays 60% of your base pay for up to three months. Here we treat your whole gross as base pay.`,
+    nl: `Verplichte verzekering voor als je je job verliest (ILOE), betaald door jou: AED 5 per maand als je basisloon tot AED 16.000 is, AED 10 als het hoger ligt. Word je ontslagen, dan krijg je tot drie maanden 60% van je basisloon. Hier rekenen we je hele brutoloon als basisloon.`,
+    fr: `Assurance obligatoire en cas de perte d'emploi (ILOE), payée par vous : 5 AED par mois si votre salaire de base va jusqu'à 16 000 AED, 10 AED au-delà. Si vous êtes licencié, elle verse 60% de votre salaire de base pendant trois mois au plus. Ici, tout votre brut est pris comme salaire de base.`,
   },
   'tip.vatM': {
-    en: `Residential rent is exempt and basic healthcare and education are zero-rated, so this is an upper bound. Dubai also charges expat tenants a 5% housing fee on rent, not counted here.`,
-    nl: `Woninghuur is vrijgesteld en basiszorg en onderwijs hebben een nultarief, dus dit is een bovengrens. Dubai rekent expat-huurders ook een woonheffing van 5% op de huur aan, hier niet meegeteld.`,
-    fr: `Les loyers d'habitation sont exonérés, les soins de base et l'enseignement à taux zéro : c'est donc un maximum. Dubaï prélève aussi 5% du loyer des locataires expatriés (housing fee), non compté ici.`,
+    en: `There is no VAT on home rent, and none on basic healthcare and schooling. So the real VAT you pay is usually lower than this. Dubai also adds a 5% housing fee to the rent of expat tenants; it isn't counted here.`,
+    nl: `Op woninghuur zit geen btw, en ook niet op basiszorg en onderwijs. De btw die je echt betaalt is dus meestal lager. Dubai rekent expat-huurders ook een woonheffing van 5% op de huur aan; die telt hier niet mee.`,
+    fr: `Il n'y a pas de TVA sur les loyers d'habitation, ni sur les soins de base et l'enseignement. La TVA que vous payez vraiment est donc souvent plus basse. Dubaï ajoute aussi une taxe de 5% au loyer des locataires expatriés (housing fee), non comptée ici.`,
   },
   'tip.net': {
-    en: calc => `What lands in your bank account over the year${calc}. Gross − pension contribution − unemployment insurance.`,
-    nl: calc => `Wat er over het jaar op je rekening komt${calc}. Bruto − pensioenbijdrage − werkloosheidsverzekering.`,
-    fr: calc => `Ce qui arrive sur votre compte sur l'année${calc}. Brut − cotisation retraite − assurance chômage.`,
+    en: calc => `What lands in your bank account over the year${calc}. That's your gross, minus your pension contribution, minus the unemployment insurance.`,
+    nl: calc => `Wat er over het jaar op je rekening komt${calc}. Dat is je bruto, min je pensioenbijdrage, min de werkloosheidsverzekering.`,
+    fr: calc => `Ce qui arrive sur votre compte sur l'année${calc}. C'est votre brut, moins votre cotisation retraite, moins l'assurance chômage.`,
   },
 
   // Rules used
   refEyebrow: { en: `Rules used · 2026`, nl: `Gebruikte regels · 2026`, fr: `Règles utilisées · 2026` },
   'ref.noTax': {
     en: { h: `1 · No income tax`, li: [
-      `No federal or emirate tax on employment income, for nationals and expats alike. Corporate tax (9% since 2023) doesn't touch salaries.`,
+      `No tax on wages, neither federal nor from the emirate, for Emiratis and expats alike. Companies pay a 9% profit tax since 2023, but it doesn't touch salaries.`,
     ] },
     nl: { h: `1 · Geen inkomstenbelasting`, li: [
-      `Geen federale of emiraatsbelasting op arbeidsinkomen, voor burgers en expats. De vennootschapsbelasting (9% sinds 2023) raakt de lonen niet.`,
+      `Geen belasting op lonen, niet federaal en niet van het emiraat, voor Emirati's en expats. Bedrijven betalen sinds 2023 9% belasting op hun winst, maar die raakt de lonen niet.`,
     ] },
     fr: { h: `1 · Pas d'impôt sur le revenu`, li: [
-      `Aucun impôt fédéral ni émirati sur les salaires, pour les nationaux comme pour les expatriés. L'impôt sur les sociétés (9% depuis 2023) ne touche pas les salaires.`,
+      `Aucun impôt sur les salaires, ni fédéral ni de l'émirat, pour les Émiriens comme pour les expatriés. Les entreprises paient 9% d'impôt sur leurs bénéfices depuis 2023, mais cela ne touche pas les salaires.`,
     ] },
   },
   'ref.gpssa': {
     en: { h: `2 · Federal pension (GPSSA), Emiratis from 31 Oct 2023`, li: [
-      `Employee <span class="num">11%</span>, employer <span class="num">15%</span>, on the contract salary with allowances, from <span class="num">AED 3,000</span> to <span class="num">AED 70,000</span> a month (<span class="num">AED 100,000</span> in government).`,
-      `Private sector below AED 20,000 a month: the government pays <span class="num">2.5%</span> of the employer's 15%.`,
+      `You pay <span class="num">11%</span>, your employer <span class="num">15%</span>. It's worked out on the salary in your contract, extras included, counting at least <span class="num">AED 3,000</span> and at most <span class="num">AED 70,000</span> a month (<span class="num">AED 100,000</span> in government).`,
+      `Private sector, pay under AED 20,000 a month: the government pays <span class="num">2.5%</span> of the employer's 15%.`,
     ] },
     nl: { h: `2 · Federaal pensioen (GPSSA), Emirati's vanaf 31 okt. 2023`, li: [
-      `Werknemer <span class="num">11%</span>, werkgever <span class="num">15%</span>, op het contractloon met toelagen, van <span class="num">AED 3.000</span> tot <span class="num">AED 70.000</span> per maand (<span class="num">AED 100.000</span> bij de overheid).`,
-      `Privésector onder AED 20.000 per maand: de overheid betaalt <span class="num">2,5%</span> van de 15% van de werkgever.`,
+      `Jij betaalt <span class="num">11%</span>, je werkgever <span class="num">15%</span>. Berekend op het loon in je contract, extra's inbegrepen, met minstens <span class="num">AED 3.000</span> en hoogstens <span class="num">AED 70.000</span> per maand dat meetelt (<span class="num">AED 100.000</span> bij de overheid).`,
+      `Privésector, loon onder AED 20.000 per maand: de overheid betaalt <span class="num">2,5%</span> van de 15% van de werkgever.`,
     ] },
     fr: { h: `2 · Retraite fédérale (GPSSA), Émiriens depuis le 31 oct. 2023`, li: [
-      `Salarié <span class="num">11%</span>, employeur <span class="num">15%</span>, sur le salaire du contrat avec indemnités, de <span class="num">3 000 AED</span> à <span class="num">70 000 AED</span> par mois (<span class="num">100 000 AED</span> dans le public).`,
-      `Privé sous 20 000 AED par mois : l'État paie <span class="num">2,5%</span> des 15% de l'employeur.`,
+      `Vous payez <span class="num">11%</span>, votre employeur <span class="num">15%</span>. Calculé sur le salaire de votre contrat, primes comprises, en comptant au moins <span class="num">3 000 AED</span> et au plus <span class="num">70 000 AED</span> par mois (<span class="num">100 000 AED</span> dans le public).`,
+      `Privé, salaire sous 20 000 AED par mois : l'État paie <span class="num">2,5%</span> des 15% de l'employeur.`,
     ] },
   },
   'ref.old': {
     en: { h: `3 · Emiratis insured before (1999 law)`, li: [
-      `Employee <span class="num">5%</span>; employer <span class="num">12.5%</span> + government <span class="num">2.5%</span> in the private sector, employer <span class="num">15%</span> in government. Contribution salary from AED 1,000 to <span class="num">AED 50,000</span> a month.`,
+      `You pay <span class="num">5%</span>. In the private sector your employer pays <span class="num">12.5%</span> and the government <span class="num">2.5%</span>; in government the employer pays <span class="num">15%</span>. The pay that counts goes from AED 1,000 up to <span class="num">AED 50,000</span> a month.`,
     ] },
     nl: { h: `3 · Emirati's die al eerder verzekerd waren (wet van 1999)`, li: [
-      `Werknemer <span class="num">5%</span>; werkgever <span class="num">12,5%</span> + overheid <span class="num">2,5%</span> in de privésector, werkgever <span class="num">15%</span> bij de overheid. Bijdrageloon van AED 1.000 tot <span class="num">AED 50.000</span> per maand.`,
+      `Jij betaalt <span class="num">5%</span>. In de privésector betaalt je werkgever <span class="num">12,5%</span> en de overheid <span class="num">2,5%</span>; bij de overheid betaalt de werkgever <span class="num">15%</span>. Het loon dat meetelt gaat van AED 1.000 tot <span class="num">AED 50.000</span> per maand.`,
     ] },
     fr: { h: `3 · Émiriens assurés avant (loi de 1999)`, li: [
-      `Salarié <span class="num">5%</span> ; employeur <span class="num">12,5%</span> + État <span class="num">2,5%</span> dans le privé, employeur <span class="num">15%</span> dans le public. Salaire de cotisation de 1 000 AED à <span class="num">50 000 AED</span> par mois.`,
+      `Vous payez <span class="num">5%</span>. Dans le privé, votre employeur paie <span class="num">12,5%</span> et l'État <span class="num">2,5%</span> ; dans le public, l'employeur paie <span class="num">15%</span>. Le salaire pris en compte va de 1 000 AED à <span class="num">50 000 AED</span> par mois.`,
     ] },
   },
   'ref.iloe': {
     en: { h: `4 · Unemployment insurance (ILOE)`, li: [
-      `Everyone employed, national or expat: <span class="num">AED 5</span> a month on a basic salary up to AED 16,000, <span class="num">AED 10</span> above. Paid by the employee.`,
+      `Every employee, Emirati or expat, pays it: <span class="num">AED 5</span> a month if base pay is up to AED 16,000, <span class="num">AED 10</span> if higher.`,
     ] },
     nl: { h: `4 · Werkloosheidsverzekering (ILOE)`, li: [
-      `Elke werknemer, burger of expat: <span class="num">AED 5</span> per maand bij een basisloon tot AED 16.000, <span class="num">AED 10</span> daarboven. Betaald door de werknemer.`,
+      `Elke werknemer, Emirati of expat, betaalt ze: <span class="num">AED 5</span> per maand als het basisloon tot AED 16.000 is, <span class="num">AED 10</span> als het hoger ligt.`,
     ] },
     fr: { h: `4 · Assurance chômage (ILOE)`, li: [
-      `Tous les salariés, nationaux ou expatriés : <span class="num">5 AED</span> par mois jusqu'à 16 000 AED de salaire de base, <span class="num">10 AED</span> au-delà. Payée par le salarié.`,
+      `Chaque salarié, émirien ou expatrié, la paie : <span class="num">5 AED</span> par mois si le salaire de base va jusqu'à 16 000 AED, <span class="num">10 AED</span> au-delà.`,
     ] },
   },
   'ref.vat': {
     en: { h: `5 · VAT on spending`, li: [
-      `Standard rate <span class="num">5%</span> since 2018, applied to all of your net pay as if you spent it. Use the slider to see other rates.`,
-      `VAT inside a price = price × r / (100 + r): at 5% that's 5 / 105 = <span class="num">4.76%</span> of what you pay.`,
+      `Usual rate <span class="num">5%</span> since 2018. We count it on all your take-home pay, as if you spent it all. Move the slider to try other rates.`,
+      `How much of a price is VAT: price × r / (100 + r). At 5% that's 5 / 105 = <span class="num">4.76%</span> of what you pay.`,
     ] },
     nl: { h: `5 · Btw op uitgaven`, li: [
-      `Normaal tarief <span class="num">5%</span> sinds 2018, toegepast op je hele nettoloon alsof je het helemaal uitgeeft. Gebruik de schuifregelaar om andere tarieven te bekijken.`,
-      `Btw in een prijs = prijs × r / (100 + r): bij 5% is dat 5 / 105 = <span class="num">4,76%</span> van wat je betaalt.`,
+      `Gewoon tarief <span class="num">5%</span> sinds 2018. We rekenen het op je hele nettoloon, alsof je alles uitgeeft. Verschuif de regelaar om andere tarieven te proberen.`,
+      `Hoeveel van een prijs btw is: prijs × r / (100 + r). Bij 5% is dat 5 / 105 = <span class="num">4,76%</span> van wat je betaalt.`,
     ] },
     fr: { h: `5 · TVA sur les dépenses`, li: [
-      `Taux normal <span class="num">5%</span> depuis 2018, appliqué à tout votre salaire net comme si vous le dépensiez entièrement. Utilisez le curseur pour voir d'autres taux.`,
-      `TVA comprise dans un prix = prix × r / (100 + r) : à 5%, cela fait 5 / 105 = <span class="num">4,76%</span> de ce que vous payez.`,
+      `Taux habituel <span class="num">5%</span> depuis 2018. On l'applique à tout votre salaire net, comme si vous dépensiez tout. Déplacez le curseur pour essayer d'autres taux.`,
+      `La part de TVA dans un prix : prix × r / (100 + r). À 5%, cela fait 5 / 105 = <span class="num">4,76%</span> de ce que vous payez.`,
     ] },
   },
   'ref.minister': {
     en: { h: `6 · Public offices`, li: [
-      `Federal undersecretary <span class="num">AED 131,250</span> a month, assistant undersecretary <span class="num">AED 107,000</span>, allowances included (2012 scale). FNC member <span class="num">AED 50,000</span> (reported, 2015). Ministers: not published.`,
-      `No income tax; 11% pension contribution for civil servants, AED 2,000 a month for FNC members.`,
+      `Federal undersecretary <span class="num">AED 131,250</span> a month, assistant undersecretary <span class="num">AED 107,000</span>, extras included (2012 pay table). FNC member <span class="num">AED 50,000</span> (press report, 2015). Ministers: not published.`,
+      `No income tax. Civil servants pay 11% into their pension, FNC members AED 2,000 a month.`,
     ] },
     nl: { h: `6 · Openbare ambten`, li: [
-      `Federale ondersecretaris <span class="num">AED 131.250</span> per maand, adjunct-ondersecretaris <span class="num">AED 107.000</span>, toelagen inbegrepen (schaal van 2012). Lid FNC <span class="num">AED 50.000</span> (gemeld, 2015). Ministers: niet gepubliceerd.`,
-      `Geen inkomstenbelasting; 11% pensioenbijdrage voor ambtenaren, AED 2.000 per maand voor FNC-leden.`,
+      `Federale ondersecretaris <span class="num">AED 131.250</span> per maand, adjunct-ondersecretaris <span class="num">AED 107.000</span>, extra's inbegrepen (loontabel van 2012). Lid FNC <span class="num">AED 50.000</span> (persbericht, 2015). Ministers: niet bekendgemaakt.`,
+      `Geen inkomstenbelasting. Ambtenaren betalen 11% aan hun pensioen, FNC-leden AED 2.000 per maand.`,
     ] },
     fr: { h: `6 · Fonctions publiques`, li: [
-      `Sous-secrétaire fédéral <span class="num">131 250 AED</span> par mois, sous-secrétaire adjoint <span class="num">107 000 AED</span>, indemnités comprises (grille de 2012). Membre du CNF <span class="num">50 000 AED</span> (rapporté, 2015). Ministres : non publié.`,
-      `Aucun impôt ; cotisation retraite de 11% pour les fonctionnaires, 2 000 AED par mois pour les membres du CNF.`,
+      `Sous-secrétaire fédéral <span class="num">131 250 AED</span> par mois, sous-secrétaire adjoint <span class="num">107 000 AED</span>, primes comprises (grille de 2012). Membre du CNF <span class="num">50 000 AED</span> (presse, 2015). Ministres : non publié.`,
+      `Pas d'impôt sur le revenu. Les fonctionnaires versent 11% à leur retraite, les membres du CNF 2 000 AED par mois.`,
     ] },
   },
   'ref.notIncl': {
     en: { h: `What's not included`, li: [
-      `The expat end-of-service gratuity (deferred pay owed by the employer), compulsory health insurance paid by Dubai employers, visa and work permit fees.`,
-      `Nafis support for Emiratis in the private sector (salary top-ups of AED 4,000 to 6,000 a month by education, child and wife allowances): its rules change in September 2026 and depend on education and years of service. Abu Dhabi (ADPF) and Sharjah private-sector pension rules. Dubai's 5% housing fee on expat rent.`,
+      `The lump sum expats get from their employer when they leave (end-of-service gratuity), the health insurance Dubai employers must pay, and visa and work permit fees.`,
+      `Nafis, the government's extra pay for Emiratis in the private sector (AED 4,000 to 6,000 a month depending on your diploma, plus money for children and a wife): its rules change in September 2026 and depend on your diploma and years worked. The pension rules of Abu Dhabi (ADPF) and of Sharjah's private sector. Dubai's 5% fee on expat rent.`,
     ] },
     nl: { h: `Wat niet is meegerekend`, li: [
-      `De eindeloonvergoeding voor expats (uitgesteld loon dat de werkgever verschuldigd is), de verplichte ziekteverzekering die werkgevers in Dubai betalen, kosten voor visum en werkvergunning.`,
-      `Nafis-steun voor Emirati's in de privésector (loonaanvulling van AED 4.000 tot 6.000 per maand volgens diploma, toelagen voor kinderen en echtgenote): de regels veranderen in september 2026 en hangen af van diploma en anciënniteit. De pensioenregels van Abu Dhabi (ADPF) en van de privésector in Sharjah. De woonheffing van 5% op expat-huur in Dubai.`,
+      `Het eenmalige bedrag dat expats van hun werkgever krijgen als ze vertrekken (eindeloonvergoeding), de ziekteverzekering die werkgevers in Dubai moeten betalen, en kosten voor visum en werkvergunning.`,
+      `Nafis, het extra loon van de overheid voor Emirati's in de privésector (AED 4.000 tot 6.000 per maand volgens je diploma, plus geld voor kinderen en een echtgenote): de regels veranderen in september 2026 en hangen af van je diploma en hoe lang je al werkt. De pensioenregels van Abu Dhabi (ADPF) en van de privésector in Sharjah. De heffing van 5% op expat-huur in Dubai.`,
     ] },
     fr: { h: `Ce qui n'est pas inclus`, li: [
-      `L'indemnité de fin de service des expatriés (salaire différé dû par l'employeur), l'assurance santé obligatoire payée par les employeurs à Dubaï, les frais de visa et de permis de travail.`,
-      `Les aides Nafis aux Émiriens du privé (complément de salaire de 4 000 à 6 000 AED par mois selon le diplôme, allocations enfants et épouse) : leurs règles changent en septembre 2026 et dépendent du diplôme et de l'ancienneté. Les règles de retraite d'Abou Dhabi (ADPF) et du privé à Charjah. La taxe de 5% sur le loyer des expatriés à Dubaï.`,
+      `La somme que les expatriés reçoivent de leur employeur en partant (indemnité de fin de service), l'assurance santé que les employeurs de Dubaï doivent payer, et les frais de visa et de permis de travail.`,
+      `Nafis, le complément de salaire versé par l'État aux Émiriens du privé (4 000 à 6 000 AED par mois selon le diplôme, plus des aides pour les enfants et l'épouse) : ses règles changent en septembre 2026 et dépendent du diplôme et des années travaillées. Les règles de retraite d'Abou Dhabi (ADPF) et du privé à Charjah. La taxe de 5% sur le loyer des expatriés à Dubaï.`,
     ] },
   },
 
@@ -323,4 +323,46 @@ window.TAX_STRINGS = {
   'src.minWage': { en: `EY: Emirati minimum salary 2026`, nl: `EY: minimumloon Emirati's 2026`, fr: `EY : salaire minimum des Émiriens 2026` },
   'src.fahr': { en: `the 2012 federal salary scale`, nl: `de federale loonschaal van 2012`, fr: `la grille salariale fédérale de 2012` },
   'src.fnc': { en: `Khaleej Times: FNC members' pay`, nl: `Khaleej Times: loon FNC-leden`, fr: `Khaleej Times : rémunération du CNF` },
+
+  // Known gaps and caveats
+  'gap.law1999': {
+    en: `For Emiratis under the 1999 pension law, the lowest (AED 1,000) and highest (AED 50,000 a month) pay that counts come from second-hand sources. We couldn't confirm them in the law.`,
+    nl: `Voor Emirati's onder de pensioenwet van 1999 komen het laagste (AED 1.000) en hoogste (AED 50.000 per maand) loon dat meetelt uit tweedehandse bronnen. We konden ze niet bevestigen in de wet.`,
+    fr: `Pour les Émiriens sous la loi de 1999 sur les retraites, le salaire minimum (1 000 AED) et maximum (50 000 AED par mois) pris en compte viennent de sources indirectes. Nous n'avons pas pu les confirmer dans la loi.`,
+  },
+  'gap.cas': {
+    en: `We work out pension contributions on your whole gross. In real life they use base pay plus some extras written in your contract, which is often less than the gross.`,
+    nl: `We berekenen de pensioenbijdragen op je hele brutoloon. In het echt gebruiken ze het basisloon plus sommige extra's uit je contract, wat vaak minder is dan het brutoloon.`,
+    fr: `On calcule les cotisations retraite sur tout votre brut. En réalité, on prend le salaire de base plus certaines primes prévues au contrat, souvent moins que le brut.`,
+  },
+  'gap.iloe': {
+    en: `Whether you pay AED 5 or 10 a month for unemployment insurance depends on your base pay being under or over AED 16,000. Here we treat your whole gross as base pay.`,
+    nl: `Of je AED 5 of 10 per maand betaalt voor de werkloosheidsverzekering, hangt af van een basisloon onder of boven AED 16.000. Hier rekenen we je hele brutoloon als basisloon.`,
+    fr: `Payer 5 ou 10 AED par mois d'assurance chômage dépend d'un salaire de base sous ou au-dessus de 16 000 AED. Ici, tout votre brut est pris comme salaire de base.`,
+  },
+  'gap.minWage': {
+    en: `The AED 6,000 line is the lowest pay allowed for Emiratis in the private sector. Expats have no minimum wage. We found no official figure for the typical (median) or average wage.`,
+    nl: `De lijn van AED 6.000 is het laagste loon dat mag voor Emirati's in de privésector. Expats hebben geen minimumloon. We vonden geen officieel cijfer voor het gewone (mediaan) of gemiddelde loon.`,
+    fr: `La ligne de 6 000 AED est le salaire le plus bas autorisé pour les Émiriens du privé. Les expatriés n'ont pas de salaire minimum. Nous n'avons trouvé aucun chiffre officiel pour le salaire médian ou moyen.`,
+  },
+  'gap.scale2012': {
+    en: `The pay of an undersecretary (AED 131,250) and assistant undersecretary (AED 107,000) comes from the 2012 federal pay table. We couldn't check that it is still the one used today.`,
+    nl: `Het loon van een ondersecretaris (AED 131.250) en adjunct-ondersecretaris (AED 107.000) komt uit de federale loontabel van 2012. We konden niet nagaan of die vandaag nog gebruikt wordt.`,
+    fr: `La paie d'un sous-secrétaire (131 250 AED) et d'un sous-secrétaire adjoint (107 000 AED) vient de la grille fédérale de 2012. Nous n'avons pas pu vérifier qu'elle est toujours utilisée.`,
+  },
+  'gap.fnc2015': {
+    en: `What Federal National Council members earn (AED 50,000 a month) and the fixed AED 2,000 kept back for their pension come from a 2015 newspaper article.`,
+    nl: `Wat leden van de Federale Nationale Raad verdienen (AED 50.000 per maand) en de vaste AED 2.000 die voor hun pensioen wordt ingehouden, komen uit een krantenartikel van 2015.`,
+    fr: `Ce que gagnent les membres du Conseil national fédéral (50 000 AED par mois) et les 2 000 AED fixes retenus pour leur retraite viennent d'un article de presse de 2015.`,
+  },
+  'gap.noMinisters': {
+    en: `We don't know what ministers earn, so they aren't shown.`,
+    nl: `We weten niet wat ministers verdienen, dus ze worden niet getoond.`,
+    fr: `On ne sait pas ce que gagnent les ministres : ils ne sont donc pas montrés.`,
+  },
+  'gap.notIncl': {
+    en: `Left out: the lump sum expats get when they leave, health insurance, visa fees, Nafis extra pay, other emirates' pension rules and Dubai's housing fee. See "What's not included".`,
+    nl: `Niet meegerekend: het eenmalige bedrag dat expats krijgen als ze vertrekken, ziekteverzekering, visumkosten, Nafis-extra's, pensioenregels van andere emiraten en de woonheffing van Dubai. Zie "Wat niet is meegerekend".`,
+    fr: `Non comptés : la somme que les expatriés reçoivent en partant, l'assurance maladie, les frais de visa, les compléments Nafis, les règles de retraite des autres émirats et la taxe de logement de Dubaï. Voir « Ce qui n'est pas inclus ».`,
+  },
 };

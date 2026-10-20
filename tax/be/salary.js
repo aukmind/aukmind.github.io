@@ -427,6 +427,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['communeRates', 'indexed', 'bbsz', 'workBonus', 'jobbonus', 'employer', 'couple', 'minister', 'mp', 'cumuleo', 'wages', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS: ['er', 'ee', 'fed', 'reg', 'com', 'bbsz', 'vat'], COMP_COLORS, BASE_TIP,
     regions: REGIONS, sizes: ['small', 'big'], minRoles: ['minister', 'pm'], factors: [12, 13.85, 13.92], factorDigits: 2, vatStandard: 21,
     features: { under3: true },

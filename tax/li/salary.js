@@ -244,6 +244,7 @@ window.TAX_COUNTRY = ({ t, eur, eur2, num, pct, int, vr, esc, link, sources }) =
   }
 
   return {
+    GAPS: ['communes2025', 'communeSource', 'noCheck', 'kidAge', 'fak2025', 'kzSplit', 'pension', 'healthEr', 'insDed', 'median', 'govPay', 'noLandtag', 'notIncl'],
     P, SRC, REF_WAGES, POLITICIANS, ROW_DEFS, COMP_KEYS, COMP_COLORS, BASE_TIP,
     currency: 'CHF', nextStep: 100,
     regions: [], sizes: [], minRoles: MIN_ROLES, factors: [12, 13], factorDigits: 0, vatStandard: 8.1,

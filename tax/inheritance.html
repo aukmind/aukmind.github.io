@@ -227,6 +227,12 @@ details.more .field+.field{margin-top:16px}
     <div class="chart-box"><canvas id="chart" :aria-label="t('inh.chartAria')"></canvas></div>
   </div>
 
+  <details class="ref-acc gaps" v-if="C.GAPS && C.GAPS.length">
+    <summary class="eyebrow">{{ t('gapsTitle', C.GAPS.length) }}</summary>
+    <p class="gaps-intro">{{ t('gapsIntro') }}</p>
+    <ul class="gaps-list"><li v-for="k in C.GAPS" :key="k" v-html="t('gap.' + k)"></li></ul>
+  </details>
+
   <div>
     <div class="eyebrow" style="margin-bottom:10px">{{ t('refEyebrow') }}</div>
     <div class="ref">
@@ -243,12 +249,6 @@ details.more .field+.field{margin-top:16px}
       </section>
     </div>
   </div>
-
-  <details class="ref-acc gaps" v-if="C.GAPS && C.GAPS.length">
-    <summary class="eyebrow">{{ t('gapsTitle', C.GAPS.length) }}</summary>
-    <p class="gaps-intro">{{ t('gapsIntro') }}</p>
-    <ul class="gaps-list"><li v-for="k in C.GAPS" :key="k" v-html="t('gap.' + k)"></li></ul>
-  </details>
 
   <footer>
     {{ t('sources') }}:
