@@ -264,6 +264,12 @@ async function comparePage(browser, base) {
     for (const [i, ch] of info.charts.entries()) if (!ch.w) problems.push(`chart ${i + 1}: no width`);
     if (info.charts.filter(ch => ch.sets >= CC.length).length < 2) problems.push(`fewer than 2 charts with a series per country: ${info.charts.map(ch => ch.sets).join(', ')}`);
     if (SHOTS) await o.page.screenshot({ path: path.join(SHOTS, 'compare.png'), fullPage: true });
+    // At an employer-cost reference, every country's cost column lands on the typed amount.
+    await o.page.goto(`${base}/tax/compare/?lang=en&c=${CC.join(',')}&basis=cost&amount=5000`, { waitUntil: 'load', timeout: 30000 });
+    await o.page.waitForFunction(n => document.querySelector('table.cmp').querySelectorAll('tbody tr').length === n, CC.length, { timeout: 30000 });
+    await o.page.waitForTimeout(600);
+    const costs = await o.page.evaluate(() => [...document.querySelector('table.cmp').querySelectorAll('tbody tr')].map(tr => +tr.cells[1].innerText.replace(/[^\d]/g, '')));
+    if (!costs.every(v => Math.abs(v - 5000) <= 1)) problems.push(`basis=cost: cost column ${costs.join(', ')}, expected 5000`);
     problems.length ? fail('compare', what, problems.slice(0, 5).join(' | ')) : pass('compare', what);
     await o.ctx.close();
   } catch (e) { fail('compare', what, e.message.split('\n')[0]); }

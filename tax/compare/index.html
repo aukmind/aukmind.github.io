@@ -187,7 +187,10 @@ button[title],a[title]{cursor:pointer}
       <div class="ctl"><span class="lbl lbl-row">{{ t('per') }}<tip-i :tip="t('info.per')"></tip-i></span>
         <div class="seg"><button v-for="p in ['month', 'year']" :key="p" :class="{on: s.per === p}" @click="setPer(p)">{{ t('unit.' + p) }}</button></div>
       </div>
-      <div class="ctl"><span class="lbl lbl-row"><label for="amt">{{ t('amount') }} ({{ sym() }} / {{ t('unit.' + s.per) }})</label><tip-i :tip="t('info.amount')"></tip-i></span>
+      <div class="ctl"><span class="lbl lbl-row">{{ t('basisPick') }}<tip-i :tip="t('info.basis')"></tip-i></span>
+        <div class="seg"><button v-for="b in ['gross', 'cost']" :key="b" :class="{on: s.basis === b}" @click="s.basis = b" :data-tip="t('basisTip.' + b)">{{ t('basis.' + b) }}</button></div>
+      </div>
+      <div class="ctl"><span class="lbl lbl-row"><label for="amt">{{ t(s.basis === 'cost' ? 'amountCost' : 'amount') }} ({{ sym() }} / {{ t('unit.' + s.per) }})</label><tip-i :tip="t('info.amount')"></tip-i></span>
         <input id="amt" class="num" type="number" min="0" v-model.number="s.amount">
       </div>
       <div class="ctl"><span class="lbl lbl-row">{{ t('household') }}<tip-i :tip="t('info.household')"></tip-i></span>
@@ -204,7 +207,7 @@ button[title],a[title]{cursor:pointer}
   </section>
 
   <section class="panel">
-    <h2>{{ t('chartTitle', metricLabel(s.metric), t('unit.' + s.per)) }}<tip-i :tip="t('info.chart1')"></tip-i></h2>
+    <h2>{{ t(s.basis === 'cost' ? 'chartTitleCost' : 'chartTitle', metricLabel(s.metric), t('unit.' + s.per)) }}<tip-i :tip="t('info.chart1')"></tip-i></h2>
     <p class="lead2">{{ t('metricTip.' + s.metric) }}</p>
     <div class="row">
       <div class="ctl"><span class="lbl">{{ t('show') }}</span>
@@ -293,7 +296,7 @@ button[title],a[title]{cursor:pointer}
   </section>
 
   <section class="panel" v-if="split.length">
-    <h2>{{ t('splitTitle', eur(money.fromShown(s.amount)), t('basis.gross').toLowerCase() + ' / ' + t('unit.' + s.per)) }}<tip-i :tip="t('info.split')"></tip-i></h2>
+    <h2>{{ t('splitTitle', eur(money.fromShown(s.amount)), t('basis.' + s.basis).toLowerCase() + ' / ' + t('unit.' + s.per)) }}<tip-i :tip="t('info.split')"></tip-i></h2>
     <p class="lead2">{{ t('splitLead') }}</p>
     <div class="legend"><span v-for="b in BUCKETS" :key="b.k"><i :style="{background: cssVar(b.color)}"></i>{{ bucketLabel(b.k) }}<tip-i :tip="t(b.tip)"></tip-i></span></div>
     <div class="chart-box tall" :style="{height: (split.length * 22 + 70) + 'px'}" @mouseleave="hl = null"><canvas ref="c3"></canvas></div>
@@ -407,14 +410,14 @@ function bucketsOf(L, r) {
   b.sav += r.cost - Object.values(b).reduce((a, v) => a + v, 0);
   return b;
 }
-// Gross that gives `amount` net or cost, by bisection (the same as the country page).
-function grossFor(L, s, env, amount, basis) {
+// Gross that gives `amount` net or cost, by bisection around a guessed gross/amount ratio.
+function grossFor(L, s, env, amount, basis, ratio = 1) {
   if (basis === 'gross' || amount <= 0) return amount;
   const f = G => L.C.compute(G, s, env)[basis];
-  let hi = amount * 2;
-  for (let i = 0; i < 40 && f(hi) < amount; i++) hi *= 2;
-  let lo = 0;
-  for (let i = 0; i < 50; i++) { const mid = (lo + hi) / 2; if (f(mid) < amount) lo = mid; else hi = mid; }
+  let lo = amount * ratio * 0.97, hi = amount * ratio * 1.03;
+  for (let k = 0; k < 40 && f(lo) > amount; k++) lo /= 1.5;
+  for (let k = 0; k < 40 && f(hi) < amount; k++) hi *= 1.5;
+  for (let k = 0; k < 50 && hi - lo > amount * 2e-6; k++) { const mid = (lo + hi) / 2; if (f(mid) < amount) lo = mid; else hi = mid; }
   return hi;
 }
 
@@ -431,6 +434,7 @@ const app = Vue.createApp({
       metric: pick('metric', ['power', 'avg', 'next'], 'power'),
       scope: pick('scope', ['full', 'work', 'employee'], 'full'),
       per: per0,
+      basis: pick('basis', ['gross', 'cost'], 'gross'),
       household: pick('household', ['single', 'joint'], 'single'),
       kids: Math.min(6, Math.max(0, numQ('kids', 0))),
       marks: q.has('marks') ? q.get('marks').split(',').filter(k => MARKERS.some(m => m.k === k)) : DEF_MARKS,
@@ -470,7 +474,7 @@ const app = Vue.createApp({
 
     // URL: only what differs from the defaults, so a shared link stays short.
     watchEffect(() => {
-      const DEF = { metric: 'power', scope: 'full', per: 'month', household: 'single', kids: 0, y2: 'cost', amount: defAmount(s.per), sort: 'power', msort: 'spendX' };
+      const DEF = { metric: 'power', scope: 'full', per: 'month', basis: 'gross', household: 'single', kids: 0, y2: 'cost', amount: defAmount(s.per), sort: 'power', msort: 'spendX' };
       const out = new URLSearchParams();
       const cur = new URLSearchParams(location.search);
       for (const k of ['lang', 'currency']) if (cur.get(k)) out.set(k, cur.get(k));
@@ -509,9 +513,12 @@ const app = Vue.createApp({
     const N = 140;
     const series1 = computed(() => active.value.map(({ L, s: st, env }) => {
       const pts = [];
+      let ratio = 0.8;
       for (let i = 1; i <= N; i++) {
-        const x = xMax1.value * i / N, G = toLocal(x, L.cur);
-        if (G == null) break;
+        const x = xMax1.value * i / N, A = toLocal(x, L.cur);
+        if (A == null) break;
+        const G = grossFor(L, st, env, A, s.basis, ratio);
+        ratio = G / A;
         const m = measure(L, st, env, G, s.scope);
         pts.push({ x, y: m[s.metric] * 100 });
       }
@@ -525,8 +532,8 @@ const app = Vue.createApp({
           if (mk.k === 'minister') G = L.C.minSalary ? L.C.minSalary(ministerRole(L.C)) : null;
           else { const r = (L.C.REF_WAGES || []).find(w => w.key === mk.k); if (r) G = r.m * st.factor; }
           if (!(G > 0)) continue;
-          const x = toShown(G, L.cur);
           const m = measure(L, st, env, G, s.scope);
+          const x = toShown(s.basis === 'cost' ? m.r.cost : G, L.cur);
           const p = { cc: L.cc, mk, x, y: m[s.metric] * 100, net: toShown(m.r.net, L.cur), y2: toShown(s.y2 === 'G' ? G : m.r.cost, L.cur) };
           // The curve is the ordinary employee; the minister's own rules are kept for the tooltip.
           if (mk.k === 'minister') {
@@ -540,34 +547,28 @@ const app = Vue.createApp({
       return out;
     });
     const legendList = computed(() => sel.value.filter(cc => ready[cc]).sort((a, b) => nameOf(a).localeCompare(nameOf(b), lang.value)));
-    // "Gross up to" is the least range shown; the axes stretch so every enabled marker fits.
     // The charts run to the reference salary, further only if an enabled marker sits beyond it.
     const reach = v => Math.max(s.amount, Math.ceil(v * 1.05 / rangeStep.value) * rangeStep.value);
     const xMax1 = computed(() => reach(Math.max(0, ...markerPts.value.map(p => p.x))));
     const xMax2 = computed(() => reach(Math.max(0, ...markerPts.value.map(p => p.net))));
     const offChart = computed(() => markerPts.value.filter(p => p.x > xMax1.value).map(p => `${FLAGS[p.cc]} ${p.mk.sym} ${eurK(money.fromShown(p.x))}`));
-    // Sampled along net, the x axis (0 to "Gross up to"), so every curve spans the full width.
+    // Sampled along net, the x axis, so every curve spans the full width.
     const series2 = computed(() => active.value.map(({ L, s: st, env }) => {
-      const pts = [], net = G => L.C.compute(G, st, env).net;
+      const pts = [];
       let ratio = 1.4;
       for (let i = 1; i <= N; i++) {
         const x = xMax2.value * i / N, A = toLocal(x, L.cur);
         if (A == null) break;
-        // Bracket around the previous point's gross/net ratio, widened until it holds the target.
-        let lo = A * ratio * 0.97, hi = A * ratio * 1.03;
-        for (let k = 0; k < 40 && net(lo) > A; k++) lo /= 1.5;
-        for (let k = 0; k < 40 && net(hi) < A; k++) hi *= 1.5;
-        for (let k = 0; k < 40 && hi - lo > A * 2e-5; k++) { const mid = (lo + hi) / 2; if (net(mid) < A) lo = mid; else hi = mid; }
-        ratio = hi / A;
-        const r = L.C.compute(hi, st, env);
-        pts.push({ x, y: toShown(s.y2 === 'G' ? hi : r.cost, L.cur) });
+        const G = grossFor(L, st, env, A, 'net', ratio);
+        ratio = G / A;
+        const r = L.C.compute(G, st, env);
+        pts.push({ x, y: toShown(s.y2 === 'G' ? G : r.cost, L.cur) });
       }
       return { cc: L.cc, pts };
     }));
 
     const rowsAt = computed(() => active.value.map(({ L, s: st, env }) => {
-      const A = toLocal(s.amount, L.cur);
-      const Gl = A;
+      const Gl = grossFor(L, st, env, toLocal(s.amount, L.cur), s.basis);
       return { L, Gl, m: measure(L, st, env, Gl, s.scope) };
     }));
     const table = computed(() => {
@@ -657,7 +658,7 @@ const app = Vue.createApp({
       if (mk && mk.pt.min) {
         const p = mk.pt, c = color(mk.cc), money2 = v => eur(money.fromShown(v));
         const rows = n === 1
-          ? [{ key: 'x', name: t('axisGross'), v: money2(p.x), color: c },
+          ? [{ key: 'x', name: xName(), v: money2(p.x), color: c },
             { key: 'e', name: t(MK_ROWS[s.metric][0]), v: fmtY(p.y), color: c },
             { key: 'm', name: t(MK_ROWS[s.metric][1]), v: fmtY(p.min.y), color: c, hl: true }]
           : [{ key: 'g', name: t('axisGross'), v: money2(p.G), color: c },
@@ -671,7 +672,7 @@ const app = Vue.createApp({
       if (mk) {
         const p = mk.data[0];
         Object.assign(tip, { ch: n, title: mk.label, more: 0, style: place, rows: [
-          { key: 'x', name: n === 1 ? t('axisGross') : t('axisNet'), v: eur(money.fromShown(p.x)), color: color(mk.cc) },
+          { key: 'x', name: n === 1 ? xName() : t('axisNet'), v: eur(money.fromShown(p.x)), color: color(mk.cc) },
           { key: 'y', name: n === 1 ? metricLabel(s.metric) : t(s.y2 === 'G' ? 'axisGross' : 'axisCost'), v: fmtY(p.y), color: color(mk.cc), hl: true, more: n === 2 ? moreNet(p.y, p.x) : '' }] });
         hl.value = mk.cc; ch.$guide = null; ch.draw();
         return;
@@ -692,16 +693,17 @@ const app = Vue.createApp({
       const shown = rows.slice(from, from + TIP_MAX);
       const per = t('unit.' + s.per);
       Object.assign(tip, { ch: n, style: place, more: rows.length - shown.length,
-        title: `${n === 1 ? t('axisGross') : t('axisNet')} ${eur(money.fromShown(xv))} / ${per}`,
+        title: `${n === 1 ? xName() : t('axisNet')} ${eur(money.fromShown(xv))} / ${per}`,
         rows: shown.map(r => ({ key: r.cc, name: label(r.cc), v: fmtY(r.y), net: n === 1 ? netAt(r.cc, xv) : '', color: color(r.cc), hl: r.cc === hit, more: n === 2 ? moreNet(r.y, xv) : '' })) });
       ch.$guide = px;
       if (hl.value !== hit) hl.value = hit; else ch.draw();
     }
     // How much more the gross or the employer cost is than what lands in hand.
     const moreNet = (y, x) => x > 0 ? t(s.y2 === 'G' ? 'moreGross' : 'moreCost', pct(y / x - 1, 0)) : '';
-    // Net pay at a gross on the first chart, in the display currency and period.
+    const xName = () => t(s.basis === 'cost' ? 'axisCost' : 'axisGross');
+    // Net pay at an x on the first chart, in the display currency and period.
     function netAt(cc, x) {
-      const a = active.value.find(e => e.L.cc === cc), G = a && toLocal(x, a.L.cur);
+      const a = active.value.find(e => e.L.cc === cc), G = a && grossFor(a.L, a.s, a.env, toLocal(x, a.L.cur), s.basis);
       return G > 0 ? eur(money.fromShown(toShown(a.L.C.compute(G, a.s, a.env).net, a.L.cur))) : '';
     }
     function lineLeave(n) {
@@ -794,7 +796,7 @@ const app = Vue.createApp({
       ch1.data.datasets = d1;
       restyle(ch1);
       Object.assign(ch1.options.scales.x, { max: xMax1.value });
-      ch1.options.scales.x.title.text = `${t('axisGross')} / ${per}`;
+      ch1.options.scales.x.title.text = `${xName()} / ${per}`;
       ch1.options.scales.y.title.text = metricLabel(s.metric);
       Object.assign(ch1.options.scales.y, { min: lo, max: hi });
       ch1.$ref = s.amount; ch1.$refLabel = t('refLine', eur(money.fromShown(s.amount)));
