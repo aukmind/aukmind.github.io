@@ -428,7 +428,7 @@ header{position:relative}
               <tr v-for="r in rows" :key="r.key">
                 <td><div class="name" :style="{'--dot':r.color}" v-tip.left="'row-'+r.key"><span class="sw"></span><div><b>{{ t('row.' + r.key) }}</b><small>{{ t('rowDesc.' + r.key) }}</small></div></div></td>
                 <template v-if="cur">
-                  <td :data-label="t('thAvg')"><span class="rate">{{ pct(r.avg) }}</span><div class="keep">{{ t('afterTax', eur(r.base - r.tax)) }}</div></td>
+                  <td :data-label="t('thAvg')"><span class="rate">{{ pct(r.avg) }}</span><div class="keep">{{ t(r.set.includes('vat') ? 'afterTaxVat' : 'afterTax', eur(r.base - r.tax)) }}</div></td>
                   <td :data-label="t('thNext', eur(NEXT_STEP))"><span class="rate">{{ pct(r.marg) }}</span><div class="keep">{{ t('youKeepNext', eur(Math.max(0, NEXT_STEP * (1 - r.marg)))) }}</div></td>
                   <td v-tip="'row-'+r.key" :data-label="t('thTaxYear')">{{ eur(r.tax) }}</td>
                   <td v-tip="r.baseKey" :data-label="t('thBaseYear')">{{ eur(r.base) }}<div class="keep">{{ r.baseName }}</div></td>

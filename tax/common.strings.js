@@ -113,6 +113,7 @@ window.TAX_COMMON = {
   thTaxYear: { en: `Tax / year`, nl: `Belasting / jaar`, fr: `Impôt / an` },
   thBaseYear: { en: `Base / year`, nl: `Basis / jaar`, fr: `Base / an` },
   afterTax: { en: v => `${v} after tax`, nl: v => `${v} na belasting`, fr: v => `${v} après impôts` },
+  afterTaxVat: { en: v => `${v} after tax and VAT`, nl: v => `${v} na belasting en btw`, fr: v => `${v} après impôts et TVA` },
   youKeepNext: { en: v => `${v} for you`, nl: v => `${v} voor jou`, fr: v => `${v} pour vous` },
   enterSalary: { en: `Enter a salary to see your figures`, nl: `Vul een loon in om je cijfers te zien`, fr: `Entrez un salaire pour voir vos chiffres` },
   whereGoes: { en: v => `Where the employer's ${v} goes`, nl: v => `Waar de ${v} van de werkgever naartoe gaat`, fr: v => `Où vont les ${v} de l'employeur` },
