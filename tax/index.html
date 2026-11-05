@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Buying Power</title>
+<link rel="canonical" href="https://aukmind.com/tax/">
+<meta name="description" content="Net salary, employer cost and real buying power after tax and VAT for 52 countries, income year 2026. Compare with minimum, median and average wages.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aukmind">
+<meta property="og:title" content="Buying Power 🌍">
+<meta property="og:description" content="Net salary, employer cost and real buying power after tax and VAT for 52 countries, income year 2026. Compare with minimum, median and average wages.">
+<meta property="og:url" content="https://aukmind.com/tax/">
+<meta property="og:image" content="https://aukmind.com/android-chrome-512x512.png">
+<meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/vue@3.4.21/dist/vue.global.prod.js"></script>
@@ -254,16 +263,16 @@ footer{font-size:12.5px;color:var(--muted)}
 .inherit:hover{border-color:var(--accent)}
 footer a,.ref a{color:var(--accent)}
 
-.tip{position:fixed;z-index:50;max-height:calc(100vh - 32px);overflow:auto;width:min(380px,calc(100vw - 32px));background:var(--tip-bg);color:var(--tip-ink);border-radius:9px;padding:12px 14px;font-size:13px;line-height:1.5;box-shadow:0 12px 32px rgba(0,0,0,.28)}
+.tip{position:fixed;z-index:50;overflow:hidden;width:min(380px,calc(100vw - 32px));background:var(--tip-bg);color:var(--tip-ink);border-radius:9px;padding:12px 14px;font-size:13px;line-height:1.5;box-shadow:0 12px 32px rgba(0,0,0,.28)}
 .tip.above{transform:translateY(-100%)}
-.tip h4{margin:0 0 4px;font-size:13.5px}
+.tip h4{margin:0 0 4px;font-size:1.04em}
 .tip p{margin:0 0 6px}
 .tip .m{color:var(--tip-muted)}
 .tip table{margin:4px 0 8px;width:100%}
-.tip td{padding:2px 0;border:0;font-size:12.5px;color:var(--tip-ink);font-family:var(--mono)}
-.tip td:first-child{font-family:var(--sans)}
+.tip td{padding:2px 0 2px 12px;border:0;font-size:.96em;color:var(--tip-ink);font-family:var(--mono);vertical-align:top}
+.tip td:first-child{font-family:var(--sans);white-space:normal;text-align:left;padding-left:0}
 .tip tr.t td{border-top:1px solid var(--tip-muted);font-weight:600;padding-top:4px}
-.tip .src{border-top:1px solid color-mix(in srgb,var(--tip-muted) 40%,transparent);padding-top:6px;margin-top:4px;font-size:12px}
+.tip .src{border-top:1px solid color-mix(in srgb,var(--tip-muted) 40%,transparent);padding-top:6px;margin-top:4px;font-size:.92em}
 .tip a{color:var(--tip-link)}
 @media (prefers-reduced-motion:reduce){.bar div,.switch input,.switch input::after{transition:none}}
 header{position:relative}
@@ -963,10 +972,23 @@ const app = Vue.createApp({
     });
 
     const tipEl = ref(null);
+    // Grow wider, then smaller text, until the whole tip fits on screen.
     watch([tipHtml, tipPos], () => {
-      const el = tipEl.value; if (!el || tipPos.value.above) return;
+      const el = tipEl.value; if (!el) return;
+      const room = innerHeight - 32, maxW = innerWidth - 32;
+      const p = tipPos.value;
+      Object.assign(el.style, { fontSize: '', left: p.left + 'px', top: p.top + 'px', width: p.width ? p.width + 'px' : '' });
+      let w = el.offsetWidth;
+      while (el.scrollHeight > room && w < Math.min(720, maxW)) {
+        w = Math.min(w + 80, 720, maxW);
+        el.style.width = w + 'px';
+      }
+      for (let f = 12.5; el.scrollHeight > room && f >= 9; f -= .5) el.style.fontSize = f + 'px';
       const b = el.getBoundingClientRect();
-      if (b.bottom > innerHeight - 16) el.style.top = Math.max(16, innerHeight - 16 - b.height) + 'px';
+      if (b.right > innerWidth - 16) el.style.left = Math.max(16, innerWidth - 16 - b.width) + 'px';
+      if (p.above) {
+        if (b.top < 16) el.style.top = 16 + b.height + 'px';
+      } else if (b.bottom > innerHeight - 16) el.style.top = Math.max(16, innerHeight - 16 - b.height) + 'px';
     }, { flush: 'post' });
 
     const allSources = computed(() => Object.keys(C.SRC).map(link).join(' · '));

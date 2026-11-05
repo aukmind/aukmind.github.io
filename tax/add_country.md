@@ -58,7 +58,7 @@ Give each fork its country, code, currency and `nextStep`, plus what is specific
 
 - Touch only `tax/<cc>/`. Never edit the shells, `i18n.js`, `common.strings.js`, `embed.js`, `update_*.py`, this file or another country.
 - Research notes go to `<scratchpad>/<cc>/research_*.md`, one row per figure: value, base, condition, source URL, year, confidence.
-- Build `salary.js`, `salary.strings.js`, `inheritance.js`, `inheritance.strings.js`, `communes.js` if a commune levy applies, and the two wrappers (copy `fr/`, change only `<title>`).
+- Build `salary.js`, `salary.strings.js`, `inheritance.js`, `inheritance.strings.js`, `communes.js` if a commune levy applies, and the two wrappers (copy `fr/`, change only `<title>`), add the country to `COUNTRY` in `shared/update_meta.py` and run it for the link-preview tags.
 - Reuse existing `--k-*` / `--r-*` colour tokens. New ones go in the report (name, light hex, dark hex), not in the shell.
 - If a commune levy applies: a standalone `build_<cc>(tmpdir) -> str` (returns the `communes.js` text) in `<scratchpad>/<cc>/update_communes_<cc>.py`. Downloads go in their own empty folder; parse with `python3 -I`.
 - A shell problem goes to the coordinator by `SendMessage` as soon as it's found, not only in the final report.
