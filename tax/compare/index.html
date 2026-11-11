@@ -297,7 +297,7 @@ button[title],a[title]{cursor:pointer}
           <td>{{ eur(r.medSpend) }}</td>
           <td>{{ eur(r.minSpend) }}</td>
           <td tabindex="0" :data-tip="t('cellSpendX', times(r.spendX))"><b>{{ times(r.spendX) }}</b></td>
-          <td tabindex="0" :data-tip="t('cellTaxGap', eur(r.needG), signed(r.needX))"><b>{{ signed(r.taxGap) }}</b></td>
+          <td tabindex="0" :data-tip="t('cellTaxGap', eur(r.minNet), eur(r.minCost), eur(r.empCost), signed(r.taxGap))"><b>{{ signed(r.taxGap) }}</b></td>
         </tr>
       </tbody>
     </table></div>
@@ -601,17 +601,16 @@ const app = Vue.createApp({
         const rMed = C.compute(Gmed, st, env);
         const sm = { ...st, regime: 'minister', period: 'year', salary: Gm, minRole: role };
         const rMin = C.compute(Gm, sm, C.env(sm));
-        // An ordinary employee on the minister's gross.
-        const rEmp = C.compute(Gm, st, env);
+        // What an employer pays for an ordinary employee to take home the minister's net.
+        const empCost = C.compute(grossFor(L, st, env, rMin.net, 'net'), st, env).cost;
         const medSpend = spend(rMed), minSpend = spend(rMin);
         if (!(medSpend > 0)) return null;
         const grossX = Gm / Gmed, spendX = minSpend / medSpend;
         return { cc: L.cc, name: nameOf(L.cc), role: L.t('minRole.' + role), usedAvg: ref.key === 'avg',
           medG: eurOf(Gmed, L.cur), minG: eurOf(Gm, L.cur), medSpend: eurOf(medSpend, L.cur), minSpend: eurOf(minSpend, L.cur),
           grossX, spendX,
-          taxGap: Gm - rMin.net > 0 ? (Gm - rEmp.net) / (Gm - rMin.net) - 1 : 0,
-          // The gross an ordinary employee needs to take home what the minister does.
-          ...(G2 => ({ needG: eurOf(G2, L.cur), needX: G2 / Gm - 1 }))(grossFor(L, st, env, rMin.net, 'net')) };
+          minNet: eurOf(rMin.net, L.cur), minCost: eurOf(rMin.cost, L.cur), empCost: eurOf(empCost, L.cur),
+          taxGap: rMin.cost > 0 ? empCost / rMin.cost - 1 : 0 };
       }).filter(Boolean);
       const k = s.msort, dir = s.mdesc ? -1 : 1;
       return rows.sort((a, b) => (k === 'name' ? a.name.localeCompare(b.name, lang.value) : a[k] - b[k]) * dir);
